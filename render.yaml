@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: swisscar-export
+    env: node
+    buildCommand: npm ci && npm run build
+    startCommand: node .output/server/index.mjs
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/.data
+      sizeGB: 1

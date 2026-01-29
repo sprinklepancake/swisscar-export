@@ -1,0 +1,70 @@
+PROJECT NAME: swisscarexport.ch
+
+This project is a Nuxt 3 (Vue) web platform for exporting used cars from Switzerland to buyers abroad.
+
+GOAL:
+Create a simple, affordable, multilingual marketplace focused ONLY on exporting used cars out of Switzerland (Eastern Europe, Balkans, Africa, etc.). The platform targets cheap, small, affordable cars.
+
+CORE FEATURES:
+- Public browsing without login
+- Two user types: Seller and Buyer
+- Sellers list cars for export only
+- Two listing types:
+  1) Normal listing
+  2) Auction / bidding 
+- Buyers can chat with sellers
+- Real-time AI translation inside chat
+- Phone number visible for sellers
+- Wallet-based system for posting fees
+- Mobile-first design
+
+BUSINESS RULES:
+- Normal listing: 7.5 CHF
+- Auction listing: 10 CHF
+- First 6 months free for sellers
+- Later: 5–10 CHF per car sold
+- Users can receive free starter credit
+- Wallet balance is reduced when posting
+- Only cars being exported out of Switzerland are allowed
+
+TRUST & SECURITY:
+- Buyers who bid must authenticate with ID
+- If a buyer bids and does not complete purchase → banned
+- Ban applies to future accounts as well
+- Users are warned about this during signup
+
+TRANSPORT LOGIC:
+- Seller selects Swiss canton for initial transport
+- Buyer selects destination country
+- System calculates two transport legs
+
+LANGUAGES:
+- English (base)
+- Add: Polish, Albanian, Italian, Czech
+- Remove: Greek, Russian
+- All locale keys must match en.json
+
+ADMIN (NOT FULLY IMPLEMENTED YET):
+- Add/remove user funds
+- Remove listings
+- Ban users
+- Moderate content
+
+KNOWN ISSUES:
+- Sorting on cars page is broken
+- Language switch sometimes doesn’t work
+- Profile page wallet & stats incomplete
+- Button color contrast issues
+- Auction UX unfinished
+
+TECH STACK:
+- Nuxt 3 / Vue
+- Nitro server routes
+- JWT authentication
+- Entities: User, Car, Bid, Chat, Message
+
+Current task: I will send you specific files and ask you to debug, improve, or implement missing features based on this context.
+
+
+to do: make sure that only verified users can post, text, and bid, unverified ones can only view. and in the signup page i want to add the requirement of the ID, which will be attached to the user in the admin page so the admin can see and verify the user
+fix the issue in the profile page where the data isnt gotten correctly.

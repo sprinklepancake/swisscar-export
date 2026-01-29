@@ -1,0 +1,128 @@
+# Nuxt build/output directories
+.nuxt
+.output
+.nitro
+.cache
+dist
+.nuxt-prod
+
+# Dependencies
+node_modules/
+.npm
+.pnpm
+.yarn/
+.yarn.lock
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Database files
+database.sqlite
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Runtime data
+/data
+/storage
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Build artifacts
+.next
+.nuxt-prod
+nuxt.d.ts
+.server/
+.client/
+
+# Coverage directory
+coverage/
+.nyc_output
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Optional TypeScript
+*.tsbuildinfo
+
+# Optional Next.js folder
+.next/
+
+# Optional Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Optional Playwright
+playwright-report/
+test-results/
+
+# Optional Jest
+jest-coverage/
+
+# macOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Windows
+[Tt]humbs.db
+*.stackdump
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+
+# Nuxt telemetry
+.nuxt/telemetry

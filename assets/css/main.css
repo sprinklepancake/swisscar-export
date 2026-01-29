@@ -1,0 +1,520 @@
+/* Global Design System - Swiss Car Marketplace - Swiss Flag Theme */
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Custom Font Import */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* CSS Variables for Swiss Theming */
+:root {
+  --swiss-red: #FF0000;
+  --swiss-red-dark: #cc0000;
+  --swiss-white: #FFFFFF;
+  --swiss-dark: #1a1a1a;
+  --swiss-gray: #333333;
+  --swiss-light-gray: #f5f5f5;
+  
+  --primary-gradient: linear-gradient(135deg, var(--swiss-red) 0%, var(--swiss-red-dark) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--swiss-red-dark) 0%, #b30000 100%);
+  --dark-gradient: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  --light-gradient: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-red: rgba(255, 0, 0, 0.1);
+  --glass-red-border: rgba(255, 0, 0, 0.3);
+  --text-primary: var(--swiss-white);
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-dark: #1a1a1a;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* CHANGED: Removed background from body to allow logo to show through */
+body {
+  font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: transparent !important; /* Ensure body doesn't cover the logo */
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+}
+
+p {
+  color: var(--text-dark);
+  margin: 0 0 1rem 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--swiss-red);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #ff3333;
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  background: var(--swiss-white);
+  border: 1px solid #e5e5e5;
+  color: var(--text-dark);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--swiss-red);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Custom Components Layer */
+@layer components {
+  .glass {
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-red-border);
+    border-radius: 0.75rem;
+    background: var(--glass-red);
+  }
+
+  .glass-strong {
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 0.75rem;
+    background: rgba(255, 0, 0, 0.15);
+  }
+
+  .card {
+    @apply glass p-6 shadow-xl transition-all duration-300;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 0, 0, 0.15);
+  }
+}
+
+/* Custom Utilities Layer */
+@layer utilities {
+  .glass {
+    background: rgba(255, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 0.75rem;
+  }
+  
+  .glass-strong {
+    background: rgba(255, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 0.75rem;
+  }
+  
+  .gradient-text {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-secondary {
+    background: var(--secondary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .status-available {
+    @apply bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .status-reserved {
+    @apply bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .status-sold {
+    @apply bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .backdrop-blur-strong {
+    backdrop-filter: blur(30px);
+  }
+
+  .border-gradient {
+    border: 1px solid;
+    border-image: var(--primary-gradient) 1;
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--swiss-red), var(--swiss-red-dark));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ff3333, #b30000);
+}
+
+/* Selection Styling */
+::selection {
+  background: rgba(255, 0, 0, 0.3);
+  color: white;
+}
+
+::-moz-selection {
+  background: rgba(255, 0, 0, 0.3);
+  color: white;
+}
+
+/* Responsive Design Helpers */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  to {
+    left: 100%;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .glass,
+  .glass-strong {
+    background: white;
+    border: 1px solid #ccc;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-bg: rgba(255, 0, 0, 0.2);
+    --glass-border: rgba(255, 0, 0, 0.4);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Swiss Cross Pattern */
+.swiss-pattern {
+  background-image: 
+    linear-gradient(45deg, var(--swiss-red) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--swiss-red) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--swiss-red) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--swiss-red) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Swiss Theme Additions */
+.bg-swiss-white {
+  background-color: var(--swiss-white);
+}
+
+.bg-swiss-red {
+  background-color: var(--swiss-red);
+}
+
+.text-swiss-red {
+  color: var(--swiss-red);
+}
+
+.border-swiss-red {
+  border-color: var(--swiss-red);
+}
+
+.swiss-pattern-bg {
+  background-image: 
+    linear-gradient(45deg, var(--swiss-red) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--swiss-red) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--swiss-red) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--swiss-red) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  opacity: 0.05;
+}
+
+.swiss-form-container {
+  background: var(--swiss-white);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e5e5;
+}
+
+.swiss-form-section {
+  background: var(--swiss-white);
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--swiss-red);
+}
+
+.swiss-form-label {
+  color: var(--swiss-dark);
+  font-weight: 600;
+}
+
+.swiss-form-input {
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  color: var(--swiss-dark);
+  background: var(--swiss-white);
+}
+
+.swiss-form-input:focus {
+  border-color: var(--swiss-red);
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+.swiss-btn-primary {
+  background: var(--swiss-red);
+  color: var(--swiss-white);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.swiss-btn-primary:hover {
+  background: var(--swiss-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+}
+
+.swiss-btn-secondary {
+  background: var(--swiss-white);
+  color: var(--swiss-red);
+  border: 1px solid var(--swiss-red);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.swiss-btn-secondary:hover {
+  background: #fff5f5;
+}
+
+.swiss-progress-bar {
+  background: #e5e5e5;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.swiss-progress-fill {
+  background: var(--swiss-red);
+  height: 0.5rem;
+  border-radius: 0.25rem;
+  transition: width 0.5s ease;
+}
+
+.swiss-section-icon {
+  background: var(--swiss-red);
+  color: var(--swiss-white);
+  border-radius: 0.625rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiss-header {
+  background: var(--swiss-red);
+  color: var(--swiss-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.swiss-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%),
+    linear-gradient(transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Fix button contrast */
+button, .btn, [class*="button"] {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.cta-button-secondary {
+  background: white !important;
+  color: #dc2626 !important; /* red-600 */
+  border: 2px solid #dc2626 !important;
+}

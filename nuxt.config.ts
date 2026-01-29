@@ -1,26 +1,26 @@
 // nuxt.config.ts
 export default defineNuxtConfig({
   compatibilityDate: '2025-09-24',
-runtimeConfig: {
-  jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
-  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-  jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
-  
-  // Private config (server-side only)
-  public: {
-    siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  }
+  runtimeConfig: {
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
+    jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+    
+    // Private config (server-side only)
+    public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    }
+  },
   nitro: {
     compatibilityDate: '2025-08-05',
     preset: 'node-server',
-      storage: {
-    db: {
-      driver: 'fs',
-      base: './.data' // Railway uses .data directory
+    storage: {
+      db: {
+        driver: 'fs',
+        base: './.data' // Render uses .data directory
+      }
     }
-  }
-
-    },
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n'
@@ -51,29 +51,28 @@ runtimeConfig: {
     },
     vueI18n: './i18n.config.ts'
   },
-  // In nuxt.config.ts, update the routeRules section:
-routeRules: {
-  '/api/**': { cors: true },
-  '/en/api/**': { cors: true },
-  '/ar/api/**': { cors: true },
-  '/el/api/**': { cors: true },
-  '/fr/api/**': { cors: true },
-  '/de/api/**': { cors: true },
-  '/ro/api/**': { cors: true },
-  '/sr/api/**': { cors: true },
-  '/bg/api/**': { cors: true },
-  '/uk/api/**': { cors: true },
-  '/ru/api/**': { cors: true },
-  // Add all your locales
-  '/': { prerender: true },
-  '/login': { prerender: true },
-  '/register': { prerender: true },
-  '/admin': { ssr: false }, // Disable SSR for admin panel
-  '/en/admin': { ssr: false },
-  '/ar/admin': { ssr: false },
-  '/el/admin': { ssr: false },
-  // Add for all locales
-},
+  routeRules: {
+    '/api/**': { cors: true },
+    '/en/api/**': { cors: true },
+    '/ar/api/**': { cors: true },
+    '/el/api/**': { cors: true },
+    '/fr/api/**': { cors: true },
+    '/de/api/**': { cors: true },
+    '/ro/api/**': { cors: true },
+    '/sr/api/**': { cors: true },
+    '/bg/api/**': { cors: true },
+    '/uk/api/**': { cors: true },
+    '/ru/api/**': { cors: true },
+    // Add all your locales
+    '/': { prerender: true },
+    '/login': { prerender: true },
+    '/register': { prerender: true },
+    '/admin': { ssr: false }, // Disable SSR for admin panel
+    '/en/admin': { ssr: false },
+    '/ar/admin': { ssr: false },
+    '/el/admin': { ssr: false },
+    // Add for all locales
+  },
   build: {
     transpile: [
       '@headlessui/vue',

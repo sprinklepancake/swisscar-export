@@ -1,63 +1,52 @@
-// server/api/fix-permissions.get.ts
-import { sequelize } from '~/server/database/connection'
+import { getDatabasePath } from '~/utils/db-path'
+import fs from 'fs'
 
 export default defineEventHandler(async (event) => {
   try {
-    const fs = await import('fs/promises')
-    const path = await import('path')
+    const dbPath = getDatabasePath()
+    const dbExists = fs.existsSync(dbPath)
     
-    const dbPath = path.join(process.cwd(), 'database.sqlite')
-    
-    // Check if file exists and get current permissions
-    let stats;
-    try {
-      stats = await fs.stat(dbPath)
-    } catch (e: any) {
+    if (!dbExists) {
       return {
         success: false,
-        error: 'Database file not found',
-        solution: 'The database file does not exist. It will be created automatically when needed.'
+        message: 'Database file does not exist',
+        path: dbPath,
+        solution: 'The database will be created automatically when the server starts'
       }
     }
     
-    // Get current permissions
-    const mode = stats.mode
-    const canWrite = !!(mode & 0o200) // Check if user has write permission
-    
-    if (!canWrite) {
+    // Try to read the file
+    try {
+      fs.accessSync(dbPath, fs.constants.R_OK | fs.constants.W_OK)
+      return {
+        success: true,
+        message: 'Database permissions are correct',
+        path: dbPath
+      }
+    } catch (accessError: any) {
       // Try to fix permissions
       try {
-        await fs.chmod(dbPath, 0o666) // Read/write for everyone
-        const newStats = await fs.stat(dbPath)
-        const newCanWrite = !!(newStats.mode & 0o200)
-        
+        fs.chmodSync(dbPath, 0o666)
         return {
           success: true,
-          message: 'File permissions updated',
-          originalPermissions: mode.toString(8),
-          newPermissions: newStats.mode.toString(8),
-          canWriteNow: newCanWrite,
-          nextStep: 'Now visit /api/simple-reset to populate the database'
+          message: 'Database permissions fixed',
+          path: dbPath,
+          previousError: accessError.message
         }
       } catch (chmodError: any) {
         return {
           success: false,
-          error: `Cannot change permissions: ${chmodError.message}`,
-          solution: 'Stop the server, delete database.sqlite manually, then restart the server'
+          message: 'Cannot fix database permissions',
+          path: dbPath,
+          error: chmodError.message,
+          solution: 'Stop the server, delete database manually, then restart the server'
         }
       }
-    } else {
-      return {
-        success: true,
-        message: 'File already has write permissions',
-        canWrite: true,
-        nextStep: 'Visit /api/simple-reset to populate the database'
-      }
     }
-    
   } catch (error: any) {
     return {
       success: false,
+      message: 'Error checking database permissions',
       error: error.message
     }
   }

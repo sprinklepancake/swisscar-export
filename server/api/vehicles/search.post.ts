@@ -1,54 +1,48 @@
-// server/api/vehicles/search.post.ts
+import { getVehicleDatabasePath } from '~/utils/db-path'
 import sqlite3 from 'sqlite3';
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { marke, typ, treibstoff, page = 1, limit = 20 } = body;
+  try {
+    const body = await readBody(event);
+    const { query, limit = 50 } = body;
 
-  return new Promise((resolve, reject) => {
-    const db = new sqlite3.Database('./vehicle_data.db');
-    
-    let sql = 'SELECT * FROM vehicles WHERE 1=1';
-    const params: any[] = [];
-
-    if (marke) {
-      sql += ' AND marke LIKE ?';
-      params.push(`%${marke}%`);
+    if (!query || query.trim().length < 2) {
+      return { results: [] };
     }
 
-    if (typ) {
-      sql += ' AND typ LIKE ?';
-      params.push(`%${typ}%`);
-    }
+    const dbPath = getVehicleDatabasePath();
+    const searchQuery = '%' + query + '%';
 
-    if (treibstoff) {
-      sql += ' AND treibstoff = ?';
-      params.push(treibstoff);
-    }
+    return new Promise((resolve, reject) => {
+      const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
+        if (err) {
+          console.error('Database error:', err);
+          reject({ error: 'Database connection failed' });
+          return;
+        }
 
-    // Add pagination
-    const offset = (page - 1) * limit;
-    sql += ' LIMIT ? OFFSET ?';
-    params.push(limit, offset);
+        const sql = `
+          SELECT * FROM vehicle_data 
+          WHERE name LIKE ? OR 
+                model LIKE ? OR 
+                make LIKE ? OR 
+                year LIKE ?
+          LIMIT ?
+        `;
 
-    db.all(sql, params, (err, rows) => {
-      db.close();
-      
-      if (err) {
-        reject(createError({
-          statusCode: 500,
-          statusMessage: 'Database error'
-        }));
-      } else {
-        resolve({
-          vehicles: rows,
-          pagination: {
-            page,
-            limit,
-            total: rows.length
+        db.all(sql, [searchQuery, searchQuery, searchQuery, searchQuery, limit], (err, rows) => {
+          db.close();
+          if (err) {
+            console.error('Query error:', err);
+            reject({ error: 'Query failed' });
+            return;
           }
+          resolve({ results: rows });
         });
-      }
+      });
     });
-  });
+  } catch (error: any) {
+    console.error('Search error:', error);
+    return { error: 'Search failed', details: error.message };
+  }
 });

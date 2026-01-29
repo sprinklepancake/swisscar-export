@@ -1,20 +1,25 @@
 // nuxt.config.ts
 export default defineNuxtConfig({
   compatibilityDate: '2025-09-24',
-  runtimeConfig: {
-    jwtAccessSecret: process.env.JWT_ACCESS_SECRET || 'your-default-access-secret',
-    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'your-default-refresh-secret',
-    jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
-    // Private config (server-side only)
-    public: {
-      // Public config that will be exposed to the client
-      cspPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:*;",
-      siteUrl: process.env.SITE_URL || 'http://localhost:3000'
-    }
-  },
+runtimeConfig: {
+  jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
+  jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+  
+  // Private config (server-side only)
+  public: {
+    siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  }
   nitro: {
     compatibilityDate: '2025-08-05',
     preset: 'node-server',
+      storage: {
+    db: {
+      driver: 'fs',
+      base: './.data' // Railway uses .data directory
+    }
+  }
+
     },
   modules: [
     '@nuxtjs/tailwindcss',

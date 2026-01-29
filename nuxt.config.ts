@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     storage: {
       db: {
         driver: 'fs',
-        base: './.data' // Render uses .data directory
+        base: '/opt/render/project/src/.data' // Render uses .data directory
       }
     }
   },

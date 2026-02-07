@@ -65,8 +65,8 @@ export default defineNuxtConfig({
     '/ru/api/**': { cors: true },
     // Add all your locales
     '/': { prerender: true },
-    '/login': { prerender: true },
-    '/register': { prerender: true },
+    //'/login': { prerender: true },
+    //'/register': { prerender: true },
     '/admin': { ssr: false }, // Disable SSR for admin panel
     '/en/admin': { ssr: false },
     '/ar/admin': { ssr: false },

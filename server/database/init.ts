@@ -5,7 +5,11 @@ import { Car } from './models/Car'
 import { Bid } from './models/Bid'
 import { Chat } from './models/Chat'
 import { Message } from './models/Message'
-import { setupAssociations } from './models'
+import { ActivityLog } from './models/ActivityLog'
+import { Watchlist } from './models/Watchlist'
+import { TransactionLog } from './models/TransactionLog'
+import { Settings } from './models/Settings'
+import { AdminLog } from './models/AdminLog'
 
 export async function initDatabase() {
   try {
@@ -19,18 +23,39 @@ export async function initDatabase() {
     Bid.initialize(sequelize)
     Chat.initialize(sequelize)
     Message.initialize(sequelize)
+    ActivityLog.initialize(sequelize)
+    Watchlist.initialize(sequelize)
+    TransactionLog.initialize(sequelize)
+    Settings.initialize(sequelize)
+    AdminLog.initialize(sequelize)
     console.log('✅ All models initialized.')
     
     console.log('🔧 Step 3: Setting up associations...')
-    // Then setup associations
-    setupAssociations()
+    // Create models object to pass to Chat.associate()
+    const models = {
+      User,
+      Car,
+      Bid,
+      Chat,
+      Message,
+      ActivityLog,
+      Watchlist,
+      TransactionLog,
+      Settings,
+      AdminLog
+    }
     
     // Call associate methods on each model
-    User.associate()
-    Car.associate()
-    Bid.associate()
-    Chat.associate()
-    Message.associate()
+    User.associate?.()
+    Car.associate?.()
+    Bid.associate?.()
+    Chat.associate(models)  // REQUIRES models parameter
+    Message.associate?.()
+    ActivityLog.associate?.()
+    Watchlist.associate?.()
+    TransactionLog.associate?.()
+    AdminLog.associate?.()
+    // Settings doesn't have associate method, so skip it
     console.log('✅ Associations setup complete.')
     
     console.log('🔧 Step 4: Syncing database...')

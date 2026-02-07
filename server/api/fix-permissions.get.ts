@@ -1,4 +1,4 @@
-import { getDatabasePath } from '~/utils/db-path'
+import { getDatabasePath } from '../utils/db-path'
 import fs from 'fs'
 
 export default defineEventHandler(async (event) => {

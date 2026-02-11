@@ -1,16 +1,33 @@
 export const useAuth = () => {
-  const { $supabase } = useNuxtApp()
-  const supabase = $supabase
-  
   const user = useState('user', () => null)
   const isAuthenticated = computed(() => !!user.value)
+  const isInitialized = useState('auth-initialized', () => false)
+  
+  // Get supabase client safely
+  const getSupabase = () => {
+    try {
+      const { $supabase } = useNuxtApp()
+      return $supabase
+    } catch (error) {
+      console.error('Failed to get supabase client:', error)
+      return null
+    }
+  }
   
   const syncAuth = async () => {
     try {
+      const supabase = getSupabase()
+      if (!supabase) {
+        user.value = null
+        isInitialized.value = true
+        return false
+      }
+      
       const { data: sessionData } = await supabase.auth.getSession()
       
       if (!sessionData.session) {
         user.value = null
+        isInitialized.value = true
         return false
       }
       
@@ -23,6 +40,7 @@ export const useAuth = () => {
       if (error || !userData) {
         console.error('Error fetching user profile:', error)
         user.value = null
+        isInitialized.value = true
         return false
       }
       
@@ -30,34 +48,45 @@ export const useAuth = () => {
         ...userData,
         auth_uid: sessionData.session.user.id
       }
-      
+      isInitialized.value = true
       return true
     } catch (error) {
       console.error('Auth sync error:', error)
       user.value = null
+      isInitialized.value = true
       return false
     }
   }
   
+  // Only run on client side
   if (process.client) {
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event)
-      if (event === 'SIGNED_IN') {
-        await syncAuth()
-      } else if (event === 'SIGNED_OUT') {
-        user.value = null
+    // Use nextTick to ensure plugin is loaded
+    nextTick(() => {
+      const supabase = getSupabase()
+      if (supabase) {
+        supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state changed:', event)
+          if (event === 'SIGNED_IN') {
+            await syncAuth()
+          } else if (event === 'SIGNED_OUT') {
+            user.value = null
+          }
+        })
       }
+      syncAuth()
     })
-    
-    syncAuth()
   }
   
   return {
     user: readonly(user),
     isAuthenticated,
+    isInitialized: readonly(isInitialized),
     
     async login(email: string, password: string) {
       try {
+        const supabase = getSupabase()
+        if (!supabase) throw new Error('Supabase client not available')
+        
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
@@ -74,18 +103,20 @@ export const useAuth = () => {
             .eq('auth_uid', data.user.id)
             .single()
           
-          user.value = {
-            ...profileData,
-            auth_uid: data.user.id
+          if (profileData) {
+            user.value = {
+              ...profileData,
+              auth_uid: data.user.id
+            }
+            
+            await supabase
+              .from('users')
+              .update({ 
+                last_login: new Date(),
+                login_count: (profileData?.login_count || 0) + 1 
+              })
+              .eq('id', profileData.id)
           }
-          
-          await supabase
-            .from('users')
-            .update({ 
-              last_login: new Date(),
-              login_count: (profileData?.login_count || 0) + 1 
-            })
-            .eq('id', profileData.id)
           
           return true
         }
@@ -99,6 +130,9 @@ export const useAuth = () => {
     
     async register(userData: any) {
       try {
+        const supabase = getSupabase()
+        if (!supabase) throw new Error('Supabase client not available')
+        
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: userData.email,
           password: userData.password,
@@ -155,6 +189,9 @@ export const useAuth = () => {
     
     async logout() {
       try {
+        const supabase = getSupabase()
+        if (!supabase) throw new Error('Supabase client not available')
+        
         const { error } = await supabase.auth.signOut()
         if (error) throw error
         user.value = null

@@ -25,19 +25,10 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/i18n',
-    '@nuxtjs/supabase' // Keep this
+    '@nuxtjs/i18n'
+    // REMOVED: '@nuxtjs/supabase'
   ],
-  supabase: { // Add this supabase config section
-    url: process.env.SUPABASE_URL,
-    key: process.env.SUPABASE_PUBLISHABLE_KEY,
-    redirect: false, // Important: disable automatic redirects
-    redirectOptions: {
-      login: '/login',
-      callback: '/confirm',
-      exclude: ['/', '/register', '/about']
-    }
-  },
+  // REMOVED: supabase: {} config section
   css: ['@/assets/css/main.css'],
   i18n: {
     locales: [
@@ -76,15 +67,11 @@ export default defineNuxtConfig({
     '/bg/api/**': { cors: true },
     '/uk/api/**': { cors: true },
     '/ru/api/**': { cors: true },
-    // Add all your locales
     '/': { prerender: true },
-    //'/login': { prerender: true },
-    //'/register': { prerender: true },
-    '/admin': { ssr: false }, // Disable SSR for admin panel
+    '/admin': { ssr: false },
     '/en/admin': { ssr: false },
     '/ar/admin': { ssr: false },
     '/el/admin': { ssr: false },
-    // Add for all locales
   },
   build: {
     transpile: [

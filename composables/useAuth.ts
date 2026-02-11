@@ -1,7 +1,9 @@
 export const useAuth = () => {
+  const { $supabase } = useNuxtApp()
+  const supabase = $supabase
+  
   const user = useState('user', () => null)
   const isAuthenticated = computed(() => !!user.value)
-  const supabase = useSupabaseClient()
   
   const syncAuth = async () => {
     try {

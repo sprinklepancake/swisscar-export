@@ -25,8 +25,19 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
+    '@nuxtjs/supabase' // Keep this
   ],
+  supabase: { // Add this supabase config section
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_PUBLISHABLE_KEY,
+    redirect: false, // Important: disable automatic redirects
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      exclude: ['/', '/register', '/about']
+    }
+  },
   css: ['@/assets/css/main.css'],
   i18n: {
     locales: [

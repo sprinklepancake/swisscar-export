@@ -66,9 +66,10 @@ const handleLogin = async () => {
     error.value = ''
     
     const success = await auth.login(email.value, password.value)
+    
     if (success) {
-      // Redirect based on user role
-      const redirectPath = auth.user.value?.role === 'seller' ? '/dashboard' : '/'
+      const user = auth.user.value
+      const redirectPath = user?.role === 'seller' ? '/dashboard' : '/'
       await router.push(redirectPath)
     } else {
       error.value = 'Invalid email or password'

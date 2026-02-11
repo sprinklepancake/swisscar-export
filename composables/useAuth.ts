@@ -1,77 +1,167 @@
-// composables/useAuth.ts
 export const useAuth = () => {
   const user = useState('user', () => null)
   const isAuthenticated = computed(() => !!user.value)
-  const isInitialized = useState('auth-initialized', () => false)
+  const supabase = useSupabaseClient()
   
   const syncAuth = async () => {
     try {
-      const { data, error } = await useFetch('/api/auth/me')
+      const { data: sessionData } = await supabase.auth.getSession()
       
-      if (error.value) {
+      if (!sessionData.session) {
         user.value = null
-        isInitialized.value = true
         return false
       }
       
-      user.value = data.value?.user || null
-      isInitialized.value = true
-      console.log('Auth sync completed - User:', user.value ? user.value.email : 'null')
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_uid', sessionData.session.user.id)
+        .single()
+      
+      if (error || !userData) {
+        console.error('Error fetching user profile:', error)
+        user.value = null
+        return false
+      }
+      
+      user.value = {
+        ...userData,
+        auth_uid: sessionData.session.user.id
+      }
+      
       return true
     } catch (error) {
       console.error('Auth sync error:', error)
       user.value = null
-      isInitialized.value = true
       return false
     }
   }
-
-  // Sync auth state on client-side - only once
-  if (process.client && !isInitialized.value) {
+  
+  if (process.client) {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event)
+      if (event === 'SIGNED_IN') {
+        await syncAuth()
+      } else if (event === 'SIGNED_OUT') {
+        user.value = null
+      }
+    })
+    
     syncAuth()
   }
-
+  
   return {
     user: readonly(user),
     isAuthenticated,
-    isInitialized: readonly(isInitialized),
+    
     async login(email: string, password: string) {
       try {
-        const { data, error } = await useFetch('/api/auth/login', {
-          method: 'POST',
-          body: { email, password },
-          credentials: 'include'
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
         })
         
-        if (error.value) {
-          throw new Error(error.value.data?.message || 'Login failed')
+        if (error) {
+          throw new Error(error.message || 'Login failed')
         }
         
-        if (data.value?.user) {
-          user.value = data.value.user
-          await syncAuth() // Re-sync to ensure consistency
+        if (data.user) {
+          const { data: profileData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('auth_uid', data.user.id)
+            .single()
+          
+          user.value = {
+            ...profileData,
+            auth_uid: data.user.id
+          }
+          
+          await supabase
+            .from('users')
+            .update({ 
+              last_login: new Date(),
+              login_count: (profileData?.login_count || 0) + 1 
+            })
+            .eq('id', profileData.id)
+          
           return true
         }
+        
         return false
-      } catch (error) {
+      } catch (error: any) {
         user.value = null
         throw error
       }
     },
-    async logout() {
+    
+    async register(userData: any) {
       try {
-        await $fetch('/api/auth/logout', { 
-          method: 'POST',
-          credentials: 'include'
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: userData.email,
+          password: userData.password,
+          options: {
+            data: {
+              name: userData.name,
+              phone: userData.phone,
+              role: userData.role
+            }
+          }
         })
-      } catch (error) {
-        console.error('Logout API call failed:', error)
-      } finally {
-        // Always clear local state
-        user.value = null
-        isInitialized.value = true
+        
+        if (authError) throw authError
+        if (!authData.user) throw new Error('User creation failed')
+        
+        const { data: profileData, error: profileError } = await supabase
+          .from('users')
+          .insert({
+            email: userData.email,
+            name: userData.name,
+            phone: userData.phone.replace(/\D/g, ''),
+            role: userData.role,
+            company_name: userData.companyName,
+            business_type: userData.businessType,
+            tax_id: userData.taxId,
+            street_address: userData.streetAddress,
+            address: userData.streetAddress,
+            canton: userData.canton,
+            city: userData.city,
+            zip_code: userData.zipCode,
+            country: userData.country || 'Switzerland',
+            auth_uid: authData.user.id,
+            free_feature_credits: userData.role === 'seller' ? 1 : 0
+          })
+          .select()
+          .single()
+        
+        if (profileError) {
+          await supabase.auth.admin.deleteUser(authData.user.id)
+          throw profileError
+        }
+        
+        user.value = {
+          ...profileData,
+          auth_uid: authData.user.id
+        }
+        
+        return { user: user.value }
+      } catch (error: any) {
+        console.error('Registration error:', error)
+        throw new Error(error.message || 'Registration failed')
       }
     },
+    
+    async logout() {
+      try {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+        user.value = null
+      } catch (error: any) {
+        console.error('Logout error:', error)
+        throw new Error(error.message || 'Logout failed')
+      }
+    },
+    
     syncAuth
   }
 }

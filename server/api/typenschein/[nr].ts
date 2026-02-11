@@ -1,10 +1,27 @@
-// frontend/server/api/typenschein/[nr].ts
 import fs from 'fs'
 import path from 'path'
 import readline from 'readline'
+import { supabase } from '~/server/utils/supabase'
 
-// Simple in-memory index
 let typenscheinData: Map<string, any> | null = null
+
+async function getTypenscheinFromSupabase(nr: string): Promise<any> {
+  try {
+    const { data, error } = await supabase
+      .from('typenschein_cache')
+      .select('data')
+      .eq('nr', nr)
+      .single()
+    
+    if (!error && data) {
+      return data.data
+    }
+    
+    return null
+  } catch (error) {
+    return null
+  }
+}
 
 async function loadTypenscheinData(): Promise<Map<string, any>> {
   return new Promise((resolve, reject) => {
@@ -12,6 +29,13 @@ async function loadTypenscheinData(): Promise<Map<string, any>> {
     
     console.log('Loading typenschein data into memory...')
     const dataMap = new Map<string, any>()
+    
+    if (!fs.existsSync(filePath)) {
+      console.warn('Typenschein file not found:', filePath)
+      resolve(dataMap)
+      return
+    }
+    
     const fileStream = fs.createReadStream(filePath, { encoding: 'utf8' })
     const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity })
 
@@ -32,7 +56,8 @@ async function loadTypenscheinData(): Promise<Map<string, any>> {
         if (obj.Nr && obj.BaseData_DE) {
           dataMap.set(obj.Nr, {
             Nr: obj.Nr,
-            BaseData_DE: obj.BaseData_DE
+            BaseData_DE: obj.BaseData_DE,
+            raw: obj
           })
         }
       } catch (e) {
@@ -42,7 +67,7 @@ async function loadTypenscheinData(): Promise<Map<string, any>> {
       lineNumber++
       
       if (lineNumber % 10000 === 0) {
-        console.log(`Loaded ${lineNumber} lines, ${dataMap.size} typenscheins in memory...`)
+        console.log(`Loaded ${lineNumber} lines, ${dataMap.size} typenscheins...`)
       }
     })
 
@@ -59,24 +84,39 @@ export default defineEventHandler(async (event) => {
   const { nr } = event.context.params!
   
   try {
-    // Load data on first request
+    const supabaseResult = await getTypenscheinFromSupabase(nr)
+    if (supabaseResult) {
+      return supabaseResult
+    }
+    
     if (!typenscheinData) {
       typenscheinData = await loadTypenscheinData()
     }
-
-    console.log(`Instant search for Typenschein: ${nr}`)
     
     const result = typenscheinData?.get(nr)
     
     if (!result) {
-      console.log(`Typenschein ${nr} not found`)
       throw createError({
         statusCode: 404,
         statusMessage: 'Typenschein not found'
       })
     }
-
-    console.log(`Found Typenschein: ${result.BaseData_DE?.Typenbezeichnung}`)
+    
+    setTimeout(async () => {
+      try {
+        await supabase
+          .from('typenschein_cache')
+          .upsert({
+            nr: result.Nr,
+            data: result,
+            typenbezeichnung: result.BaseData_DE?.Typenbezeichnung,
+            fahrzeugart: result.BaseData_DE?.Fahrzeugart
+          })
+        console.log(`Cached typenschein ${nr} in Supabase`)
+      } catch (error) {
+        console.error('Failed to cache in Supabase:', error)
+      }
+    }, 0)
     
     return result
     
@@ -89,7 +129,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error: ' + error.message
+      statusMessage: 'Internal server error'
     })
   }
 })

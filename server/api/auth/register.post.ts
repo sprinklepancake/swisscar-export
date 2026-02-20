@@ -1,81 +1,66 @@
 // server/api/auth/register.post.ts
-import { validateRegisterInput } from '../../validators/auth'
-import { createUser, getUserByEmail } from '../../database/repositories/userRepository'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  
-  console.log('Registration request body:', body) // Add this to see what's being sent
-  
-  const { 
-    name, 
-    email, 
-    password, 
-    phone, 
-    role,
-    companyName,
-    businessType,
-    canton,
-    city,
-    zipCode,
-    country,
-    taxId,
-    streetAddress
-  } = body
-  
-  // Validate input - update your validator to include phone
-  const { valid, errors } = validateRegisterInput({ name, email, password, phone })
-  if (!valid) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: errors.join(', ')
-    })
+  const { name, email, password, phone, role, companyName, businessType, canton, city, zipCode, country, taxId, streetAddress } = body
+
+  if (!name || !email || !password) {
+    throw createError({ statusCode: 400, statusMessage: 'Name, email, and password are required' })
   }
-  
-  // Check if user exists
-  const existingUser = await getUserByEmail(email)
-  if (existingUser) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Email already in use'
-    })
+  if (password.length < 8) {
+    throw createError({ statusCode: 400, statusMessage: 'Password must be at least 8 characters' })
   }
-  
-  // Create user - include ALL fields
+
   try {
-    const user = await createUser({
-      name,
+    const supabase = getSupabaseAdmin()
+
+    // Create auth user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
-      phone,
+      email_confirm: true,
+    })
+
+    if (authError) {
+      if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
+        throw createError({ statusCode: 400, statusMessage: 'Email already in use' })
+      }
+      throw createError({ statusCode: 400, statusMessage: authError.message })
+    }
+
+    const authUser = authData.user
+    if (!authUser) throw createError({ statusCode: 500, statusMessage: 'Failed to create auth user' })
+
+    // Create profile in users table
+    const { data: profile, error: profileError } = await supabase.from('users').insert({
+      auth_uid: authUser.id,
+      email,
+      name,
+      phone: phone || '',
       role: role || 'buyer',
-      companyName: companyName || '',
-      businessType: businessType || '',
+      company_name: companyName || '',
+      business_type: businessType || '',
       canton: canton || '',
       city: city || '',
-      zipCode: zipCode || '',
+      zip_code: zipCode || '',
       country: country || 'Switzerland',
-      taxId: taxId || '',
-      streetAddress: streetAddress || ''
-    })
-    
-    console.log('User created with location data:', {
-      id: user.id,
-      canton: user.canton,
-      city: user.city,
-      zipCode: user.zipCode,
-      streetAddress: user.streetAddress
-    })
-    
-    return { 
-      success: true,
-      userId: user.id
+      tax_id: taxId || '',
+      street_address: streetAddress || '',
+      funds: 0,
+      verified: false,
+      banned: false,
+    }).select('id').single()
+
+    if (profileError) {
+      // Rollback auth user if profile creation fails
+      await supabase.auth.admin.deleteUser(authUser.id)
+      throw createError({ statusCode: 500, statusMessage: 'Registration failed: ' + profileError.message })
     }
-  } catch (error) {
-    console.error('Registration error:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Registration failed'
-    })
+
+    return { success: true, userId: profile.id }
+  } catch (error: any) {
+    if (error.statusCode) throw error
+    throw createError({ statusCode: 500, statusMessage: 'Registration failed' })
   }
 })

@@ -1,9 +1,9 @@
 // server/api/auth/login.post.ts
-// Login is handled client-side by Supabase in useAuth().login()
-// This endpoint exists as a no-op fallback for any old code that still calls it
+// Login is handled client-side via Supabase Auth JS SDK (useAuth composable)
+// This stub exists to prevent 404 errors from any legacy calls
 export default defineEventHandler(async () => {
   throw createError({
     statusCode: 410,
-    statusMessage: 'This endpoint is no longer used. Login is handled client-side via Supabase.',
+    statusMessage: 'Login is handled client-side via Supabase. Use the useAuth composable.'
   })
 })

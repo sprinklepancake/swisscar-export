@@ -1,82 +1,51 @@
 // server/middleware/auth.ts
-// Reads the Supabase access token from a cookie and verifies it server-side.
-// The client stores the token via useAuth composable after login.
-import { verifySupabaseToken, getUserProfile } from '~/server/utils/supabase'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   const path = getRequestURL(event).pathname
 
-  // Public paths - skip auth entirely
-  const publicPaths = [
-    '/api/auth/',
-    '/api/cars',
-    '/api/health',
-    '/api/debug',
-  ]
+  // Always set defaults
+  event.context.user = null
+  event.context.auth = null
 
-  const isPublicPath = publicPaths.some(p => path.startsWith(p))
-  if (isPublicPath) return
+  // Read Supabase session token from cookie
+  const token = getCookie(event, 'sb-access-token') || getCookie(event, 'access_token')
 
-  // Try to get the Supabase access token from cookie
-  const token = getCookie(event, 'sb_access_token')
-
-  if (!token) {
-    event.context.auth = null
-    event.context.user = null
-
-    const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
-    if (protectedPaths.some(p => path.startsWith(p))) {
-      throw createError({ statusCode: 401, message: 'Authentication required' })
-    }
-    return
-  }
+  if (!token) return
 
   try {
-    // Verify with Supabase
-    const authUser = await verifySupabaseToken(token)
+    const supabase = getSupabaseAdmin()
+    const { data: { user: authUser }, error } = await supabase.auth.getUser(token)
 
-    if (!authUser) {
-      event.context.auth = null
-      event.context.user = null
-      deleteCookie(event, 'sb_access_token')
+    if (error || !authUser) return
 
-      const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
-      if (protectedPaths.some(p => path.startsWith(p))) {
-        throw createError({ statusCode: 401, message: 'Invalid or expired session' })
-      }
-      return
-    }
+    // Fetch profile from users table
+    const { data: profile } = await supabase
+      .from('users')
+      .select('id, email, name, role, funds, verified, banned, phone, company_name, profile_image, created_at')
+      .eq('auth_uid', authUser.id)
+      .single()
 
-    // Load profile from our users table
-    const profile = await getUserProfile(authUser.id)
-
-    if (!profile) {
-      event.context.auth = null
-      event.context.user = null
-      return
-    }
+    if (!profile) return
 
     const userData = {
       id: profile.id,
-      auth_uid: authUser.id,
+      authUid: authUser.id,
       email: profile.email,
       name: profile.name,
       role: profile.role,
       funds: parseFloat(profile.funds || 0),
-      banned: profile.banned || false,
       verified: profile.verified || false,
+      banned: profile.banned || false,
+      phone: profile.phone || '',
+      companyName: profile.company_name || '',
+      profileImage: profile.profile_image || '',
+      createdAt: profile.created_at,
     }
 
-    event.context.auth = userData
     event.context.user = userData
-  } catch (error: any) {
-    // Don't throw on non-protected routes, just clear context
-    event.context.auth = null
-    event.context.user = null
-
-    const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
-    if (protectedPaths.some(p => path.startsWith(p))) {
-      throw createError({ statusCode: 401, message: 'Authentication failed' })
-    }
+    event.context.auth = userData
+  } catch (error) {
+    // Non-fatal — unauthenticated requests are fine for public routes
   }
 })

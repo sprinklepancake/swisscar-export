@@ -45,41 +45,43 @@ export default defineEventHandler(async (event) => {
       .maybeSingle()
 
     if (existing) {
-      // Profile already created by trigger — just update the fields
       console.log('[register] Profile already exists (trigger), updating:', existing.id)
+      const isSeller = (role || 'buyer') === 'seller'
       await supabase.from('users').update({
         name,
-        phone: phone || '',
+        phone: phone || null,
         role: role || 'buyer',
-        company_name: companyName || '',
-        business_type: businessType || '',
-        canton: canton || '',
-        city: city || '',
-        zip_code: zipCode || '',
+        company_name: isSeller ? (companyName || null) : null,
+        business_type: isSeller ? (businessType || null) : null,
+        canton: canton || null,
+        city: city || null,
+        zip_code: zipCode || null,
         country: country || 'Switzerland',
-        tax_id: taxId || '',
-        street_address: streetAddress || '',
+        tax_id: isSeller ? (taxId || null) : null,
+        street_address: streetAddress || null,
       }).eq('id', existing.id)
 
       return { success: true, userId: existing.id }
     }
 
     // Step 3: Insert profile row
-    console.log('[register] Inserting profile row...')
+    const isSeller = (role || 'buyer') === 'seller'
+    console.log('[register] Inserting profile row, isSeller:', isSeller)
+
     const { data: profile, error: profileError } = await supabase.from('users').insert({
       auth_uid: authUserId,
       email,
       name,
-      phone: phone || '',
+      phone: phone || null,
       role: role || 'buyer',
-      company_name: companyName || '',
-      business_type: businessType || '',
-      canton: canton || '',
-      city: city || '',
-      zip_code: zipCode || '',
+      company_name: isSeller ? (companyName || null) : null,
+      business_type: isSeller ? (businessType || null) : null,
+      canton: canton || null,
+      city: city || null,
+      zip_code: zipCode || null,
       country: country || 'Switzerland',
-      tax_id: taxId || '',
-      street_address: streetAddress || '',
+      tax_id: isSeller ? (taxId || null) : null,
+      street_address: streetAddress || null,
       funds: 0,
       verified: false,
       banned: false,
@@ -87,7 +89,6 @@ export default defineEventHandler(async (event) => {
 
     if (profileError) {
       console.error('[register] Profile insert error:', profileError)
-      // Rollback auth user
       await supabase.auth.admin.deleteUser(authUserId)
       throw createError({ statusCode: 500, statusMessage: 'Registration failed: ' + profileError.message })
     }
@@ -98,7 +99,6 @@ export default defineEventHandler(async (event) => {
   } catch (error: any) {
     console.error('[register] Unhandled error:', error)
 
-    // Rollback auth user if something went wrong after creation
     if (authUserId && !error.statusCode) {
       await supabase.auth.admin.deleteUser(authUserId).catch(() => {})
     }

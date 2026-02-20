@@ -1,227 +1,92 @@
 // server/api/chat/[id].get.ts
-import { Chat, Message, User, Car } from '~/server/database/models'
-import { requireAuth } from '~/server/utils/auth'
-import { getUserName } from '~/server/utils/userHelpers' // ADD THIS
-import { Op } from 'sequelize'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  }
+
+  const chatId = getRouterParam(event, 'id')
+  if (!chatId) throw createError({ statusCode: 400, statusMessage: 'Chat ID is required' })
+
   try {
-    console.log('=== GET CHAT API ===')
-    
-    // Get authenticated user
-    const auth = await requireAuth(event)
-    const userId = auth.id
-    
-    console.log('👤 Current user from requireAuth:', {
-      id: auth.id,
-      name: auth.name, // This should now be properly set
-      email: auth.email,
-      role: auth.role
-    })
-    
-    // Get chat ID
-    const chatId = event.context.params?.id || getRouterParam(event, 'id')
+    const supabase = getSupabaseAdmin()
 
-    if (!chatId) {
-      throw createError({
-        statusCode: 400,
-        message: 'Chat ID is required'
-      })
+    // Get chat with full details
+    const { data: chat, error: chatError } = await supabase
+      .from('chats')
+      .select(`
+        id, car_id, buyer_id, seller_id, last_message_at, created_at,
+        buyer:users!buyer_id (id, name, email, profile_image, phone),
+        seller:users!seller_id (id, name, email, profile_image, phone),
+        car:cars!car_id (
+          id, make, model, year, price, mileage, images, city, canton, status,
+          listing_type, fuel_type, transmission, color_exterior, condition,
+          engine_size, with_warranty, valid_inspection, has_accident, export_documents
+        )
+      `)
+      .eq('id', chatId)
+      .single()
+
+    if (chatError || !chat) {
+      throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
     }
 
-    console.log('💬 Fetching chat with ID:', chatId)
-
-    // Get the chat with all related data
-    const chat = await Chat.findOne({
-      where: {
-        id: parseInt(chatId),
-        [Op.or]: [
-          { buyerId: userId },
-          { sellerId: userId }
-        ]
-      },
-      include: [
-        { 
-          model: User, 
-          as: 'buyer', 
-          attributes: ['id', 'name', 'email', 'profileImage', 'phone'] 
-        },
-        { 
-          model: User, 
-          as: 'seller', 
-          attributes: ['id', 'name', 'email', 'profileImage', 'phone'] 
-        },
-        {
-          model: Car,
-          as: 'car',
-          attributes: [
-            'id', 'make', 'model', 'year', 'price', 'mileage', 'images', 
-            'city', 'canton', 'status', 'listingType', 'fuelType', 'transmission',
-            'color', 'condition', 'engineSize', 'powerPs', 'doors', 'seats',
-            'withWarranty', 'validInspection', 'hasAccident', 'exportDocuments'
-          ]
-        }
-      ]
-    })
-
-    if (!chat) {
-      console.log('❌ Chat not found or access denied')
-      throw createError({
-        statusCode: 404,
-        message: 'Chat not found or access denied'
-      })
+    // Verify access
+    if (chat.buyer_id !== user.id && chat.seller_id !== user.id) {
+      throw createError({ statusCode: 403, statusMessage: 'Access denied' })
     }
 
-    console.log('✅ Chat found. Users:', {
-      buyer: chat.buyer ? { id: chat.buyer.id, name: getUserName(chat.buyer) } : 'No buyer',
-      seller: chat.seller ? { id: chat.seller.id, name: getUserName(chat.seller) } : 'No seller'
-    })
+    // Get messages
+    const { data: messages } = await supabase
+      .from('messages')
+      .select(`
+        id, content, sender_id, read, created_at, updated_at,
+        sender:users!sender_id (id, name, profile_image)
+      `)
+      .eq('chat_id', chatId)
+      .order('created_at', { ascending: true })
 
-    // Get all messages
-    const messages = await Message.findAll({
-      where: { chatId: parseInt(chatId) },
-      include: [
-        { 
-          model: User, 
-          as: 'sender', 
-          attributes: ['id', 'name', 'profileImage'] 
-        }
-      ],
-      order: [['createdAt', 'ASC']]
-    })
+    // Mark unread messages as read
+    await supabase
+      .from('messages')
+      .update({ read: true })
+      .eq('chat_id', chatId)
+      .neq('sender_id', user.id)
+      .eq('read', false)
 
-    console.log(`📨 Found ${messages.length} messages`)
-
-    // Mark messages as read
-    const unreadMessages = await Message.findAll({
-      where: {
-        chatId: parseInt(chatId),
-        senderId: { [Op.ne]: userId },
-        read: false
-      }
-    })
-
-    if (unreadMessages.length > 0) {
-      console.log(`📖 Marking ${unreadMessages.length} messages as read`)
-      await Message.update(
-        { read: true },
-        {
-          where: {
-            chatId: parseInt(chatId),
-            senderId: { [Op.ne]: userId },
-            read: false
-          }
-        }
-      )
-    }
-
-    // Determine user roles
-    const isCurrentUserSeller = chat.sellerId === userId
+    const isCurrentUserSeller = chat.seller_id === user.id
     const otherUser = isCurrentUserSeller ? chat.buyer : chat.seller
 
-    console.log('👥 Role info:', {
-      isCurrentUserSeller,
-      currentUserName: auth.name,
-      otherUserName: getUserName(otherUser)
-    })
+    const formattedMessages = (messages || []).map((msg: any) => ({
+      id: msg.id,
+      content: msg.content,
+      senderId: msg.sender_id,
+      senderName: msg.sender?.name || 'User',
+      senderImage: msg.sender?.profile_image,
+      createdAt: msg.created_at,
+      updatedAt: msg.updated_at,
+      read: msg.read,
+    }))
 
-    // Prepare car info
-    const carInfo = chat.car ? {
-      id: chat.car.id,
-      make: chat.car.make,
-      model: chat.car.model,
-      year: chat.car.year,
-      price: chat.car.price,
-      mileage: chat.car.mileage,
-      images: chat.car.images || [],
-      city: chat.car.city,
-      canton: chat.car.canton,
-      status: chat.car.status,
-      listingType: chat.car.listingType
-    } : null
-
-    // Prepare messages with proper sender names
-    const formattedMessages = messages.map(msg => {
-      let senderName = 'User'
-      
-      console.log(`Processing message ${msg.id}:`, {
-        senderId: msg.senderId,
-        senderObject: msg.sender,
-        senderNameAttempt: getUserName(msg.sender)
-      })
-
-      // Use the helper function to safely get the name
-      senderName = getUserName(msg.sender)
-      
-      console.log(`✅ Final sender name for message ${msg.id}: ${senderName}`)
-
-      return {
-        id: msg.id,
-        content: msg.content,
-        senderId: msg.senderId,
-        senderName: senderName,
-        senderImage: msg.sender?.profileImage,
-        createdAt: msg.createdAt,
-        updatedAt: msg.updatedAt,
-        read: msg.read
-      }
-    })
-
-    // Prepare response
-    const response = {
+    return {
       chat: {
         id: chat.id,
-        carId: chat.carId,
-        buyerId: chat.buyerId,
-        sellerId: chat.sellerId,
-        buyer: chat.buyer ? {
-          id: chat.buyer.id,
-          name: getUserName(chat.buyer) || 'Buyer',
-          email: chat.buyer.email,
-          profileImage: chat.buyer.profileImage,
-          phone: chat.buyer.phone
-        } : null,
-        seller: chat.seller ? {
-          id: chat.seller.id,
-          name: getUserName(chat.seller) || 'Seller',
-          email: chat.seller.email,
-          profileImage: chat.seller.profileImage,
-          phone: chat.seller.phone
-        } : null,
-        car: carInfo,
-        isCurrentUserSeller: isCurrentUserSeller,
-        otherUserName: getUserName(otherUser) || 'User',
-        otherUserEmail: otherUser?.email,
-        otherUserPhone: otherUser?.phone,
-        otherUserImage: otherUser?.profileImage,
-        lastMessageAt: chat.lastMessageAt,
-        createdAt: chat.createdAt,
-        updatedAt: chat.updatedAt
+        carId: chat.car_id,
+        buyerId: chat.buyer_id,
+        sellerId: chat.seller_id,
+        buyer: chat.buyer,
+        seller: chat.seller,
+        car: chat.car,
+        isCurrentUserSeller,
+        otherUser,
       },
-      messages: formattedMessages
+      messages: formattedMessages,
     }
-
-    console.log('✅ Final response check:', {
-      authUserName: auth.name,
-      chatBuyerName: response.chat.buyer?.name,
-      chatSellerName: response.chat.seller?.name,
-      chatOtherUserName: response.chat.otherUserName,
-      messageNames: response.messages.map(m => m.senderName)
-    })
-    
-    return response
-
   } catch (error: any) {
-    console.error('❌ Get chat error:', error)
-    console.error('❌ Error stack:', error.stack)
-    
-    if (error.statusCode) {
-      throw error
-    }
-    
-    throw createError({
-      statusCode: 500,
-      message: error.message || 'Failed to fetch chat'
-    })
+    if (error.statusCode) throw error
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch chat' })
   }
 })

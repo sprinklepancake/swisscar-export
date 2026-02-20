@@ -1,48 +1,45 @@
-// server/api/admin/transactions.get.ts
-import { TransactionService } from '~/server/services/transactionService'
+// server/api/admin/adminTransactions.get.ts
+// Same as transactions.get.ts - kept for backward compatibility
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user || user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
+  }
+
   try {
-    // Check admin access
-    const user = event.context.user
-    if (!user || user.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        message: 'Admin access required'
-      })
-    }
-    
+    const supabase = getSupabaseAdmin()
     const query = getQuery(event)
-    const filters: any = {}
-    
-    if (query.userId) {
-      filters.userId = parseInt(query.userId as string)
-    }
-    
-    if (query.type) {
-      filters.type = query.type as string
-    }
-    
-    if (query.startDate) {
-      filters.startDate = new Date(query.startDate as string)
-    }
-    
-    if (query.endDate) {
-      filters.endDate = new Date(query.endDate as string)
-    }
-    
-    const transactions = await TransactionService.getAllTransactions(filters)
-    
+
+    let dbQuery = supabase
+      .from('transaction_logs')
+      .select(`*, user:users!user_id (id, name, email)`)
+      .order('created_at', { ascending: false })
+
+    if (query.userId) dbQuery = dbQuery.eq('user_id', query.userId)
+    if (query.type) dbQuery = dbQuery.eq('type', query.type)
+
+    const { data: transactions, error } = await dbQuery
+    if (error) throw error
+
     return {
       success: true,
-      transactions,
-      total: transactions.length
+      transactions: (transactions || []).map((t: any) => ({
+        id: t.id,
+        type: t.type,
+        amount: parseFloat(t.amount) || 0,
+        previousBalance: parseFloat(t.previous_balance) || 0,
+        newBalance: parseFloat(t.new_balance) || 0,
+        description: t.description || '',
+        createdAt: t.created_at,
+        userId: t.user_id,
+        user: t.user,
+      })),
+      total: transactions?.length || 0,
     }
-  } catch (error) {
-    console.error('Error fetching admin transactions:', error)
-    return {
-      success: false,
-      error: 'Failed to fetch transactions'
-    }
+  } catch (error: any) {
+    return { success: false, error: 'Failed to fetch transactions' }
   }
 })

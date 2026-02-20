@@ -1,53 +1,41 @@
-// server/api/user/profile.put.ts - NEW FILE
-import { User } from '~/server/database/models'
+// server/api/user/profile.put.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  }
+
+  const body = await readBody(event)
+
+  const allowed = ['name', 'phone', 'company_name', 'street_address', 'city', 'canton', 'zip_code', 'business_type']
+  const updateData: any = {}
+  allowed.forEach(field => {
+    // Accept both snake_case and camelCase from frontend
+    const camelField = field.replace(/_([a-z])/g, (_, l) => l.toUpperCase())
+    if (body[field] !== undefined) updateData[field] = body[field]
+    else if (body[camelField] !== undefined) updateData[field] = body[camelField]
+  })
+
+  if (Object.keys(updateData).length === 0) {
+    return { success: true, message: 'No changes to save' }
+  }
+
   try {
-    const user = event.context.user || event.context.auth
-    
-    if (!user || !user.id) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Unauthorized'
-      })
-    }
+    const supabase = getSupabaseAdmin()
 
-    const body = await readBody(event)
-    
-    // Allowed fields for update
-    const allowedFields = [
-      'name',
-      'phone',
-      'companyName',
-      'streetAddress',
-      'city',
-      'canton',
-      'zipCode',
-      'businessType'
-    ]
-    
-    // Filter only allowed fields
-    const updateData: any = {}
-    allowedFields.forEach(field => {
-      if (body[field] !== undefined) {
-        updateData[field] = body[field]
-      }
-    })
+    const { error } = await supabase
+      .from('users')
+      .update(updateData)
+      .eq('id', user.id)
 
-    // Update user in database
-    await User.update(updateData, {
-      where: { id: user.id }
-    })
+    if (error) throw error
 
-    return {
-      success: true,
-      message: 'Profile updated successfully'
-    }
+    return { success: true, message: 'Profile updated successfully' }
   } catch (error: any) {
     console.error('Profile update error:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to update profile'
-    })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to update profile' })
   }
 })

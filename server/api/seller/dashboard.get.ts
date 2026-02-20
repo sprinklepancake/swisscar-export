@@ -1,115 +1,95 @@
 // server/api/seller/dashboard.get.ts
-import { Car } from '~/server/database/models'
-import { getUserById } from '~/server/database/repositories/userRepository'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  }
+
+  if (user.role !== 'seller' && user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: 'Seller access only' })
+  }
+
   try {
-    // Try both possible auth contexts
-    const user = event.context.user || event.context.auth
-    
-    console.log('Dashboard API - Context user:', user)
-    
-    if (!user) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Unauthorized'
-      })
-    }
+    const supabase = getSupabaseAdmin()
 
-    // Additional seller check
-    if (user.role !== 'seller') {
-      throw createError({
-        statusCode: 403,
-        statusMessage: 'Forbidden: Seller access only'
-      })
-    }
+    // Get full user profile
+    const { data: profile } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single()
 
-    // Get user's actual data from database
-    const dbUser = await getUserById(user.id)
-    if (!dbUser) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'User not found'
-      })
-    }
+    // Get seller's cars
+    const { data: cars } = await supabase
+      .from('cars')
+      .select('*')
+      .eq('seller_id', user.id)
+      .order('created_at', { ascending: false })
 
-    // Get user's cars from database
-    const userCars = await Car.findAll({
-      where: { sellerId: user.id },
-      order: [['createdAt', 'DESC']]
-    })
+    const allCars = cars || []
 
-    // Calculate statistics
-    const activeListings = userCars.filter(car => car.status === 'active' || car.status === 'auction').length
-    const soldCars = userCars.filter(car => car.status === 'sold').length
-    const totalCars = userCars.length
-    
-    // Calculate earnings (simplified - you'll need to implement actual transaction logic)
-    const totalEarnings = userCars
-      .filter(car => car.status === 'sold')
-      .reduce((sum, car) => sum + parseFloat(car.price || 0), 0)
-    
-    // Monthly earnings (last 30 days)
+    const activeListings = allCars.filter((c: any) => c.status === 'active' || c.status === 'auction').length
+    const soldCars = allCars.filter((c: any) => c.status === 'sold').length
+
+    const totalEarnings = allCars
+      .filter((c: any) => c.status === 'sold')
+      .reduce((sum: number, c: any) => sum + parseFloat(c.price || 0), 0)
+
     const oneMonthAgo = new Date()
     oneMonthAgo.setDate(oneMonthAgo.getDate() - 30)
-    
-    const monthlyEarnings = userCars
-      .filter(car => car.status === 'sold' && new Date(car.updatedAt) > oneMonthAgo)
-      .reduce((sum, car) => sum + parseFloat(car.price || 0), 0)
 
-    // Recent sales
-    const recentSales = userCars
-      .filter(car => car.status === 'sold')
+    const monthlyEarnings = allCars
+      .filter((c: any) => c.status === 'sold' && new Date(c.updated_at) > oneMonthAgo)
+      .reduce((sum: number, c: any) => sum + parseFloat(c.price || 0), 0)
+
+    const recentSales = allCars
+      .filter((c: any) => c.status === 'sold')
       .slice(0, 5)
-      .map(car => ({
-        id: car.id,
-        car: `${car.make} ${car.model}`,
-        price: car.price,
-        date: car.updatedAt
+      .map((c: any) => ({
+        id: c.id,
+        car: `${c.make} ${c.model}`,
+        price: c.price,
+        date: c.updated_at,
       }))
 
-    // Listings with more details
-    const listings = userCars.map(car => ({
-      id: car.id,
-      make: car.make,
-      model: car.model,
-      year: car.year,
-      price: car.price,
-      startingPrice: car.startingPrice,
-      status: car.status,
-      views: car.views || 0,
-      isFeatured: car.isFeatured && car.featuredUntil && new Date(car.featuredUntil) > new Date(),
-      listingType: car.listingType,
-      auctionEnd: car.auctionEnd,
-      currentBid: car.currentBid,
-      bidCount: car.bidCount || 0,
-      createdAt: car.createdAt,
-      updatedAt: car.updatedAt
+    const listings = allCars.map((c: any) => ({
+      id: c.id,
+      make: c.make,
+      model: c.model,
+      year: c.year,
+      price: c.price,
+      starting_price: c.starting_price,
+      status: c.status,
+      views: c.views || 0,
+      is_featured: c.is_featured && c.featured_until && new Date(c.featured_until) > new Date(),
+      listing_type: c.listing_type,
+      auction_end: c.auction_end,
+      current_bid: c.current_bid,
+      bid_count: c.bid_count || 0,
+      created_at: c.created_at,
+      updated_at: c.updated_at,
     }))
-
-    // Get user's real balance
-    const userBalance = parseFloat(dbUser.getDataValue('funds')) || 0
 
     return {
       user: {
-        name: dbUser.getDataValue('name'),
-        funds: userBalance
+        name: profile?.name || user.name,
+        funds: parseFloat(profile?.funds || 0),
       },
       stats: {
         activeListings,
-        totalCars: totalCars,
+        totalCars: allCars.length,
         totalEarnings,
         monthlyEarnings,
-        soldCars
+        soldCars,
       },
       recentSales,
-      listings
+      listings,
     }
   } catch (error: any) {
     console.error('Dashboard API error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || 'Internal server error'
-    })
+    throw createError({ statusCode: 500, statusMessage: 'Internal server error' })
   }
 })

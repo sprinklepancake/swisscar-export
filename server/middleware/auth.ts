@@ -1,96 +1,82 @@
 // server/middleware/auth.ts
-import jwt from 'jsonwebtoken'
-import { getUserById } from '~/server/database/repositories/userRepository'
+// Reads the Supabase access token from a cookie and verifies it server-side.
+// The client stores the token via useAuth composable after login.
+import { verifySupabaseToken, getUserProfile } from '~/server/utils/supabase'
 
-// server/middleware/auth.ts
 export default defineEventHandler(async (event) => {
-  // Skip auth for specific public routes ONLY
-  const publicPaths = [
-    '/api/auth/login', 
-    '/api/auth/register', 
-    '/api/cars', // Make sure this is only for public car listings
-    '/api/debug',
-    '/'
-  ]
   const path = getRequestURL(event).pathname
-  
-  // Only skip EXACT public paths, not their subpaths
-  const isPublicPath = publicPaths.some(publicPath => 
-    path === publicPath || path.startsWith(publicPath + '/')
-  )
-  
-  if (isPublicPath) {
-    console.log('Auth middleware: Skipping public path', path)
-    return
-  }
 
-  console.log('Auth middleware: Processing path', path)
-  
-  const token = getCookie(event, 'access_token')
-  
-  console.log('Auth middleware - Token present:', !!token)
-  
+  // Public paths - skip auth entirely
+  const publicPaths = [
+    '/api/auth/',
+    '/api/cars',
+    '/api/health',
+    '/api/debug',
+  ]
+
+  const isPublicPath = publicPaths.some(p => path.startsWith(p))
+  if (isPublicPath) return
+
+  // Try to get the Supabase access token from cookie
+  const token = getCookie(event, 'sb_access_token')
+
   if (!token) {
-    console.log('Auth middleware - No token found for path:', path)
     event.context.auth = null
     event.context.user = null
-    
-    // Only throw for protected routes
-    const protectedPaths = ['/api/user', '/api/seller', '/dashboard', '/profile']
-    if (protectedPaths.some(protectedPath => path.startsWith(protectedPath))) {
-      throw createError({
-        statusCode: 401,
-        message: 'Please login to access this resource'
-      })
+
+    const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
+    if (protectedPaths.some(p => path.startsWith(p))) {
+      throw createError({ statusCode: 401, message: 'Authentication required' })
     }
     return
   }
 
   try {
-    const config = useRuntimeConfig()
-    console.log('Auth middleware - Verifying token...')
-    
-    const decoded = jwt.verify(token, config.jwtAccessSecret) as any
-    console.log('Auth middleware - Decoded token user ID:', decoded.userId)
-    
-    const user = await getUserById(decoded.userId)
-    
-    if (!user) {
-      console.log('Auth middleware - User not found for ID:', decoded.userId)
-      throw new Error('User not found')
+    // Verify with Supabase
+    const authUser = await verifySupabaseToken(token)
+
+    if (!authUser) {
+      event.context.auth = null
+      event.context.user = null
+      deleteCookie(event, 'sb_access_token')
+
+      const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
+      if (protectedPaths.some(p => path.startsWith(p))) {
+        throw createError({ statusCode: 401, message: 'Invalid or expired session' })
+      }
+      return
     }
-    
-    // ALWAYS use getDataValue for Sequelize instances
+
+    // Load profile from our users table
+    const profile = await getUserProfile(authUser.id)
+
+    if (!profile) {
+      event.context.auth = null
+      event.context.user = null
+      return
+    }
+
     const userData = {
-      id: user.getDataValue('id'),
-      email: user.getDataValue('email'),
-      name: user.getDataValue('name'),
-      role: user.getDataValue('role'),
-      funds: user.getDataValue('funds') || 0,
-      banned: user.getDataValue('banned') || false,
-      createdAt: user.getDataValue('createdAt')
+      id: profile.id,
+      auth_uid: authUser.id,
+      email: profile.email,
+      name: profile.name,
+      role: profile.role,
+      funds: parseFloat(profile.funds || 0),
+      banned: profile.banned || false,
+      verified: profile.verified || false,
     }
-    
-    console.log('Auth middleware - Processed user data:', userData)
-    
-    // Set both contexts explicitly
+
     event.context.auth = userData
     event.context.user = userData
-    
-    console.log('Auth middleware: User authenticated', userData.email, 'for path:', path)
-  } catch (error) {
-    console.error('Auth middleware error:', error)
-    deleteCookie(event, 'access_token')
+  } catch (error: any) {
+    // Don't throw on non-protected routes, just clear context
     event.context.auth = null
     event.context.user = null
-    
-    // Throw error for protected routes
-    const protectedPaths = ['/api/user', '/api/seller', '/dashboard', '/profile']
-    if (protectedPaths.some(protectedPath => path.startsWith(protectedPath))) {
-      throw createError({
-        statusCode: 401,
-        message: 'Please login to access this resource'
-      })
+
+    const protectedPaths = ['/api/user', '/api/seller', '/api/admin']
+    if (protectedPaths.some(p => path.startsWith(p))) {
+      throw createError({ statusCode: 401, message: 'Authentication failed' })
     }
   }
 })

@@ -1,17 +1,21 @@
 // server/plugins/database.ts
-import { initDatabase } from '~/server/database/init'
+// Replaces the old SQLite/Sequelize plugin.
+// Just verifies Supabase is reachable on startup.
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
-export default defineNitroPlugin(async (nitroApp) => {
-  console.log('🔧 Database plugin: Starting initialization...')
-  
+export default defineNitroPlugin(async () => {
+  console.log('🔧 Supabase plugin: Checking connection...')
+
   try {
-    const success = await initDatabase()
-    if (success) {
-      console.log('✅ Database plugin: Initialization completed successfully')
+    const supabase = getSupabaseAdmin()
+    const { error } = await supabase.from('users').select('id').limit(1)
+
+    if (error) {
+      console.error('❌ Supabase connection check failed:', error.message)
     } else {
-      console.error('❌ Database plugin: Initialization failed')
+      console.log('✅ Supabase connected successfully')
     }
-  } catch (error) {
-    console.error('❌ Database plugin: Error during initialization:', error)
+  } catch (error: any) {
+    console.error('❌ Supabase plugin error:', error.message)
   }
 })

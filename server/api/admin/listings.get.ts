@@ -1,45 +1,41 @@
 // server/api/admin/listings.get.ts
-import { Car } from '~/server/database/models/Car'
-import { getUserById } from '~/server/database/repositories/userRepository'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user || user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
+  }
+
   try {
-    const cars = await Car.findAll({
-      include: ['seller'],
-      order: [['createdAt', 'DESC']]
-    })
-    
-    const listings = await Promise.all(cars.map(async (car: any) => {
-      let sellerName = 'Unknown'
-      if (car.sellerId) {
-        const seller = await getUserById(car.sellerId)
-        sellerName = seller?.getDataValue('name') || 'Unknown'
-      }
-      
-      return {
-        id: car.getDataValue('id'),
-        title: car.getDataValue('title'),
-        description: car.getDataValue('description'),
-        price: car.getDataValue('price'),
-        auction: car.getDataValue('auction'),
-        type: car.getDataValue('auction') ? 'auction' : 'normal',
-        status: car.getDataValue('status') || 'active',
-        sellerId: car.getDataValue('sellerId'),
-        sellerName: sellerName,
-        createdAt: car.getDataValue('createdAt'),
-        updatedAt: car.getDataValue('updatedAt')
-      }
+    const supabase = getSupabaseAdmin()
+
+    const { data: cars, error } = await supabase
+      .from('cars')
+      .select(`
+        id, make, model, year, price, listing_type, status, seller_id, created_at, updated_at,
+        seller:users!seller_id (name)
+      `)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    const listings = (cars || []).map((c: any) => ({
+      id: c.id,
+      title: `${c.make} ${c.model} ${c.year || ''}`.trim(),
+      price: c.price,
+      type: c.listing_type,
+      status: c.status || 'active',
+      seller_id: c.seller_id,
+      seller_name: c.seller?.name || 'Unknown',
+      created_at: c.created_at,
+      updated_at: c.updated_at,
     }))
-    
-    return {
-      success: true,
-      listings
-    }
+
+    return { success: true, listings }
   } catch (error) {
     console.error('Error getting listings:', error)
-    return {
-      success: false,
-      error: 'Failed to fetch listings'
-    }
+    return { success: false, error: 'Failed to fetch listings' }
   }
 })

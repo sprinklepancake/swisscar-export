@@ -2,33 +2,21 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-09-24',
   runtimeConfig: {
-    jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
-    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-    jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
-    
-    // Private config (server-side only)
+    // Private - server only
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_PUBLISHABLE_KEY
-    }
+      supabaseAnonKey: process.env.SUPABASE_PUBLISHABLE_KEY,
+    },
   },
   nitro: {
     compatibilityDate: '2025-08-05',
     preset: 'node-server',
-    storage: {
-      db: {
-        driver: 'fs',
-        base: '/opt/render/project/src/.data' // Render uses .data directory
-      }
-    }
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/i18n'
-    // REMOVED: '@nuxtjs/supabase'
+    '@nuxtjs/i18n',
   ],
-  // REMOVED: supabase: {} config section
   css: ['@/assets/css/main.css'],
   i18n: {
     locales: [
@@ -41,7 +29,7 @@ export default defineNuxtConfig({
       { code: 'bg', iso: 'bg-BG', file: 'bg.json', name: 'Bulgarian' },
       { code: 'uk', iso: 'uk-UA', file: 'uk.json', name: 'Ukrainian' },
       { code: 'el', iso: 'el-GR', file: 'el.json', name: 'Greek' },
-      { code: 'ru', iso: 'ru-RU', file: 'ru.json', name: 'Russian' }
+      { code: 'ru', iso: 'ru-RU', file: 'ru.json', name: 'Russian' },
     ],
     types: 'composition',
     defaultLocale: 'en',
@@ -51,9 +39,9 @@ export default defineNuxtConfig({
       useCookie: true,
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
-      fallbackLocale: 'en'
+      fallbackLocale: 'en',
     },
-    vueI18n: './i18n.config.ts'
+    vueI18n: './i18n.config.ts',
   },
   routeRules: {
     '/api/**': { cors: true },
@@ -74,22 +62,17 @@ export default defineNuxtConfig({
     '/el/admin': { ssr: false },
   },
   build: {
-    transpile: [
-      '@headlessui/vue',
-      '@heroicons/vue'
-    ]
+    transpile: ['@headlessui/vue', '@heroicons/vue'],
   },
   vite: {
     optimizeDeps: {
-      include: ['@headlessui/vue']
-    }
+      include: ['@headlessui/vue'],
+    },
   },
-  devtools: {
-    enabled: true
-  },
+  devtools: { enabled: true },
   typescript: {
     strict: false,
     typeCheck: false,
-    shim: false
-  }
+    shim: false,
+  },
 })

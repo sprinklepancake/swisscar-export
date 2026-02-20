@@ -1,37 +1,27 @@
 // server/api/admin/users/[id]/ban.post.ts
-import { getUserById, updateUser } from '~/server/database/repositories/userRepository'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user || user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
+  }
+
+  const userId = getRouterParam(event, 'id')
+
   try {
-    const userId = parseInt(getRouterParam(event, 'id') || '0')
-    
-    if (!userId) {
-      throw createError({
-        statusCode: 400,
-        message: 'Invalid user ID'
-      })
-    }
-    
-    const user = await getUserById(userId)
-    
-    if (!user) {
-      throw createError({
-        statusCode: 404,
-        message: 'User not found'
-      })
-    }
-    
-    await updateUser(userId, { banned: true })
-    
-    return {
-      success: true,
-      message: 'User banned successfully'
-    }
+    const supabase = getSupabaseAdmin()
+
+    const { error } = await supabase
+      .from('users')
+      .update({ banned: true })
+      .eq('id', userId)
+
+    if (error) throw error
+
+    return { success: true, message: 'User banned successfully' }
   } catch (error) {
-    console.error('Error banning user:', error)
-    return {
-      success: false,
-      error: 'Failed to ban user'
-    }
+    return { success: false, error: 'Failed to ban user' }
   }
 })

@@ -1,58 +1,32 @@
 // server/api/admin/check.get.ts
-import { getUserById } from '~/server/database/repositories/userRepository'
-import jwt from 'jsonwebtoken'
+import { verifySupabaseToken, getUserProfile } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   try {
-    const token = getCookie(event, 'access_token')
-    
-    if (!token) {
-      return { isAdmin: false, authenticated: false }
+    const token = getCookie(event, 'sb_access_token')
+
+    if (!token) return { isAdmin: false, authenticated: false }
+
+    const authUser = await verifySupabaseToken(token)
+    if (!authUser) return { isAdmin: false, authenticated: false }
+
+    const profile = await getUserProfile(authUser.id)
+    if (!profile) return { isAdmin: false, authenticated: false }
+
+    const isAdmin = profile.role === 'admin'
+
+    return {
+      isAdmin,
+      authenticated: true,
+      user: {
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        role: profile.role,
+        funds: parseFloat(profile.funds || 0),
+      },
     }
-    
-    const config = useRuntimeConfig()
-    
-    try {
-      const decoded = jwt.verify(token, config.jwtAccessSecret) as any
-      const user = await getUserById(decoded.userId)
-      
-      if (!user) {
-        return { isAdmin: false, authenticated: false }
-      }
-      
-      const userRole = user.getDataValue('role')
-      const isAdmin = userRole === 'admin'
-      
-      if (isAdmin) {
-        return {
-          isAdmin: true,
-          authenticated: true,
-          user: {
-            id: user.getDataValue('id'),
-            email: user.getDataValue('email'),
-            name: user.getDataValue('name'),
-            role: userRole,
-            funds: user.getDataValue('funds') || 0
-          }
-        }
-      }
-      
-      return { 
-        isAdmin: false, 
-        authenticated: true,
-        user: {
-          id: user.getDataValue('id'),
-          email: user.getDataValue('email'),
-          name: user.getDataValue('name'),
-          role: userRole
-        }
-      }
-    } catch (error) {
-      console.error('Token verification error:', error)
-      return { isAdmin: false, authenticated: false }
-    }
-  } catch (error) {
-    console.error('Admin check error:', error)
+  } catch {
     return { isAdmin: false, authenticated: false }
   }
 })

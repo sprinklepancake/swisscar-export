@@ -1,399 +1,149 @@
-// server/api/cars/create.post.ts - UPDATED WITH TRANSACTION LOGGING
-import { saveCar } from '~/server/utils/carStorage'
-import jwt from 'jsonwebtoken'
-import { getUserByEmail } from '~/server/database/repositories/userRepository'
-import { getUserField } from '~/server/utils/userAccess'
-import { TransactionLog } from '~/server/database/models/TransactionLog'
+// server/api/cars/create.post.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized. Please log in.' })
+  }
+
+  if (user.role !== 'seller' && user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: 'Only sellers can create listings.' })
+  }
+
+  if (user.banned) {
+    throw createError({ statusCode: 403, statusMessage: 'Your account has been banned.' })
+  }
+
+  const body = await readBody(event)
+
+  if (!body.canton || !body.city || !body.zipCode) {
+    throw createError({ statusCode: 400, statusMessage: 'Location fields (canton, city, ZIP) are required' })
+  }
+
   try {
-    // Get the access token from cookies
-    const accessToken = getCookie(event, 'access_token')
-    
-    console.log('Access token present:', !!accessToken)
-    
-    if (!accessToken) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Unauthorized. Please log in to create a car listing.'
-      })
-    }
+    const supabase = getSupabaseAdmin()
 
-    // Verify the JWT token
-    const config = useRuntimeConfig()
-    
-    if (!config.jwtAccessSecret) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Server configuration error'
-      })
-    }
+    // Check if seller is in their free period (first 6 months)
+    const { data: sellerProfile } = await supabase
+      .from('users')
+      .select('funds, created_at, free_feature_credits')
+      .eq('id', user.id)
+      .single()
 
-    let decodedToken: any = null
-    
-    try {
-      decodedToken = jwt.verify(accessToken, config.jwtAccessSecret)
-      console.log('Decoded token:', decodedToken)
-    } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError)
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Invalid or expired token. Please log in again.'
-      })
-    }
+    const sellerCreatedAt = sellerProfile?.created_at ? new Date(sellerProfile.created_at) : new Date()
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+    const isFirstSixMonths = sellerCreatedAt > sixMonthsAgo
 
-    const body = await readBody(event)
-    
-    console.log('📨 Received form data:', body)
-    
-    // VALIDATE LOCATION FIELDS
-    if (!body.canton || !body.city || !body.zipCode) {
-      console.error('❌ Location fields missing:', { 
-        canton: body.canton, 
-        city: body.city,
-        zipCode: body.zipCode 
-      })
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Location fields (canton, city, and ZIP code) are required'
-      })
-    }
-
-    // Determine listing type and fee
     const listingType = body.listingType || 'normal'
-    const auctionDuration = listingType === 'auction' ? 7 : 30 // 7 days for auction, 30 for normal
-    
-    // Calculate auction end date if auction listing
-    let auctionEndDate = null
-    if (listingType === 'auction') {
-      auctionEndDate = new Date()
-      auctionEndDate.setDate(auctionEndDate.getDate() + auctionDuration)
-    }
+    const listingFee = listingType === 'auction' ? 10 : 7.5
 
-    // Validate auction-specific fields
-    if (listingType === 'auction') {
-      // For auctions, startingPrice is required
-      if (!body.startingPrice && !body.price) {
+    // Check balance if not in free period
+    if (!isFirstSixMonths) {
+      const currentFunds = parseFloat(sellerProfile?.funds || 0)
+      if (currentFunds < listingFee) {
         throw createError({
-          statusCode: 400,
-          statusMessage: 'Starting price is required for auction listings'
+          statusCode: 402,
+          statusMessage: `Insufficient funds. You need ${listingFee} CHF to post a listing. Current balance: ${currentFunds} CHF`,
         })
       }
-      
-      // Use startingPrice as primary price for auctions
-      body.price = body.startingPrice || body.price
-      
-      // Validate reserve price (optional but if provided, must be >= starting price)
-      if (body.reservePrice && body.price) {
-        if (parseFloat(body.reservePrice) < parseFloat(body.price)) {
-          throw createError({
-            statusCode: 400,
-            statusMessage: 'Reserve price must be greater than or equal to starting price'
-          })
-        }
-      }
     }
 
-    // Validate required fields
-    const requiredFields = [
-      'make', 'model', 'year', 'mileage', 'fuelType', 'transmission', 
-      'price', 'sellerName', 'sellerPhone', 'sellerEmail', 
-      'canton', 'city', 'zipCode'
-    ]
-    
-    const missingFields = requiredFields.filter(field => !body[field])
-    
-    if (missingFields.length > 0) {
-      console.error('❌ Missing required fields:', missingFields)
-      throw createError({
-        statusCode: 400,
-        statusMessage: `Missing required fields: ${missingFields.join(', ')}`
-      })
+    // Calculate auction end if applicable
+    let auctionEndDate: string | null = null
+    if (listingType === 'auction') {
+      const durationHours = body.auctionDuration || 72
+      const endDate = new Date()
+      endDate.setHours(endDate.getHours() + durationHours)
+      auctionEndDate = endDate.toISOString()
     }
 
-    // Validate numeric fields
-    if (isNaN(body.year) || body.year < 1990 || body.year > new Date().getFullYear()) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid year'
-      })
-    }
-
-    if (isNaN(body.mileage) || body.mileage < 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid mileage'
-      })
-    }
-
-    if (isNaN(body.price) || body.price <= 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid price'
-      })
-    }
-
-    // Get seller by email from the form
-    const sellerEmail = body.sellerEmail
-    console.log('🔍 Looking up seller by email:', sellerEmail)
-    
-    let sellerId = null
-    let sellerData = null
-    let isFirstSixMonths = false
-    
-    if (sellerEmail) {
-      try {
-        const seller = await getUserByEmail(sellerEmail)
-        
-        if (seller) {
-          // Found seller in database!
-          sellerId = getUserField(seller, 'id')
-          sellerData = {
-            id: sellerId,
-            name: getUserField(seller, 'name'),
-            email: getUserField(seller, 'email'),
-            phone: getUserField(seller, 'phone'),
-            role: getUserField(seller, 'role'),
-            funds: parseFloat(getUserField(seller, 'funds')) || 0,
-            createdAt: getUserField(seller, 'createdAt'),
-            verified: getUserField(seller, 'verified') || false,
-            banned: getUserField(seller, 'banned') || false
-          }
-          
-          console.log('✅ Found seller in database:', sellerData)
-          
-          // Update seller info from database
-          body.sellerName = sellerData.name || body.sellerName
-          body.sellerPhone = sellerData.phone || body.sellerPhone
-        } else {
-          console.log('⚠️ Seller email not found in database:', sellerEmail)
-        }
-      } catch (dbError) {
-        console.error('Database error finding seller:', dbError)
-      }
-    }
-
-    // ============================================
-    // WALLET BALANCE CHECK AND DEDUCTION LOGIC
-    // ============================================
-    
-    // Determine listing fee based on type
-    const listingFee = listingType === 'auction' ? 10 : 7.5
-    let transactionLog = null
-    
-    // Only check balance if we found the seller in database
-    if (sellerData && sellerData.id && sellerData.role === 'seller') {
-      console.log('💰 Checking seller wallet balance...')
-      console.log(`📊 Listing type: ${listingType}, Fee: ${listingFee} CHF`)
-      
-      // Check if seller is in first 6 months (free period)
-      const userJoinedDate = new Date(sellerData.createdAt)
-      const sixMonthsAgo = new Date()
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-      
-      isFirstSixMonths = userJoinedDate > sixMonthsAgo
-      
-      if (isFirstSixMonths) {
-        console.log('🎉 Seller is in first 6 months - listing is FREE!')
-      } else {
-        console.log(`💳 Seller balance: ${sellerData.funds} CHF, Required: ${listingFee} CHF`)
-        
-        // Check if seller has sufficient funds
-        if (sellerData.funds < listingFee) {
-          throw createError({
-            statusCode: 402,
-            statusMessage: `Insufficient funds. You need ${listingFee} CHF to post a ${listingType} listing. Your current balance is ${sellerData.funds} CHF.`
-          })
-        }
-        
-        // Deduct funds from seller's account
-        try {
-          const { updateUser } = await import('~/server/database/repositories/userRepository')
-          
-          const newBalance = sellerData.funds - listingFee
-          await updateUser(sellerData.id, { funds: newBalance })
-          
-          console.log(`✅ Deducted ${listingFee} CHF from seller ${sellerData.id}`)
-          console.log(`💰 New balance: ${newBalance} CHF`)
-          
-          // Create transaction log
-          transactionLog = await TransactionLog.create({
-            userId: sellerData.id,
-            type: listingType === 'auction' ? 'auction_fee' : 'listing_fee',
-            amount: -listingFee,
-            previousBalance: sellerData.funds,
-            newBalance: newBalance,
-            description: `${listingType === 'auction' ? 'Auction' : 'Normal'} listing fee for ${body.make} ${body.model}`,
-            referenceId: `LISTING-${Date.now()}`,
-            metadata: {
-              carMake: body.make,
-              carModel: body.model,
-              listingType: listingType,
-              feeType: 'listing',
-              listingFee: listingFee,
-              isFirstSixMonths: false
-            }
-          })
-          
-          console.log(`📝 Transaction logged: ID ${transactionLog.id}`)
-          
-          // Update sellerData for logging
-          sellerData.funds = newBalance
-          
-        } catch (deductionError) {
-          console.error('❌ Failed to deduct funds:', deductionError)
-          throw createError({
-            statusCode: 500,
-            statusMessage: 'Failed to process payment. Please try again.'
-          })
-        }
-      }
-    } else if (sellerData && sellerData.id && sellerData.role !== 'seller') {
-      console.log('⚠️ User is not a seller, skipping balance check')
-    } else {
-      console.log('⚠️ Seller not found in database or no sellerId, skipping balance check')
-    }
-    
-    // ============================================
-    // END WALLET LOGIC
-    // ============================================
-
-    // Create the proper Swiss address format
-    const swissAddress = `${body.streetAddress || ''}, ${body.zipCode} ${body.city}`.trim()
-    
-    const locationDisplay = body.streetAddress 
-      ? swissAddress 
-      : `${body.zipCode} ${body.city}`
-
-    // Create car listing object with auction fields
-    const carListing = {
+    // Build the car record (snake_case for Supabase)
+    const carData = {
+      seller_id: user.id,
       make: body.make,
       model: body.model,
-      year: parseInt(body.year),
-      mileage: parseInt(body.mileage),
-      fuelType: body.fuelType,
-      transmission: body.transmission,
-      price: listingType === 'normal' ? parseFloat(body.price) : null,
-      startingPrice: listingType === 'auction' ? parseFloat(body.price) : null,
-      negotiable: body.negotiable || false,
-      bodyType: body.bodyType || '',
-      color: body.colorExterior || body.color || '',
-      doors: body.doors ? parseInt(body.doors) : null,
-      seats: body.seats ? parseInt(body.seats) : null,
-      features: body.equipment || body.features || [],
-      description: body.description || '',
-      sellerName: body.sellerName,
-      sellerPhone: body.sellerPhone,
-      sellerEmail: body.sellerEmail,
-      sellerType: body.sellerType || 'private',
-      
-      // Seller ID (if found) or null
-      sellerId: sellerId,
-      
-      // NEW: AUCTION FIELDS
-      listingType: listingType,
-      reservePrice: body.reservePrice ? parseFloat(body.reservePrice) : null,
-      currentBid: listingType === 'auction' ? parseFloat(body.price) : null,
-      highestBidderId: null,
-      bidCount: 0,
-      auctionDuration: auctionDuration,
-      auctionEnd: auctionEndDate,
-      
-      // Set status based on listing type
-      status: 'active', // Always 'active' for live listings
-
-      // LOCATION FIELDS
-      location: locationDisplay,
-      city: body.city,
-      canton: body.canton,
-      zipCode: body.zipCode,
-      streetAddress: body.streetAddress || '',
-      
-      isFeatured: Math.random() > 0.7,
-      exportDocuments: body.exportDocuments || false,
-      withWarranty: body.withWarranty || false,
-      validInspection: body.validInspection || false,
-      hasAccident: body.hasAccident || false,
-      images: body.images && body.images.length > 0 ? body.images : ['/placeholder-car.jpg'],
-      engineSize: body.engineSize || `${(Math.random() * 3 + 1).toFixed(1)}L`,
-      condition: body.condition || 'excellent',
+      year: body.year ? parseInt(body.year) : null,
+      price: body.price ? parseFloat(body.price) : null,
+      starting_price: body.startingPrice ? parseFloat(body.startingPrice) : null,
+      reserve_price: body.reservePrice ? parseFloat(body.reservePrice) : null,
+      mileage: body.mileage ? parseInt(body.mileage) : null,
+      fuel_type: body.fuelType || null,
+      transmission: body.transmission || null,
+      engine_size: body.engineSize || null,
       power: body.power ? parseInt(body.power) : null,
-      driveType: body.driveType || null,
-      
-      // TYPENSCHEIN FIELDS
-      typenscheinNr: body.typenscheinNr || '',
-      typenscheinData: body.typenscheinData || null,
-      vehicleType: body.vehicleType || '',
-      powerPs: body.power ? parseInt(body.power) : null,
-      powerKw: body.power ? Math.round(parseInt(body.power) / 1.36) : null,
-      cylinders: body.cylinders ? parseInt(body.cylinders) : null,
-      displacement: body.displacement ? parseInt(body.displacement) : null,
-      weightEmpty: body.weightEmpty || '',
-      weightTotal: body.weightTotal || '',
-      
-      // COLOR FIELDS
-      colorExterior: body.colorExterior || '',
-      colorInterior: body.colorInterior || '',
-      
-      // ADDITIONAL FIELDS
-      vin: body.vin || '',
-      firstRegistration: body.firstRegistration || '',
-      additionalFeatures: body.additionalFeatures || '',
+      drive_type: body.driveType || null,
+      condition: body.condition || null,
+      color: body.colorExterior || body.color || null,
+      color_exterior: body.colorExterior || null,
+      color_interior: body.colorInterior || null,
+      canton: body.canton,
+      city: body.city,
+      zip_code: body.zipCode,
+      description: body.description || '',
+      images: body.images || [],
       equipment: body.equipment || [],
-      
-      // WALLET FIELDS (for tracking)
-      listingFeePaid: sellerData && !isFirstSixMonths ? listingFee : 0,
-      paidAt: new Date(),
-      transactionId: transactionLog?.id || null,
-      
-      createdAt: new Date(),
-      updatedAt: new Date()
+      vin: body.vin || null,
+      first_registration: body.firstRegistration || null,
+      additional_features: body.additionalFeatures || null,
+      typenschein_nr: body.typenscheinNr || null,
+      typenschein_data: body.typenscheinData || null,
+      vehicle_type: body.vehicleType || null,
+      export_documents: body.exportDocuments || [],
+      listing_type: listingType,
+      status: 'active',
+      is_featured: false,
+      auction_end: auctionEndDate,
+      current_bid: null,
+      bid_count: 0,
+      views: 0,
+      listing_fee_paid: isFirstSixMonths ? 0 : listingFee,
+      seller_name: user.name,
+      seller_email: user.email,
     }
 
-    console.log('🚗 Creating car listing:', {
-      listingType: carListing.listingType,
-      price: carListing.price,
-      startingPrice: carListing.startingPrice,
-      reservePrice: carListing.reservePrice,
-      auctionEnd: carListing.auctionEnd
-    })
+    const { data: newCar, error: carError } = await supabase
+      .from('cars')
+      .insert(carData)
+      .select()
+      .single()
 
-    // Save the car to storage
-    const savedCar = await saveCar(carListing)
+    if (carError) throw carError
 
-    console.log('✅ Car listing created with ID:', savedCar.id)
-    
-    // Return seller balance info if available
-    const response: any = {
+    // Deduct listing fee if not free period
+    if (!isFirstSixMonths) {
+      const currentFunds = parseFloat(sellerProfile?.funds || 0)
+      const newBalance = currentFunds - listingFee
+
+      await supabase
+        .from('users')
+        .update({ funds: newBalance })
+        .eq('id', user.id)
+
+      // Log transaction
+      await supabase.from('transaction_logs').insert({
+        user_id: user.id,
+        type: 'listing_fee',
+        amount: -listingFee,
+        description: `Listing fee for ${body.make} ${body.model}`,
+        car_id: newCar.id,
+        new_balance: newBalance,
+      })
+    }
+
+    return {
       success: true,
       message: 'Car listing created successfully',
-      car: savedCar,
-      listingType: listingType,
-      auctionEnd: auctionEndDate
+      car: newCar,
+      listingType,
+      freeListing: isFirstSixMonths,
+      listingFee: isFirstSixMonths ? 0 : listingFee,
     }
-    
-    if (sellerData) {
-      response.sellerBalance = sellerData.funds
-      response.listingFee = sellerData && !isFirstSixMonths ? listingFee : 0
-      response.freeListing = isFirstSixMonths
-      if (transactionLog) {
-        response.transaction = {
-          id: transactionLog.id,
-          type: transactionLog.type,
-          amount: transactionLog.amount,
-          newBalance: transactionLog.newBalance
-        }
-      }
-    }
-
-    return response
-
   } catch (error: any) {
-    console.error('❌ Error creating car listing:', error)
-    
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || 'Internal server error'
-    })
+    console.error('Error creating car listing:', error)
+    if (error.statusCode) throw error
+    throw createError({ statusCode: 500, statusMessage: error.message || 'Internal server error' })
   }
 })

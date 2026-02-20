@@ -1,49 +1,25 @@
 // server/api/debug/transactions.get.ts
-import { TransactionLog, User } from '~/server/database/models'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   try {
-    // Get all transactions
-    const allTransactions = await TransactionLog.findAll({
-      include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'name', 'email']
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-      limit: 100
-    })
-    
-    // Format for display
-    const formatted = allTransactions.map(t => {
-      const data = t.get({ plain: true })
-      return {
-        id: data.id,
-        userId: data.userId,
-        user: data.user?.name || 'Unknown',
-        type: data.type,
-        amount: parseFloat(data.amount) || 0,
-        description: data.description,
-        referenceId: data.referenceId,
-        createdAt: data.createdAt,
-        adminId: data.adminId
-      }
-    })
-    
+    const supabase = getSupabaseAdmin()
+    const { data } = await supabase
+      .from('transaction_logs')
+      .select('*, user:users!user_id(id, name, email)')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
     return {
       success: true,
-      total: formatted.length,
-      transactions: formatted
+      total: data?.length || 0,
+      transactions: (data || []).map((t: any) => ({
+        id: t.id, userId: t.user_id, user: t.user?.name || 'Unknown',
+        type: t.type, amount: parseFloat(t.amount) || 0,
+        description: t.description, createdAt: t.created_at,
+      })),
     }
-    
   } catch (error: any) {
-    console.error('Debug transaction error:', error)
-    return {
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }
+    return { success: false, error: error.message }
   }
 })

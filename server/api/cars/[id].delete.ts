@@ -1,56 +1,31 @@
-// server/api/cars/[id].delete.ts - NEW FILE
-import { Car } from '~/server/database/models'
+// server/api/cars/[id].delete.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+
+  const carId = event.context.params?.id
+  if (!carId) throw createError({ statusCode: 400, statusMessage: 'Car ID is required' })
+
   try {
-    const user = event.context.user || event.context.auth
-    
-    if (!user || !user.id) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Unauthorized'
-      })
-    }
+    const supabase = getSupabaseAdmin()
+    const { data: car } = await supabase.from('cars').select('id, seller_id').eq('id', carId).single()
+    if (!car) throw createError({ statusCode: 404, statusMessage: 'Car not found' })
+    if (car.seller_id !== user.id && user.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'You can only delete your own listings' })
 
-    const carId = event.context.params?.id
-    
-    if (!carId) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Car ID is required'
-      })
-    }
+    // Cascade delete in order
+    const { data: chats } = await supabase.from('chats').select('id').eq('car_id', carId)
+    const chatIds = (chats || []).map((c: any) => c.id)
+    if (chatIds.length > 0) await supabase.from('messages').delete().in('chat_id', chatIds)
+    await supabase.from('chats').delete().eq('car_id', carId)
+    await supabase.from('bids').delete().eq('car_id', carId)
+    await supabase.from('watchlists').delete().eq('car_id', carId)
+    await supabase.from('cars').delete().eq('id', carId)
 
-    // Find the car
-    const car = await Car.findByPk(carId)
-    
-    if (!car) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Car not found'
-      })
-    }
-
-    // Check if user owns this car
-    if (car.sellerId !== user.id && user.role !== 'admin') {
-      throw createError({
-        statusCode: 403,
-        statusMessage: 'You can only delete your own listings'
-      })
-    }
-
-    // Delete the car
-    await car.destroy()
-
-    return {
-      success: true,
-      message: 'Listing deleted successfully'
-    }
+    return { success: true, message: 'Listing deleted successfully' }
   } catch (error: any) {
-    console.error('Delete car error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.message || 'Failed to delete listing'
-    })
+    if (error.statusCode) throw error
+    throw createError({ statusCode: 500, statusMessage: error.message || 'Failed to delete listing' })
   }
 })

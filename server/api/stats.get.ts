@@ -1,32 +1,17 @@
 // server/api/stats.get.ts
-import { Car, User } from '~/server/database/models'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   try {
-    // Get counts from database
-    const [totalCars, totalUsers, totalSellers] = await Promise.all([
-      Car.count({ where: { status: 'active' } }),
-      User.count(),
-      User.count({ where: { role: 'seller' } })
+    const supabase = getSupabaseAdmin()
+    const [{ count: totalCars }, { count: activeCars }, { count: totalUsers }, { count: totalBids }] = await Promise.all([
+      supabase.from('cars').select('*', { count: 'exact', head: true }),
+      supabase.from('cars').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('bids').select('*', { count: 'exact', head: true }),
     ])
-    
-    // Get unique countries/cantons (you can add this logic later)
-    const countriesServed = 50 // Hardcode for now until you have actual data
-    
-    return {
-      totalCars,
-      totalUsers,
-      totalSellers,
-      countriesServed,
-      // Add more stats as needed
-    }
-  } catch (error) {
-    console.error('Error fetching stats:', error)
-    return {
-      totalCars: 0,
-      totalUsers: 0,
-      totalSellers: 0,
-      countriesServed: 0
-    }
+    return { success: true, stats: { totalCars, activeCars, totalUsers, totalBids } }
+  } catch (error: any) {
+    return { success: false, error: error.message }
   }
 })

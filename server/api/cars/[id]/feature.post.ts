@@ -1,204 +1,88 @@
-// server/api/cars/[id]/feature.post.ts - UPDATED WITH TRANSACTION LOGGING
-import jwt from 'jsonwebtoken'
-import { FeatureService } from '~/server/services/featureService'
-import { TransactionLog } from '~/server/database/models/TransactionLog'
+// server/api/cars/[id]/feature.post.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
+
+const FEATURE_PRICE = 5
+const FEATURE_DAYS = 7
+const PERMANENT_PRICE = 50
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+
+  const carId = getRouterParam(event, 'id')
+  if (!carId) throw createError({ statusCode: 400, statusMessage: 'Car ID is required' })
+
+  const { useFreeCredit = false, permanent = false } = await readBody(event)
+
   try {
-    const carId = event.context.params?.id
-    if (!carId) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Car ID is required'
-      })
+    const supabase = getSupabaseAdmin()
+
+    const [{ data: car }, { data: profile }] = await Promise.all([
+      supabase.from('cars').select('id, make, model, seller_id, status, is_featured, featured_until, permanent_feature').eq('id', carId).single(),
+      supabase.from('users').select('id, funds, free_feature_credits, created_at').eq('id', user.id).single(),
+    ])
+
+    if (!car) throw createError({ statusCode: 404, statusMessage: 'Car not found' })
+    if (car.seller_id !== user.id) throw createError({ statusCode: 403, statusMessage: 'You do not own this car' })
+    if (car.status !== 'active') throw createError({ statusCode: 400, statusMessage: 'Only active listings can be featured' })
+    if (!profile) throw createError({ statusCode: 404, statusMessage: 'User not found' })
+
+    // Check if already featured
+    if (car.is_featured && car.featured_until && new Date(car.featured_until) > new Date()) {
+      throw createError({ statusCode: 400, statusMessage: 'This car is already featured' })
     }
-    
-    // Get authenticated user
-    const accessToken = getCookie(event, 'access_token')
-    if (!accessToken) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'You must be logged in to feature a car'
-      })
-    }
-    
-    const config = useRuntimeConfig()
-    
-    if (!config.jwtAccessSecret) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Server configuration error'
-      })
-    }
-    
-    let decodedToken: any = null
-    
-    try {
-      decodedToken = jwt.verify(accessToken, config.jwtAccessSecret)
-    } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError)
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Invalid or expired token. Please log in again.'
-      })
-    }
-    
-    const userId = decodedToken.userId
-    
-    // Get request body for feature options
-    const body = await readBody(event)
-    const { useFreeCredit = false, permanent = false, customDuration } = body
-    
-    // Check if user can feature the car
-    const canFeature = await FeatureService.canFeatureCar(userId, parseInt(carId))
-    
-    if (!canFeature.canFeature) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: canFeature.reason || 'Cannot feature this car'
-      })
-    }
-    
-    // Import needed models and services
-    const { Car, User } = await import('~/server/database/models')
-    const { updateUser } = await import('~/server/database/repositories/userRepository')
-    
-    // Get car and user
-    const car = await Car.findByPk(carId)
-    if (!car) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Car not found'
-      })
-    }
-    
-    const user = await User.findByPk(userId)
-    if (!user) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'User not found'
-      })
-    }
-    
-    // Determine cost and transaction type
+
+    const freeCredits = profile.free_feature_credits || 0
+    const previousBalance = parseFloat(profile.funds || 0)
     let cost = 0
     let transactionType = 'feature_payment'
     let description = ''
-    
-    if (permanent && canFeature.allowPermanentFeature) {
-      cost = canFeature.permanentFeaturePrice
+    let featuredUntil: string | null = null
+
+    if (permanent) {
+      cost = PERMANENT_PRICE
       transactionType = 'permanent_feature_payment'
       description = `Permanent feature for ${car.make} ${car.model}`
-    } else if (useFreeCredit && canFeature.freeCreditsAvailable) {
+      featuredUntil = null
+    } else if (useFreeCredit && freeCredits > 0) {
       cost = 0
       transactionType = 'free_feature'
-      description = `Free feature (using credit) for ${car.make} ${car.model}`
+      description = `Free feature (credit) for ${car.make} ${car.model}`
+      const until = new Date()
+      until.setDate(until.getDate() + FEATURE_DAYS)
+      featuredUntil = until.toISOString()
     } else {
-      cost = canFeature.price
-      description = `${customDuration || canFeature.durationDays}-day feature for ${car.make} ${car.model}`
+      cost = FEATURE_PRICE
+      description = `${FEATURE_DAYS}-day feature for ${car.make} ${car.model}`
+      const until = new Date()
+      until.setDate(until.getDate() + FEATURE_DAYS)
+      featuredUntil = until.toISOString()
     }
-    
-    // Get current balance
-    const previousBalance = parseFloat(user.getDataValue('funds')) || 0
-    
-    // Check funds if not free
+
     if (cost > 0 && previousBalance < cost) {
-      throw createError({
-        statusCode: 402,
-        statusMessage: `Insufficient funds. You need ${cost} CHF to feature this car. Your current balance is ${previousBalance} CHF.`
-      })
+      throw createError({ statusCode: 402, statusMessage: `Insufficient funds. You need ${cost} CHF. Your balance is ${previousBalance} CHF.` })
     }
-    
-    let transactionLog = null
-    
-    // Create transaction log if not free
+
+    // Deduct funds and update car
+    const newBalance = previousBalance - cost
     if (cost > 0) {
-      const newBalance = previousBalance - cost
-      
-      transactionLog = await TransactionLog.create({
-        userId,
-        type: transactionType as any,
-        amount: -cost,
-        previousBalance,
-        newBalance,
-        description,
-        referenceId: `FEATURE-${carId}-${Date.now()}`,
-        metadata: {
-          carId: parseInt(carId),
-          carMake: car.getDataValue('make'),
-          carModel: car.getDataValue('model'),
-          featureType: permanent ? 'permanent' : 'temporary',
-          durationDays: customDuration || canFeature.durationDays,
-          cost,
-          isFree: cost === 0,
-          usedFreeCredit: useFreeCredit
-        }
-      })
-      
-      // Update user funds
-      await updateUser(userId, { funds: newBalance })
-      
-      console.log(`✅ Feature transaction logged: ID ${transactionLog.id}`)
-    }
-    
-    // Update user's free credits if used
-    if (useFreeCredit) {
-      const usedFreeFeatures = (user.getDataValue('usedFreeFeatures') || 0) + 1
-      await user.update({
-        usedFreeFeatures,
-        freeFeatureCredits: Math.max(0, (user.getDataValue('freeFeatureCredits') || 0) - 1)
+      await supabase.from('users').update({ funds: newBalance }).eq('id', user.id)
+      await supabase.from('transaction_logs').insert({
+        user_id: user.id, type: transactionType, amount: -cost,
+        previous_balance: previousBalance, new_balance: newBalance, description,
+        car_id: parseInt(carId),
       })
     }
-    
-    // Calculate featured until date
-    let featuredUntil = null
-    const durationDays = customDuration || canFeature.durationDays
-    if (durationDays > 0 && !permanent) {
-      featuredUntil = new Date()
-      featuredUntil.setDate(featuredUntil.getDate() + durationDays)
+
+    if (useFreeCredit && freeCredits > 0 && cost === 0) {
+      await supabase.from('users').update({ free_feature_credits: Math.max(0, freeCredits - 1) }).eq('id', user.id)
     }
-    
-    // Update car
-    await car.update({
-      isFeatured: true,
-      featuredUntil: permanent ? null : featuredUntil,
-      permanentFeature: permanent || false
-    })
-    
-    console.log('✅ Car featured successfully:', {
-      carId,
-      userId,
-      featuredUntil,
-      permanent,
-      cost,
-      durationDays,
-      transactionId: transactionLog?.id
-    })
-    
-    return {
-      success: true,
-      message: cost === 0 
-        ? 'Car featured successfully (free during first 6 months)!' 
-        : `Car featured successfully! ${cost} CHF deducted from your account.`,
-      data: {
-        carId,
-        featuredUntil,
-        permanent,
-        cost,
-        durationDays,
-        transaction: transactionLog ? {
-          id: transactionLog.id,
-          amount: transactionLog.amount,
-          newBalance: transactionLog.newBalance
-        } : null
-      }
-    }
-    
+
+    await supabase.from('cars').update({ is_featured: true, featured_until: featuredUntil, permanent_feature: permanent }).eq('id', carId)
+
+    return { success: true, carId: parseInt(carId), featuredUntil, permanent, isFree: cost === 0, cost, durationDays: permanent ? 'permanent' : FEATURE_DAYS }
   } catch (error: any) {
-    console.error('❌ Error featuring car:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.message || 'Internal server error'
-    })
+    if (error.statusCode) throw error
+    throw createError({ statusCode: 500, statusMessage: error.message || 'Failed to feature car' })
   }
 })

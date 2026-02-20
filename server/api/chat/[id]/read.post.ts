@@ -1,45 +1,22 @@
 // server/api/chat/[id]/read.post.ts
-import { Message } from '~/server/database/models'
-import { requireAuth } from '~/server/utils/auth'
-import { Op } from 'sequelize'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const auth = await requireAuth(event)
-    const userId = auth.id
-    
-    const chatId = getRouterParam(event, 'id')
-    
-    if (!chatId) {
-      throw createError({
-        statusCode: 400,
-        message: 'Chat ID is required'
-      })
-    }
-    
-    // Mark all messages from other users as read
-    await Message.update(
-      { read: true },
-      {
-        where: {
-          chatId: parseInt(chatId),
-          senderId: { [Op.ne]: userId }, // Not equal to current user
-          read: false
-        }
-      }
-    )
-    
-    return {
-      success: true,
-      message: 'Messages marked as read'
-    }
-    
-  } catch (error: any) {
-    console.error('Error marking messages as read:', error)
-    
-    throw createError({
-      statusCode: 500,
-      message: error.message || 'Failed to mark messages as read'
-    })
+  const user = event.context.user
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+
+  const chatId = getRouterParam(event, 'id')
+  if (!chatId) throw createError({ statusCode: 400, statusMessage: 'Chat ID required' })
+
+  const supabase = getSupabaseAdmin()
+
+  // Verify user has access
+  const { data: chat } = await supabase.from('chats').select('buyer_id, seller_id').eq('id', chatId).single()
+  if (!chat || (chat.buyer_id !== user.id && chat.seller_id !== user.id)) {
+    throw createError({ statusCode: 403, statusMessage: 'Access denied' })
   }
+
+  await supabase.from('messages').update({ read: true }).eq('chat_id', chatId).neq('sender_id', user.id).eq('read', false)
+
+  return { success: true }
 })

@@ -1,72 +1,32 @@
-// server/api/cars/my.get.ts - NEW FILE
-import jwt from 'jsonwebtoken'
-import { Car } from '~/server/database/models'
+// server/api/cars/my.get.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
+  const user = event.context.user
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+
   try {
-    // Get authenticated user
-    const accessToken = getCookie(event, 'access_token')
-    if (!accessToken) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'You must be logged in'
-      })
+    const supabase = getSupabaseAdmin()
+    const { data: cars, error } = await supabase
+      .from('cars')
+      .select('id, make, model, year, price, mileage, images, city, canton, status, listing_type, current_bid, starting_price, is_featured, created_at, views')
+      .eq('seller_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return {
+      success: true,
+      cars: (cars || []).map((car: any) => ({
+        id: car.id, make: car.make, model: car.model, year: car.year,
+        price: car.price, mileage: car.mileage, images: car.images || [],
+        city: car.city, canton: car.canton, status: car.status,
+        listingType: car.listing_type, currentBid: car.current_bid,
+        startingPrice: car.starting_price, isFeatured: car.is_featured,
+        createdAt: car.created_at, views: car.views || 0,
+      })),
     }
-    
-    const config = useRuntimeConfig()
-    
-    if (!config.jwtAccessSecret) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Server configuration error'
-      })
-    }
-    
-    let decodedToken: any = null
-    
-    try {
-      decodedToken = jwt.verify(accessToken, config.jwtAccessSecret)
-    } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError)
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Invalid or expired token. Please log in again.'
-      })
-    }
-    
-    const userId = decodedToken.userId
-    
-    // Get user's cars
-    const cars = await Car.findAll({
-      where: { sellerId: userId },
-      order: [['createdAt', 'DESC']]
-    })
-    
-    return cars.map(car => ({
-      id: car.getDataValue('id'),
-      make: car.getDataValue('make'),
-      model: car.getDataValue('model'),
-      year: car.getDataValue('year'),
-      price: car.getDataValue('price'),
-      startingPrice: car.getDataValue('startingPrice'),
-      mileage: car.getDataValue('mileage'),
-      images: car.getDataValue('images'),
-      status: car.getDataValue('status'),
-      city: car.getDataValue('city'),
-      canton: car.getDataValue('canton'),
-      createdAt: car.getDataValue('createdAt'),
-      isFeatured: car.getDataValue('isFeatured'),
-      featuredUntil: car.getDataValue('featuredUntil'),
-      listingType: car.getDataValue('listingType'),
-      auctionEnd: car.getDataValue('auctionEnd'),
-      bidCount: car.getDataValue('bidCount')
-    }))
-    
   } catch (error: any) {
-    console.error('❌ Error getting user cars:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.message || 'Internal server error'
-    })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch listings' })
   }
 })

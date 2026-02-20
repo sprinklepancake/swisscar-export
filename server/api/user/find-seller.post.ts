@@ -1,46 +1,22 @@
-import { User } from '~/server/database/models'
+// server/api/user/find-seller.post.ts
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const { sellerName, sellerEmail, sellerPhone } = body
+  const { sellerName, sellerEmail, sellerPhone } = await readBody(event)
+  const supabase = getSupabaseAdmin()
 
-  console.log('🔍 Searching for seller:', { sellerName, sellerEmail, sellerPhone })
-
-  let seller = null
-
-  // Try to find by email first (most reliable)
   if (sellerEmail) {
-    seller = await User.findOne({
-      where: { email: sellerEmail }
-    })
-    if (seller) {
-      console.log('✅ Found seller by email:', seller.id)
-      return { seller: { id: seller.id, name: seller.name, email: seller.email } }
-    }
+    const { data } = await supabase.from('users').select('id, name, email').eq('email', sellerEmail).single()
+    if (data) return { seller: { id: data.id, name: data.name, email: data.email } }
+  }
+  if (sellerPhone) {
+    const { data } = await supabase.from('users').select('id, name, email').eq('phone', sellerPhone).single()
+    if (data) return { seller: { id: data.id, name: data.name, email: data.email } }
+  }
+  if (sellerName) {
+    const { data } = await supabase.from('users').select('id, name, email').eq('name', sellerName).single()
+    if (data) return { seller: { id: data.id, name: data.name, email: data.email } }
   }
 
-  // Try to find by phone
-  if (sellerPhone && !seller) {
-    seller = await User.findOne({
-      where: { phone: sellerPhone }
-    })
-    if (seller) {
-      console.log('✅ Found seller by phone:', seller.id)
-      return { seller: { id: seller.id, name: seller.name, email: seller.email } }
-    }
-  }
-
-  // Try to find by name (least reliable)
-  if (sellerName && !seller) {
-    seller = await User.findOne({
-      where: { name: sellerName }
-    })
-    if (seller) {
-      console.log('✅ Found seller by name:', seller.id)
-      return { seller: { id: seller.id, name: seller.name, email: seller.email } }
-    }
-  }
-
-  console.log('❌ No seller found with the provided contact info')
   return { seller: null }
 })

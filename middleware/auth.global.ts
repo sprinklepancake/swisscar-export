@@ -2,18 +2,11 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const auth = useAuth()
 
-  // Only run on client side
+  // On client side, sync auth state from Supabase session before checking routes
   if (process.client) {
-    try {
-      const { data } = await useFetch('/api/auth/me')
-
-      if ((data.value as any)?.user) {
-        auth.user.value = (data.value as any).user
-      } else {
-        auth.user.value = null
-      }
-    } catch {
-      auth.user.value = null
+    // If auth hasn't been initialized yet, run syncAuth and wait for it
+    if (!auth.isInitialized.value) {
+      await auth.syncAuth()
     }
   }
 

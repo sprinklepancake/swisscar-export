@@ -2,14 +2,16 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-  const path = getRequestURL(event).pathname
-
   // Always set defaults
   event.context.user = null
   event.context.auth = null
 
-  // Read Supabase session token from cookie
-  const token = getCookie(event, 'sb-access-token') || getCookie(event, 'access_token')
+  // FIX: check both hyphen and underscore variants for backwards compatibility
+  // The client now sets 'sb-access-token' (hyphen) to match this server middleware
+  const token =
+    getCookie(event, 'sb-access-token') ||
+    getCookie(event, 'sb_access_token') ||
+    getCookie(event, 'access_token')
 
   if (!token) return
 

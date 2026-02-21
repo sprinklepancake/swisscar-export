@@ -16,9 +16,10 @@ export const useAuth = () => {
     }
   }
 
-  // Store/clear the Supabase token in a cookie the server can read
+  // FIX: cookie name must use hyphens to match server/middleware/auth.ts
+  // which reads 'sb-access-token' (hyphen), not 'sb_access_token' (underscore)
   const setAuthCookie = (token: string | null) => {
-    const cookie = useCookie('sb_access_token', {
+    const cookie = useCookie('sb-access-token', {
       maxAge: 60 * 60 * 24 * 7, // 7 days
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',

@@ -1,22 +1,40 @@
 // server/api/admin/check.get.ts
-import { verifySupabaseToken, getUserProfile } from '~/server/utils/supabase'
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   try {
-    const token = getCookie(event, 'sb_access_token')
+    // Prefer the user already resolved by server/middleware/auth.ts
+    const ctxUser = event.context.user
+    if (ctxUser) {
+      return {
+        isAdmin: ctxUser.role === 'admin',
+        authenticated: true,
+        user: ctxUser,
+      }
+    }
+
+    // Fallback: read cookie directly (handles both name variants)
+    const token =
+      getCookie(event, 'sb-access-token') ||
+      getCookie(event, 'sb_access-token') ||
+      getCookie(event, 'access_token')
 
     if (!token) return { isAdmin: false, authenticated: false }
 
-    const authUser = await verifySupabaseToken(token)
-    if (!authUser) return { isAdmin: false, authenticated: false }
+    const supabase = getSupabaseAdmin()
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !authUser) return { isAdmin: false, authenticated: false }
 
-    const profile = await getUserProfile(authUser.id)
+    const { data: profile } = await supabase
+      .from('users')
+      .select('id, email, name, role, funds')
+      .eq('auth_uid', authUser.id)
+      .single()
+
     if (!profile) return { isAdmin: false, authenticated: false }
 
-    const isAdmin = profile.role === 'admin'
-
     return {
-      isAdmin,
+      isAdmin: profile.role === 'admin',
       authenticated: true,
       user: {
         id: profile.id,

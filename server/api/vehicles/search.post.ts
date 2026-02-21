@@ -1,48 +1,51 @@
-import { getVehicleDatabasePath } from '~/server/utils/db-path'
-import sqlite3 from 'sqlite3';
+// server/api/vehicles/search.post.ts
+// Replaced legacy sqlite3 implementation with Supabase query.
+// Vehicle data is now served from the typenschein_cache table in Supabase.
+import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event);
-    const { query, limit = 50 } = body;
+    const body = await readBody(event)
+    const { query, marke, limit = 50 } = body
 
-    if (!query || query.trim().length < 2) {
-      return { results: [] };
+    // Support both old 'marke' field and new 'query' field
+    const searchTerm = (query || marke || '').trim()
+
+    if (!searchTerm || searchTerm.length < 2) {
+      return { results: [], vehicles: [] }
     }
 
-    const dbPath = getVehicleDatabasePath();
-    const searchQuery = '%' + query + '%';
+    const supabase = getSupabaseAdmin()
 
-    return new Promise((resolve, reject) => {
-      const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          reject({ error: 'Database connection failed' });
-          return;
-        }
+    // Search typenschein_cache by typenbezeichnung (make/model name)
+    const { data, error } = await supabase
+      .from('typenschein_cache')
+      .select('nr, typenbezeichnung, fahrzeugart, data')
+      .or(
+        `typenbezeichnung.ilike.%${searchTerm}%,fahrzeugart.ilike.%${searchTerm}%,nr.ilike.%${searchTerm}%`
+      )
+      .limit(limit)
 
-        const sql = `
-          SELECT * FROM vehicle_data 
-          WHERE name LIKE ? OR 
-                model LIKE ? OR 
-                make LIKE ? OR 
-                year LIKE ?
-          LIMIT ?
-        `;
+    if (error) {
+      console.error('Vehicle search error:', error)
+      return { results: [], vehicles: [], error: 'Search failed' }
+    }
 
-        db.all(sql, [searchQuery, searchQuery, searchQuery, searchQuery, limit], (err, rows) => {
-          db.close();
-          if (err) {
-            console.error('Query error:', err);
-            reject({ error: 'Query failed' });
-            return;
-          }
-          resolve({ results: rows });
-        });
-      });
-    });
+    const results = (data || []).map((row: any) => ({
+      nr: row.nr,
+      name: row.typenbezeichnung,
+      typenbezeichnung: row.typenbezeichnung,
+      fahrzeugart: row.fahrzeugart,
+      // Expose key fields from the full data blob
+      make: row.data?.BaseData_DE?.Typenbezeichnung?.split(' ')[0] || '',
+      model: row.typenbezeichnung,
+      treibstoff: row.data?.BaseData_DE?.Treibstoffcode,
+      kw: row.data?.BaseData_DE?.Kw,
+    }))
+
+    return { results, vehicles: results }
   } catch (error: any) {
-    console.error('Search error:', error);
-    return { error: 'Search failed', details: error.message };
+    console.error('Search error:', error)
+    return { results: [], vehicles: [], error: 'Search failed' }
   }
-});
+})

@@ -1,12 +1,9 @@
-import { getDatabasePath } from '../utils/db-path'
-
-export default defineEventHandler(async (event) => {
-  const dbPath = getDatabasePath()
-  
+// server/api/database-reset.get.ts
+// Legacy SQLite reset endpoint — no longer applicable with Supabase.
+export default defineEventHandler(async () => {
   return {
-    message: 'Database reset endpoint',
-    path: dbPath,
-    exists: require('fs').existsSync(dbPath),
-    usage: 'Send POST request to reset database'
+    success: false,
+    message: 'This endpoint is not applicable. The app now uses Supabase PostgreSQL.',
+    hint: 'Manage your database via the Supabase dashboard at https://supabase.com'
   }
 })

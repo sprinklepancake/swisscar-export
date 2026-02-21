@@ -1,23 +1,13 @@
-import path from 'path'
-import fs from 'fs'
+// server/utils/db-path.ts
+// LEGACY FILE - SQLite is no longer used. App runs on Supabase PostgreSQL.
+// These stubs prevent import errors from any files that haven't been cleaned up yet.
 
 export function getDatabasePath(filename = 'database.sqlite') {
-  // Render production
-  if (process.env.RENDER) {
-    const renderPath = '/opt/render/project/src/.data'
-    
-    // Ensure directory exists
-    if (!fs.existsSync(renderPath)) {
-      fs.mkdirSync(renderPath, { recursive: true })
-    }
-    
-    return path.join(renderPath, filename)
-  }
-  
-  // Local development
-  return path.join(process.cwd(), filename)
+  console.warn('[db-path] getDatabasePath() called - app uses Supabase, not SQLite')
+  return `/tmp/${filename}`
 }
 
 export function getVehicleDatabasePath() {
-  return getDatabasePath('vehicle_data.db')
+  console.warn('[db-path] getVehicleDatabasePath() called - vehicle data is served from Supabase')
+  return '/tmp/vehicle_data.db'
 }

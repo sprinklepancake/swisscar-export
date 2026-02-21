@@ -1158,6 +1158,17 @@
               class="hidden"
             >
 
+            <!-- Upload Progress Bar -->
+            <div v-if="uploadingImages" class="mt-3 mb-2">
+              <div class="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                <div class="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                Uploading images... {{ uploadProgress }}%
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-1.5">
+                <div class="bg-red-600 h-1.5 rounded-full transition-all" :style="{ width: uploadProgress + '%' }"></div>
+              </div>
+            </div>
+
             <!-- Image Preview -->
             <div v-if="form.images.length > 0" class="mt-4">
               <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
@@ -1166,7 +1177,20 @@
                   :key="index"
                   class="relative group"
                 >
-                  <img :src="image.url" :alt="`Car image ${index + 1}`" class="w-full h-20 sm:h-24 object-cover rounded-lg">
+                  <img 
+                    :src="image.url" 
+                    :alt="`Car image ${index + 1}`" 
+                    class="w-full h-20 sm:h-24 object-cover rounded-lg"
+                    :class="{ 'opacity-50': image.uploading }"
+                  >
+                  <!-- Uploading spinner overlay -->
+                  <div v-if="image.uploading" class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <!-- Error overlay -->
+                  <div v-if="image.error" class="absolute inset-0 flex items-center justify-center bg-red-500/60 rounded-lg">
+                    <span class="text-white text-xs font-bold">Failed</span>
+                  </div>
                   <button 
                     @click="removeImage(index)"
                     class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors"
@@ -1175,7 +1199,9 @@
                   </button>
                 </div>
               </div>
-              <p class="text-gray-600 text-xs sm:text-sm mt-2">{{ $t('car_listing_form.photos_uploaded', { count: form.images.length }) }}</p>
+              <p class="text-gray-600 text-xs sm:text-sm mt-2">
+                {{ form.images.filter(img => !img.error && !img.uploading).length }} / {{ form.images.length }} photos uploaded
+              </p>
             </div>
           </div>
 
@@ -1254,6 +1280,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 // Form state
+const uploadingImages = ref(false)
+const uploadProgress = ref(0)
 const currentStep = ref(0)
 const entryMethod = ref<'typenschein' | 'manual' | null>(null)
 const isSubmitting = ref(false)
@@ -1330,7 +1358,7 @@ const form = ref({
   hasAccident: false,
   
   // Photos & Description
-  images: [] as Array<{ file: File; url: string }>,
+  images: [] as Array<{ url: string; uploading: boolean; error: boolean }>,
   description: '',
   
   // Terms
@@ -2110,25 +2138,59 @@ const triggerFileInput = () => {
   fileInput.value?.click()
 }
 
-const handleImageUpload = (event: Event) => {
+const handleImageUpload = async (event: Event) => {
   const target = event.target as HTMLInputElement
   const files = target.files
-  
-  if (files) {
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      if (file.type.startsWith('image/')) {
-        const url = URL.createObjectURL(file)
-        form.value.images.push({ file, url })
-      }
+  if (!files || files.length === 0) return
+
+  uploadingImages.value = true
+  uploadProgress.value = 0
+
+  const total = files.length
+  let done = 0
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    if (!file.type.startsWith('image/')) continue
+
+    // Show preview immediately with blob URL
+    const previewUrl = URL.createObjectURL(file)
+    const imageEntry = { url: previewUrl, uploading: true, error: false }
+    form.value.images.push(imageEntry)
+    const idx = form.value.images.length - 1
+
+    try {
+      // Upload to Supabase via server endpoint
+      const fd = new FormData()
+      fd.append('file', file)
+
+      const result = await $fetch('/api/upload/image', {
+        method: 'POST',
+        body: fd,
+      })
+
+      // Replace blob URL with the real Supabase Storage URL
+      URL.revokeObjectURL(previewUrl)
+      form.value.images[idx] = { url: result.url, uploading: false, error: false }
+    } catch (err) {
+      console.error('Image upload failed:', err)
+      form.value.images[idx] = { url: previewUrl, uploading: false, error: true }
     }
+
+    done++
+    uploadProgress.value = Math.round((done / total) * 100)
   }
-  
+
+  uploadingImages.value = false
   if (target) target.value = ''
 }
 
 const removeImage = (index: number) => {
-  URL.revokeObjectURL(form.value.images[index].url)
+  const img = form.value.images[index]
+  // Only revoke blob URLs (not real Supabase URLs)
+  if (img.url.startsWith('blob:')) {
+    URL.revokeObjectURL(img.url)
+  }
   form.value.images.splice(index, 1)
 }
 
@@ -2260,7 +2322,7 @@ const submitListing = async () => {
       
       // Photos & Description
       description: form.value.description,
-      images: form.value.images.map(img => img.url),
+      images: form.value.images.filter(img => !img.error).map(img => img.url),
       
       // Typenschein data
       typenscheinNr: form.value.typenscheinNr,
@@ -2353,7 +2415,7 @@ const resetForm = () => {
   // Reset all other fields but keep user contact info
   Object.keys(form.value).forEach(key => {
     if (key === 'images') {
-      form.value.images.forEach(image => URL.revokeObjectURL(image.url))
+      form.value.images.forEach(image => { if (image.url.startsWith('blob:')) URL.revokeObjectURL(image.url) })
       form.value.images = []
     } else if (Array.isArray(form.value[key as keyof typeof form.value])) {
       (form.value[key as keyof typeof form.value] as any) = []

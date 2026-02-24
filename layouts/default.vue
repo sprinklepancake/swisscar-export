@@ -38,7 +38,7 @@
               </NuxtLink>
 
               <NuxtLink
-                v-if="auth.user?.role === 'seller'"
+                v-if="currentUser?.role === 'seller'"
                 :to="localePath('/sell')"
                 class="nav-link nav-link-primary"
               >
@@ -83,7 +83,7 @@
               <div class="w-20 h-9 bg-red-100 rounded-xl animate-pulse"></div>
             </div>
 
-            <template v-else-if="auth.user">
+            <template v-else-if="currentUser">
               <!-- Messages -->
               <NuxtLink :to="localePath('/messages')" class="nav-link relative">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
               </NuxtLink>
 
               <!-- Dashboard (seller) -->
-              <NuxtLink v-if="auth.user?.role === 'seller'" :to="localePath('/dashboard')" class="nav-link">
+              <NuxtLink v-if="currentUser?.role === 'seller'" :to="localePath('/dashboard')" class="nav-link">
                 <svg class="w-4 h-4 lg:w-5 lg:h-5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                 </svg>
@@ -105,7 +105,7 @@
               <!-- Profile Avatar -->
               <NuxtLink :to="localePath('/profile')" class="relative group">
                 <div class="w-9 h-9 lg:w-11 lg:h-11 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:scale-105 transition-transform duration-200">
-                  {{ (auth.user?.name || 'U').charAt(0).toUpperCase() }}
+                  {{ (currentUser?.name || 'U').charAt(0).toUpperCase() }}
                 </div>
                 <div class="absolute -bottom-1 -right-1 bg-green-500 rounded-full w-3 h-3 border-2 border-white shadow-sm"></div>
               </NuxtLink>
@@ -134,7 +134,7 @@
 
           <!-- Mobile: Messages + Hamburger -->
           <div class="flex md:hidden items-center gap-1">
-            <NuxtLink v-if="auth.user" :to="localePath('/messages')" class="relative p-2 rounded-xl text-red-700 hover:bg-red-50">
+            <NuxtLink v-if="currentUser" :to="localePath('/messages')" class="relative p-2 rounded-xl text-red-700 hover:bg-red-50">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
               </svg>
@@ -181,7 +181,7 @@
             </NuxtLink>
 
             <NuxtLink
-              v-if="auth.user?.role === 'seller'"
+              v-if="currentUser?.role === 'seller'"
               :to="localePath('/sell')"
               class="mobile-nav-link-featured"
               @click="closeMobileMenu"
@@ -192,7 +192,7 @@
               {{ t('export_your_car') }}
             </NuxtLink>
 
-            <NuxtLink v-if="auth.user?.role === 'seller'" :to="localePath('/dashboard')" class="mobile-nav-link" @click="closeMobileMenu">
+            <NuxtLink v-if="currentUser?.role === 'seller'" :to="localePath('/dashboard')" class="mobile-nav-link" @click="closeMobileMenu">
               <svg class="w-5 h-5 mr-3 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
               </svg>
@@ -239,7 +239,7 @@
 
             <!-- Auth Section -->
             <div class="border-t border-red-100">
-              <div v-if="!auth.isInitialized" class="px-4 py-4">
+              <div v-if="!auth.isInitialized?.value && auth.isInitialized !== undefined" class="px-4 py-4">
                 <div class="flex gap-3">
                   <div class="w-8 h-8 bg-red-100 rounded-full animate-pulse shrink-0"></div>
                   <div class="flex-1 space-y-2">
@@ -249,13 +249,13 @@
                 </div>
               </div>
 
-              <template v-else-if="auth.user">
+              <template v-else-if="currentUser">
                 <NuxtLink :to="localePath('/profile')" class="mobile-nav-link" @click="closeMobileMenu">
                   <svg class="w-5 h-5 mr-3 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
                   {{ t('profile.my_profile') }}
-                  <span class="ml-auto text-xs text-red-500 font-medium">{{ auth.user?.name }}</span>
+                  <span class="ml-auto text-xs text-red-500 font-medium">{{ currentUser?.name }}</span>
                 </NuxtLink>
                 <button @click="handleLogout" class="mobile-nav-link w-full text-left text-red-700 hover:bg-red-100 hover:text-red-900">
                   <svg class="w-5 h-5 mr-3 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,9 +378,9 @@
               <span class="text-red-600 text-xs sm:text-sm font-medium">{{ t('export_active') }}</span>
             </div>
             <div class="flex items-center space-x-1.5">
-              <div class="w-2 h-2 rounded-full animate-pulse" :class="auth.user ? 'bg-green-500' : 'bg-gray-400'"></div>
-              <span class="text-xs sm:text-sm font-medium" :class="auth.user ? 'text-green-600' : 'text-gray-500'">
-                {{ auth.user ? t('auth.logged_in') : t('auth.logged_out') }}
+              <div class="w-2 h-2 rounded-full animate-pulse" :class="currentUser ? 'bg-green-500' : 'bg-gray-400'"></div>
+              <span class="text-xs sm:text-sm font-medium" :class="currentUser ? 'text-green-600' : 'text-gray-500'">
+                {{ currentUser ? t('auth.logged_in') : t('auth.logged_out') }}
               </span>
             </div>
           </div>
@@ -398,21 +398,23 @@ const switchLocalePath = useSwitchLocalePath()
 const localePath = useLocalePath()
 const router = useRouter()
 const auth = useAuth()
-const currentUserId = computed(() => auth.user?.value?.id || 1)
+
+// auth.user is a Ref — unwrap it so template checks work correctly
+const currentUser = computed(() => auth.user?.value ?? null)
+
+const currentUserId = computed(() => currentUser.value?.id || 1)
 const unreadCount = ref(0)
 
 const handleLogout = async () => {
   try {
-    console.log('Logout initiated, current user:', auth.user.value)
     await auth.logout()
-    console.log('Logout completed, current user:', auth.user.value)
     closeMobileMenu()
     await nextTick()
     await navigateTo(localePath('/'))
   } catch (error) {
     console.error('Logout failed:', error)
-    auth.user.value = null
-    auth.isInitialized.value = true
+    if (auth.user?.value !== undefined) auth.user.value = null
+    if (auth.isInitialized?.value !== undefined) auth.isInitialized.value = true
     closeMobileMenu()
     await navigateTo(localePath('/'))
   }

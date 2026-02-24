@@ -7,7 +7,9 @@
 /* Custom Font Import */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
-/* CSS Variables for Swiss Theming */
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
 :root {
   --swiss-red: #FF0000;
   --swiss-red-dark: #cc0000;
@@ -15,7 +17,7 @@
   --swiss-dark: #1a1a1a;
   --swiss-gray: #333333;
   --swiss-light-gray: #f5f5f5;
-  
+
   --primary-gradient: linear-gradient(135deg, var(--swiss-red) 0%, var(--swiss-red-dark) 100%);
   --secondary-gradient: linear-gradient(135deg, var(--swiss-red-dark) 0%, #b30000 100%);
   --dark-gradient: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
@@ -30,7 +32,9 @@
   --text-dark: #1a1a1a;
 }
 
-/* Base Styles */
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
 * {
   box-sizing: border-box;
 }
@@ -39,7 +43,6 @@ html {
   scroll-behavior: smooth;
 }
 
-/* CHANGED: Removed background from body to allow logo to show through */
 body {
   font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
   color: var(--text-dark);
@@ -48,36 +51,22 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: transparent !important; /* Ensure body doesn't cover the logo */
+  background: transparent !important;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
 }
 
 /* Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: var(--text-dark);
   line-height: 1.2;
   margin: 0;
 }
 
-h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-}
-
-h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-}
-
-h3 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 600;
-}
+h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; }
+h2 { font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700; }
+h3 { font-size: clamp(1.25rem, 3vw, 2rem); font-weight: 600; }
 
 p {
   color: var(--text-dark);
@@ -91,110 +80,46 @@ a {
 }
 
 a:hover {
-  color: #ff3333;
+  color: var(--swiss-red-dark);
 }
 
-/* Form Elements */
-input,
-textarea,
-select {
-  font-family: inherit;
-  font-size: 1rem;
-  background: var(--swiss-white);
-  border: 1px solid #e5e5e5;
-  color: var(--text-dark);
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  width: 100%;
-  transition: all 0.2s ease;
+/* ============================================================
+   MOBILE: PREVENT IOS ZOOM ON INPUTS
+   ============================================================ */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents iOS zoom */
+  }
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--swiss-red);
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--text-muted);
-}
-
-/* Buttons */
-button {
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: var(--primary-gradient);
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Custom Components Layer */
+/* ============================================================
+   COMPONENT LAYER — shared utility classes
+   ============================================================ */
 @layer components {
+  /* Glass card effect */
   .glass {
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-red-border);
-    border-radius: 0.75rem;
-    background: var(--glass-red);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
 
   .glass-strong {
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 0, 0, 0.3);
-    border-radius: 0.75rem;
-    background: rgba(255, 0, 0, 0.15);
-  }
-
-  .card {
-    @apply glass p-6 shadow-xl transition-all duration-300;
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 0, 0, 0.15);
-  }
-}
-
-/* Custom Utilities Layer */
-@layer utilities {
-  .glass {
-    background: rgba(255, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 0, 0, 0.2);
-    border-radius: 0.75rem;
-  }
-  
-  .glass-strong {
-    background: rgba(255, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 0, 0, 0.3);
-    border-radius: 0.75rem;
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(239, 68, 68, 0.3);
   }
-  
+
+  /* Gradient text */
   .gradient-text {
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -209,6 +134,7 @@ button:disabled {
     background-clip: text;
   }
 
+  /* Status badges — ensure readable text on light backgrounds */
   .status-available {
     @apply bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
   }
@@ -218,99 +144,163 @@ button:disabled {
   }
 
   .status-sold {
-    @apply bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
+    @apply bg-red-700 text-white px-3 py-1 rounded-full text-sm font-semibold;
   }
 
+  /* Text shadow */
   .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
   .backdrop-blur-strong {
     backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
   }
 
-  .border-gradient {
-    border: 1px solid;
-    border-image: var(--primary-gradient) 1;
+  /* ============================================================
+     BUTTON CONTRAST FIXES — override any same-color-as-bg issues
+     ============================================================ */
+
+  /* view-toggle: inactive state needs visible background on hover */
+  .view-toggle {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    color: #b91c1c; /* text-red-700 */
+    transition: colors 0.2s;
+  }
+
+  .view-toggle:hover {
+    background-color: #dc2626; /* bg-red-600 */
+    color: #ffffff;
+  }
+
+  .view-toggle.active {
+    background-color: #dc2626; /* bg-red-600 */
+    color: #ffffff;
+  }
+
+  /* Secondary / ghost buttons that might appear on white background */
+  .btn-ghost-red {
+    @apply border-2 border-red-600 text-red-700 bg-transparent font-semibold rounded-xl px-4 py-2 hover:bg-red-600 hover:text-white transition-all duration-200;
+  }
+
+  /* White button on red/dark background */
+  .btn-white {
+    @apply bg-white text-red-800 font-semibold rounded-xl px-4 py-2 hover:bg-red-50 border border-red-200 transition-all duration-200 shadow-sm;
+  }
+
+  /* Ensure page-number buttons are always readable */
+  .page-button {
+    @apply w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 text-red-800 font-medium;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .page-button:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+  }
+
+  .page-button.active {
+    background: linear-gradient(to right, #dc2626, #991b1b);
+    color: #ffffff;
+    border-color: transparent;
   }
 }
 
-/* Custom Animations */
+/* ============================================================
+   CUSTOM ANIMATIONS
+   ============================================================ */
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
-  }
+  0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.6); }
 }
 
-.float {
-  animation: float 3s ease-in-out infinite;
+@keyframes loading {
+  to { left: 100%; }
 }
 
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
+.float { animation: float 3s ease-in-out infinite; }
+.pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fef2f2; border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--swiss-red), var(--swiss-red-dark));
+  background: linear-gradient(135deg, #dc2626, #991b1b);
   border-radius: 4px;
 }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #b91c1c, #7f1d1d); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff3333, #b30000);
-}
+/* ============================================================
+   SELECTION
+   ============================================================ */
+::selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
+::-moz-selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
 
-/* Selection Styling */
-::selection {
-  background: rgba(255, 0, 0, 0.3);
-  color: white;
-}
-
-::-moz-selection {
-  background: rgba(255, 0, 0, 0.3);
-  color: white;
-}
-
-/* Responsive Design Helpers */
-@media (max-width: 768px) {
+/* ============================================================
+   RESPONSIVE — MOBILE FIRST
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Tighter container on phones */
   .container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
-  h1 {
-    font-size: 2.5rem;
+  /* Prevent tables from breaking layout */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  h2 {
-    font-size: 2rem;
+  /* Full-width buttons on mobile */
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  /* Stack flex rows on mobile */
+  .mobile-stack {
+    flex-direction: column !important;
   }
 }
 
-/* Loading States */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.375rem; }
+
+  /* Ensure modals are full-width on mobile */
+  .modal-content {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+
+  /* Car cards: disable hover scale on mobile (causes layout shift) */
+  .car-card:hover {
+    transform: none !important;
+  }
+
+  /* Feature cards: same */
+  .feature-card:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   LOADING STATE SKELETON
+   ============================================================ */
 .loading {
   position: relative;
   overflow: hidden;
@@ -323,198 +313,466 @@ button:disabled {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.15), transparent);
   animation: loading 1.5s infinite;
 }
 
-@keyframes loading {
-  to {
-    left: 100%;
-  }
-}
-
-/* Print Styles */
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
 @media print {
-  body {
-    background: white;
-    color: black;
-  }
-
-  .glass,
-  .glass-strong {
-    background: white;
-    border: 1px solid #ccc;
-  }
+  body { background: white; color: black; }
+  .glass, .glass-strong { background: white; border: 1px solid #ccc; }
+  header, footer, nav { display: none; }
 }
 
-/* High Contrast Mode */
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
 @media (prefers-contrast: high) {
   :root {
-    --glass-bg: rgba(255, 0, 0, 0.2);
-    --glass-border: rgba(255, 0, 0, 0.4);
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(153, 27, 27, 0.6);
   }
+
+  .status-available { @apply bg-green-700; }
+  .status-reserved { @apply bg-yellow-700; }
+  .status-sold { @apply bg-red-800; }
 }
 
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* Swiss Cross Pattern */
-.swiss-pattern {
-  background-image: 
-    linear-gradient(45deg, var(--swiss-red) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--swiss-red) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--swiss-red) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--swiss-red) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-}
-
-/* Swiss Theme Additions */
-.bg-swiss-white {
-  background-color: var(--swiss-white);
-}
-
-.bg-swiss-red {
-  background-color: var(--swiss-red);
-}
-
-.text-swiss-red {
-  color: var(--swiss-red);
-}
-
-.border-swiss-red {
-  border-color: var(--swiss-red);
-}
-
-.swiss-pattern-bg {
-  background-image: 
-    linear-gradient(45deg, var(--swiss-red) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--swiss-red) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--swiss-red) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--swiss-red) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-  opacity: 0.05;
-}
+/* ============================================================
+   SWISS THEME UTILITIES
+   ============================================================ */
+.bg-swiss-white { background-color: var(--swiss-white); }
+.bg-swiss-red { background-color: var(--swiss-red); }
+.text-swiss-red { color: var(--swiss-red); }
+.border-swiss-red { border-color: var(--swiss-red); }
 
 .swiss-form-container {
   background: var(--swiss-white);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e5e5;
 }
 
-.swiss-form-section {
-  background: var(--swiss-white);
-  border-radius: 0.75rem;
-  border-left: 4px solid var(--swiss-red);
-}
-
-.swiss-form-label {
-  color: var(--swiss-dark);
-  font-weight: 600;
-}
-
+/* ============================================================
+   FORM INPUTS — global defaults
+   ============================================================ */
 .swiss-form-input {
-  border: 1px solid #e5e5e5;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  color: var(--swiss-dark);
-  background: var(--swiss-white);
+  @apply w-full px-4 py-3 rounded-xl border border-red-300 bg-white text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
 }
 
-.swiss-form-input:focus {
-  border-color: var(--swiss-red);
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+/* ============================================================
+   MOBILE TAP TARGETS — minimum 44x44px
+   ============================================================ */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exception: small inline badges/tags */
+  .badge, .tag, .chip {
+    min-height: unset;
+    min-width: unset;
+  }
 }
 
-.swiss-btn-primary {
-  background: var(--swiss-red);
-  color: var(--swiss-white);
-  font-weight: 600;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+
+/* ============================================================
+   PAGE-SPECIFIC MOBILE FIXES
+   ============================================================ */
+
+/* ---- INDEX PAGE (homepage) ---- */
+@media (max-width: 640px) {
+  /* Hero section — shrink giant headings */
+  .min-h-screen h1,
+  section h1 {
+    font-size: 1.875rem !important; /* 30px instead of 60px */
+    line-height: 1.2 !important;
+  }
+
+  section p.text-xl,
+  section p.text-2xl {
+    font-size: 1rem !important;
+  }
+
+  /* Hero padding */
+  section.relative.py-20,
+  section.py-20 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* Filter row stacks on small screens — already flex-col but make sure */
+  .flex.flex-col.md\:flex-row {
+    flex-direction: column !important;
+  }
 }
 
-.swiss-btn-primary:hover {
-  background: var(--swiss-red-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+/* ---- CARS/INDEX PAGE ---- */
+
+/* List-view cards: stack image + content vertically on mobile */
+@media (max-width: 640px) {
+  .car-card.flex {
+    flex-direction: column !important;
+  }
+
+  .car-card.flex .car-image,
+  .car-card.flex [class*="w-1/3"],
+  .car-card.flex [class*="w-2/3"] {
+    width: 100% !important;
+  }
+
+  /* Sort bar: wrap on mobile */
+  .flex.items-center.gap-4 {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+
+  /* Sort label hide on tiny screens */
+  .whitespace-nowrap {
+    white-space: normal !important;
+  }
+
+  /* Cars page hero shrink */
+  .cars-hero h1,
+  .text-4xl.md\:text-5xl {
+    font-size: 1.75rem !important;
+  }
+
+  /* Active filter badges — wrap nicely */
+  .flex.flex-wrap.gap-2 {
+    flex-wrap: wrap;
+  }
+
+  /* Advanced filter grid: single col on phone */
+  .grid.grid-cols-2.md\:grid-cols-3,
+  .grid.grid-cols-2.md\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Equipment checkboxes: 2 per row max */
+  .grid.grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Search/action buttons row */
+  .flex.gap-2 > .secondary-button,
+  .flex.gap-2 > .search-button {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
 }
 
-.swiss-btn-secondary {
-  background: var(--swiss-white);
-  color: var(--swiss-red);
-  border: 1px solid var(--swiss-red);
-  font-weight: 600;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
+/* ---- CARS/[ID] DETAIL PAGE ---- */
+@media (max-width: 768px) {
+  /* Main grid: stack left/right columns */
+  .grid.grid-cols-1.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tab nav: horizontal scroll */
+  .flex.overflow-x-auto,
+  .tabs-nav {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+  }
+
+  .tabs-nav::-webkit-scrollbar { display: none; }
+
+  /* Tab buttons: don't shrink */
+  .tabs-nav button,
+  .flex.overflow-x-auto button {
+    flex-shrink: 0 !important;
+    white-space: nowrap;
+    min-width: auto;
+  }
+
+  /* Main image */
+  .relative.h-80 {
+    height: 14rem !important; /* 224px */
+  }
+
+  /* Image thumbnails: horizontal scroll */
+  .flex.gap-2.overflow-x-auto {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Spec grid: single column */
+  .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Features grid */
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Bid/contact panel — sits below main on mobile but should be reachable */
+  /* Right sidebar sticky: disable sticky on mobile */
+  .lg\:sticky {
+    position: static !important;
+  }
+
+  /* Bid panel — add top margin */
+  .glass.rounded-2xl.p-6.border.border-red-200.shadow-lg {
+    margin-top: 1rem;
+  }
+
+  /* Price — larger & centered */
+  .text-3xl.font-bold.text-red-800 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Seller contact row: stack icon+info+button */
+  .flex.items-center.text-red-700.bg-red-50 {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .flex.items-center.text-red-700.bg-red-50 .ml-auto {
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }
 
-.swiss-btn-secondary:hover {
-  background: #fff5f5;
+/* ---- DASHBOARD PAGE ---- */
+@media (max-width: 768px) {
+  /* Welcome header: stack vertically */
+  .bg-gradient-to-r.rounded-xl .flex.items-center.justify-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+
+  /* Balance box: full width on mobile */
+  .bg-white\/50.rounded-lg.p-4.text-center.border.border-red-200 {
+    min-width: unset !important;
+    width: 100%;
+  }
+
+  /* Stats grid: 2 cols on phone (1 col was too sparse, 3 too cramped) */
+  .grid.grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* But single col for very small */
+  @media (max-width: 400px) {
+    .grid.grid-cols-1.md\:grid-cols-3 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Listings table: don't overflow */
+  .overflow-x-auto table {
+    min-width: 500px; /* force scroll for table */
+  }
+
+  /* Dashboard table header filter row: stack */
+  .flex.justify-between.items-center.mb-6 {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+
+  /* Quick actions 2-col grid: force on mobile too */
+  .grid.grid-cols-2.gap-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
-.swiss-progress-bar {
-  background: #e5e5e5;
-  border-radius: 0.25rem;
-  overflow: hidden;
+/* ---- PROFILE PAGE ---- */
+@media (max-width: 768px) {
+  /* Profile header: stack avatar + info + balance */
+  .glass.p-6.rounded-xl .flex.flex-col.md\:flex-row.items-start.md\:items-center {
+    flex-direction: column !important;
+  }
+
+  /* Balance section */
+  .mt-4.md\:mt-0.bg-white\/50 {
+    margin-top: 1rem !important;
+    width: 100%;
+  }
+
+  /* Stats grid: 2 cols on mobile */
+  .grid.grid-cols-1.md\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Listings grid: single col on phone */
+  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Edit form: stack the action buttons */
+  .flex.justify-end.space-x-3 {
+    flex-direction: column !important;
+    space-x: 0 !important;
+    gap: 0.5rem;
+  }
+
+  .flex.justify-end.space-x-3 button {
+    width: 100%;
+  }
+
+  /* Quick actions links: ensure full width tap */
+  .flex.items-center.justify-between.p-4 {
+    padding: 0.75rem !important;
+  }
+
+  /* Transaction history: full width amounts */
+  .flex.justify-between.items-center {
+    gap: 0.5rem;
+  }
 }
 
-.swiss-progress-fill {
-  background: var(--swiss-red);
-  height: 0.5rem;
-  border-radius: 0.25rem;
-  transition: width 0.5s ease;
+/* ---- ADMIN PAGE ---- */
+@media (max-width: 768px) {
+  /* Admin stats: 2 cols */
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Tab nav: horizontal scroll */
+  .flex.space-x-1.overflow-x-auto,
+  .border-b.border-gray-200 .flex {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* User / listing tables: horizontal scroll */
+  .overflow-x-auto {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .overflow-x-auto table {
+    min-width: 600px;
+  }
+
+  /* User/listing card rows: stack on mobile */
+  .flex.flex-col.md\:flex-row.md\:items-center.justify-between {
+    flex-direction: column !important;
+    gap: 0.75rem;
+  }
+
+  /* Action button rows: wrap */
+  .flex.space-x-2 {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
 }
 
-.swiss-section-icon {
-  background: var(--swiss-red);
-  color: var(--swiss-white);
-  border-radius: 0.625rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ---- CHAT PAGE ---- */
+@media (max-width: 768px) {
+  /* Chat sidebar + main: stack vertically */
+  .flex.h-screen > .w-80,
+  .flex.h-screen > .w-1\/3 {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Message input bar: make sure keyboard doesn't cover it */
+  .fixed.bottom-0,
+  .sticky.bottom-0 {
+    position: sticky !important;
+    bottom: 0;
+  }
 }
 
-.swiss-header {
-  background: var(--swiss-red);
-  color: var(--swiss-white);
-  position: relative;
-  overflow: hidden;
+/* ---- SELL / CAR LISTING FORM ---- */
+@media (max-width: 640px) {
+  /* Step progress bar text: smaller */
+  .text-xs.font-medium {
+    font-size: 0.625rem !important;
+  }
+
+  /* Multi-step form: ensure inputs don't zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
-.swiss-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%),
-    linear-gradient(transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
-  pointer-events: none;
+/* ---- GENERAL MOBILE POLISH ---- */
+@media (max-width: 640px) {
+  /* Any "hero" with py-20 is too tall on mobile */
+  .py-20 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  /* Cards: remove scale transform on mobile (causes layout shift) */
+  .hover\:scale-105:hover,
+  .hover\:transform:hover {
+    transform: none !important;
+  }
+
+  /* Ensure modal backdrop covers full screen including notch */
+  .fixed.inset-0 {
+    padding-top: env(safe-area-inset-top) !important;
+  }
+
+  /* Price tags: don't overflow */
+  .text-2xl.font-bold,
+  .text-3xl.font-bold {
+    word-break: break-word;
+  }
+
+  /* Button groups in cards: stack */
+  .flex.gap-2 > button,
+  .flex.gap-2 > a {
+    flex: 1 1 auto;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Breadcrumbs: allow wrap */
+  nav.flex.items-center.space-x-2 {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* Container padding on very small phones */
+  .max-w-7xl, .max-w-6xl, .max-w-4xl {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
 }
 
-/* Fix button contrast */
-button, .btn, [class*="button"] {
-  color: white !important;
-  font-weight: 600 !important;
+/* Fix: list view cards in cars/index at medium mobile (landscape phones) */
+@media (min-width: 641px) and (max-width: 900px) {
+  .car-card.flex {
+    flex-direction: row !important;
+  }
+
+  .car-card.flex .car-image {
+    width: 40% !important;
+    max-height: 180px;
+  }
+
+  .car-card.flex [class*="w-2/3"] {
+    width: 60% !important;
+  }
 }
 
-.cta-button-secondary {
-  background: white !important;
-  color: #dc2626 !important; /* red-600 */
-  border: 2px solid #dc2626 !important;
+/* Safe area insets for iPhone notch/home bar */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .sticky.bottom-0,
+  footer {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
 }

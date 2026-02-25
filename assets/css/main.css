@@ -134,7 +134,7 @@ a:hover {
     background-clip: text;
   }
 
-  /* Status badges — ensure readable text on light backgrounds */
+  /* Status badges */
   .status-available {
     @apply bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
   }
@@ -158,28 +158,26 @@ a:hover {
   }
 
   /* ============================================================
-     BUTTON CONTRAST FIXES — override any same-color-as-bg issues
+     BUTTON CONTRAST FIXES
      ============================================================ */
 
-  /* view-toggle: inactive state needs visible background on hover */
   .view-toggle {
     padding: 0.5rem;
     border-radius: 0.375rem;
-    color: #b91c1c; /* text-red-700 */
+    color: #b91c1c;
     transition: colors 0.2s;
   }
 
   .view-toggle:hover {
-    background-color: #dc2626; /* bg-red-600 */
+    background-color: #dc2626;
     color: #ffffff;
   }
 
   .view-toggle.active {
-    background-color: #dc2626; /* bg-red-600 */
+    background-color: #dc2626;
     color: #ffffff;
   }
 
-  /* Secondary / ghost buttons that might appear on white background */
   .btn-ghost-red {
     @apply border-2 border-red-600 text-red-700 bg-transparent font-semibold rounded-xl px-4 py-2 hover:bg-red-600 hover:text-white transition-all duration-200;
   }
@@ -189,7 +187,7 @@ a:hover {
     @apply bg-white text-red-800 font-semibold rounded-xl px-4 py-2 hover:bg-red-50 border border-red-200 transition-all duration-200 shadow-sm;
   }
 
-  /* Ensure page-number buttons are always readable */
+  /* Page-number buttons */
   .page-button {
     @apply w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 text-red-800 font-medium;
     background-color: rgba(255, 255, 255, 0.9);
@@ -207,6 +205,63 @@ a:hover {
     color: #ffffff;
     border-color: transparent;
   }
+
+  /* Car cards */
+  .car-card {
+    @apply bg-white/80 rounded-2xl overflow-hidden border border-red-200 hover:bg-white transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl;
+  }
+
+  .car-image {
+    @apply relative h-48 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden;
+  }
+
+  .car-status {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .status-draft {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  /* Feature cards */
+  .feature-card {
+    @apply bg-white/80 p-8 rounded-2xl border border-red-200 hover:bg-white transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl;
+  }
+
+  .feature-icon {
+    @apply w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-300 shadow-lg;
+  }
+
+  /* Newsletter */
+  .newsletter-input {
+    @apply w-full p-4 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm transition-all duration-200;
+  }
+
+  .newsletter-input:focus {
+    @apply bg-white shadow-lg;
+  }
+}
+
+/* ============================================================
+   SWISS THEME UTILITIES
+   ============================================================ */
+.bg-swiss-white { background-color: var(--swiss-white); }
+.bg-swiss-red { background-color: var(--swiss-red); }
+.text-swiss-red { color: var(--swiss-red); }
+.border-swiss-red { border-color: var(--swiss-red); }
+
+.swiss-form-container {
+  background: var(--swiss-white);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e5e5;
+}
+
+/* ============================================================
+   FORM INPUTS — global defaults
+   ============================================================ */
+.swiss-form-input {
+  @apply w-full px-4 py-3 rounded-xl border border-red-300 bg-white text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
 }
 
 /* ============================================================
@@ -230,6 +285,25 @@ a:hover {
 .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 
 /* ============================================================
+   LOADING STATE SKELETON
+   ============================================================ */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.15), transparent);
+  animation: loading 1.5s infinite;
+}
+
+/* ============================================================
    SCROLLBAR STYLING
    ============================================================ */
 ::-webkit-scrollbar { width: 6px; }
@@ -245,6 +319,37 @@ a:hover {
    ============================================================ */
 ::selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
 ::-moz-selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  body { background: white; color: black; }
+  .glass, .glass-strong { background: white; border: 1px solid #ccc; }
+  header, footer, nav { display: none; }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(153, 27, 27, 0.6);
+  }
+
+  .status-available { @apply bg-green-700; }
+  .status-reserved { @apply bg-yellow-700; }
+  .status-sold { @apply bg-red-800; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* ============================================================
    RESPONSIVE — MOBILE FIRST
@@ -287,7 +392,7 @@ a:hover {
     border-radius: 1rem 1rem 0 0 !important;
   }
 
-  /* Car cards: disable hover scale on mobile (causes layout shift) */
+  /* Car cards: disable hover scale on mobile */
   .car-card:hover {
     transform: none !important;
   }
@@ -296,78 +401,6 @@ a:hover {
   .feature-card:hover {
     transform: none !important;
   }
-}
-
-/* ============================================================
-   LOADING STATE SKELETON
-   ============================================================ */
-.loading {
-  position: relative;
-  overflow: hidden;
-}
-
-.loading::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.15), transparent);
-  animation: loading 1.5s infinite;
-}
-
-/* ============================================================
-   PRINT STYLES
-   ============================================================ */
-@media print {
-  body { background: white; color: black; }
-  .glass, .glass-strong { background: white; border: 1px solid #ccc; }
-  header, footer, nav { display: none; }
-}
-
-/* ============================================================
-   ACCESSIBILITY
-   ============================================================ */
-@media (prefers-contrast: high) {
-  :root {
-    --glass-bg: rgba(255, 255, 255, 0.95);
-    --glass-border: rgba(153, 27, 27, 0.6);
-  }
-
-  .status-available { @apply bg-green-700; }
-  .status-reserved { @apply bg-yellow-700; }
-  .status-sold { @apply bg-red-800; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ============================================================
-   SWISS THEME UTILITIES
-   ============================================================ */
-.bg-swiss-white { background-color: var(--swiss-white); }
-.bg-swiss-red { background-color: var(--swiss-red); }
-.text-swiss-red { color: var(--swiss-red); }
-.border-swiss-red { border-color: var(--swiss-red); }
-
-.swiss-form-container {
-  background: var(--swiss-white);
-  border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e5e5;
-}
-
-/* ============================================================
-   FORM INPUTS — global defaults
-   ============================================================ */
-.swiss-form-input {
-  @apply w-full px-4 py-3 rounded-xl border border-red-300 bg-white text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
 }
 
 /* ============================================================
@@ -386,7 +419,6 @@ a:hover {
   }
 }
 
-
 /* ============================================================
    PAGE-SPECIFIC MOBILE FIXES
    ============================================================ */
@@ -396,7 +428,7 @@ a:hover {
   /* Hero section — shrink giant headings */
   .min-h-screen h1,
   section h1 {
-    font-size: 1.875rem !important; /* 30px instead of 60px */
+    font-size: 1.875rem !important;
     line-height: 1.2 !important;
   }
 
@@ -412,7 +444,7 @@ a:hover {
     padding-bottom: 3rem !important;
   }
 
-  /* Filter row stacks on small screens — already flex-col but make sure */
+  /* Filter row stacks on small screens */
   .flex.flex-col.md\:flex-row {
     flex-direction: column !important;
   }
@@ -476,6 +508,11 @@ a:hover {
 
 /* ---- CARS/[ID] DETAIL PAGE ---- */
 @media (max-width: 768px) {
+  /* Prevent the whole detail page from scrolling sideways */
+  .min-h-screen.bg-gradient-to-br {
+    overflow-x: hidden !important;
+  }
+
   /* Main grid: stack left/right columns */
   .grid.grid-cols-1.lg\:grid-cols-3 {
     grid-template-columns: 1fr !important;
@@ -500,9 +537,27 @@ a:hover {
     min-width: auto;
   }
 
-  /* Main image */
+  /* ✅ FIXED: Main image — constrain fully to viewport width */
   .relative.h-80 {
-    height: 14rem !important; /* 224px */
+    height: 56vw !important;
+    max-height: 260px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .relative.h-80 img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  /* Image gallery card: never exceed viewport */
+  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
 
   /* Image thumbnails: horizontal scroll */
@@ -521,8 +576,7 @@ a:hover {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Bid/contact panel — sits below main on mobile but should be reachable */
-  /* Right sidebar sticky: disable sticky on mobile */
+  /* Right sidebar sticky: disable on mobile */
   .lg\:sticky {
     position: static !important;
   }
@@ -532,7 +586,7 @@ a:hover {
     margin-top: 1rem;
   }
 
-  /* Price — larger & centered */
+  /* Price — slightly smaller */
   .text-3xl.font-bold.text-red-800 {
     font-size: 1.5rem !important;
   }
@@ -564,12 +618,11 @@ a:hover {
     width: 100%;
   }
 
-  /* Stats grid: 2 cols on phone (1 col was too sparse, 3 too cramped) */
+  /* Stats grid: 2 cols on phone */
   .grid.grid-cols-1.md\:grid-cols-3 {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* But single col for very small */
   @media (max-width: 400px) {
     .grid.grid-cols-1.md\:grid-cols-3 {
       grid-template-columns: 1fr !important;
@@ -578,7 +631,7 @@ a:hover {
 
   /* Listings table: don't overflow */
   .overflow-x-auto table {
-    min-width: 500px; /* force scroll for table */
+    min-width: 500px;
   }
 
   /* Dashboard table header filter row: stack */
@@ -588,9 +641,21 @@ a:hover {
     gap: 0.75rem;
   }
 
-  /* Quick actions 2-col grid: force on mobile too */
+  /* Quick actions 2-col grid */
   .grid.grid-cols-2.gap-3 {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Listing card rows: stack on mobile */
+  .flex.flex-col.md\:flex-row.md\:items-center.justify-between {
+    flex-direction: column !important;
+    gap: 0.75rem;
+  }
+
+  /* Action button rows: wrap */
+  .flex.space-x-2 {
+    flex-wrap: wrap;
+    gap: 0.25rem;
   }
 }
 
@@ -620,7 +685,6 @@ a:hover {
   /* Edit form: stack the action buttons */
   .flex.justify-end.space-x-3 {
     flex-direction: column !important;
-    space-x: 0 !important;
     gap: 0.5rem;
   }
 
@@ -663,18 +727,6 @@ a:hover {
   .overflow-x-auto table {
     min-width: 600px;
   }
-
-  /* User/listing card rows: stack on mobile */
-  .flex.flex-col.md\:flex-row.md\:items-center.justify-between {
-    flex-direction: column !important;
-    gap: 0.75rem;
-  }
-
-  /* Action button rows: wrap */
-  .flex.space-x-2 {
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
 }
 
 /* ---- CHAT PAGE ---- */
@@ -715,7 +767,7 @@ a:hover {
     padding-bottom: 2.5rem !important;
   }
 
-  /* Cards: remove scale transform on mobile (causes layout shift) */
+  /* Cards: remove scale transform on mobile */
   .hover\:scale-105:hover,
   .hover\:transform:hover {
     transform: none !important;

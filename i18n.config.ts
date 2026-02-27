@@ -1,7 +1,7 @@
 export default {
   legacy: false,
   locale: 'en',
-  availableLocales: ['en', 'fr', 'de', 'ro', 'sr', 'ar', 'bg', 'uk', 'el', 'ru'],
+  availableLocales: ['en', 'fr', 'de', 'ro', 'sr', 'ar', 'bg', 'uk', 'el', 'ru', 'pl', 'sq', 'es', 'it'],
   messages: {
     en: () => import('./i18n/locales/en.json'),
     fr: () => import('./i18n/locales/fr.json'),
@@ -12,6 +12,10 @@ export default {
     el: () => import('./i18n/locales/el.json'),
     ro: () => import('./i18n/locales/ro.json'),
     ru: () => import('./i18n/locales/ru.json'),
-    sr: () => import('./i18n/locales/sr.json')
+    sr: () => import('./i18n/locales/sr.json'),
+    pl: () => import('./i18n/locales/pl.json'),
+    sq: () => import('./i18n/locales/sq.json'),
+    es: () => import('./i18n/locales/es.json'),
+    it: () => import('./i18n/locales/it.json'),
   }
 }

@@ -66,16 +66,36 @@
 
           <!-- Desktop Right Actions -->
           <div class="hidden md:flex items-center space-x-2 lg:space-x-3 shrink-0">
-            <!-- Language Switcher -->
-            <select
-              v-model="locale"
-              @change="handleLanguageChange"
-              class="lang-switcher bg-white border border-red-300 text-red-700 rounded-xl px-3 py-2 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition-colors"
-            >
-              <option v-for="loc in locales" :key="loc.code" :value="loc.code">
-                {{ loc.code.toUpperCase() }}
-              </option>
-            </select>
+
+            <!-- Language Switcher Dropdown -->
+            <div class="relative">
+              <button
+                @click="langDropdownOpen = !langDropdownOpen"
+                class="flex items-center gap-1.5 bg-white border border-red-300 text-red-700 rounded-xl px-3 py-2 text-sm cursor-pointer hover:border-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <span>{{ currentLang.flag }}</span>
+                <span class="font-medium hidden lg:inline">{{ currentLang.name }}</span>
+                <svg class="w-3.5 h-3.5 text-red-500 transition-transform" :class="langDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div
+                v-if="langDropdownOpen"
+                class="absolute right-0 top-full mt-1 bg-white border border-red-200 rounded-xl shadow-xl z-50 min-w-[160px] py-1 overflow-hidden"
+                v-click-outside="() => langDropdownOpen = false"
+              >
+                <button
+                  v-for="lang in availableLanguages"
+                  :key="lang.code"
+                  @click="switchLanguage(lang.code)"
+                  class="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-800 hover:bg-red-50 transition-colors"
+                  :class="locale === lang.code ? 'bg-red-50 font-semibold' : ''"
+                >
+                  <span class="text-base">{{ lang.flag }}</span>
+                  <span>{{ lang.name }}</span>
+                </button>
+              </div>
+            </div>
 
             <!-- Loading skeleton -->
             <div v-if="!auth.isInitialized" class="flex space-x-2">
@@ -132,8 +152,38 @@
             </template>
           </div>
 
-          <!-- Mobile: Messages + Hamburger -->
+          <!-- Mobile: Language + Messages + Hamburger -->
           <div class="flex md:hidden items-center gap-1">
+
+            <!-- Mobile Language Switcher -->
+            <div class="relative">
+              <button
+                @click="langDropdownOpen = !langDropdownOpen"
+                class="flex items-center gap-1 p-2 rounded-xl text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors"
+              >
+                <span class="text-base">{{ currentLang.flag }}</span>
+                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div
+                v-if="langDropdownOpen"
+                class="absolute right-0 top-full mt-1 bg-white border border-red-200 rounded-xl shadow-xl z-50 min-w-[160px] py-1 overflow-hidden"
+                v-click-outside="() => langDropdownOpen = false"
+              >
+                <button
+                  v-for="lang in availableLanguages"
+                  :key="lang.code"
+                  @click="switchLanguage(lang.code)"
+                  class="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-800 hover:bg-red-50 transition-colors"
+                  :class="locale === lang.code ? 'bg-red-50 font-semibold' : ''"
+                >
+                  <span class="text-base">{{ lang.flag }}</span>
+                  <span>{{ lang.name }}</span>
+                </button>
+              </div>
+            </div>
+
             <NuxtLink v-if="currentUser" :to="localePath('/messages')" class="relative p-2 rounded-xl text-red-700 hover:bg-red-50">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
@@ -222,20 +272,6 @@
                 {{ unreadCount > 9 ? '9+' : unreadCount }}
               </span>
             </NuxtLink>
-
-            <!-- Language Switcher -->
-            <div class="px-4 py-3 bg-red-50 border-t border-red-100">
-              <label class="block text-xs font-semibold text-red-700 mb-1.5 uppercase tracking-wider">{{ t('language') || 'Language' }}</label>
-              <select
-                v-model="locale"
-                @change="handleLanguageChange; closeMobileMenu()"
-                class="w-full bg-white border-2 border-red-300 text-red-800 rounded-xl px-3 py-2.5 text-sm font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              >
-                <option v-for="loc in locales" :key="loc.code" :value="loc.code">
-                  {{ loc.code.toUpperCase() }}
-                </option>
-              </select>
-            </div>
 
             <!-- Auth Section -->
             <div class="border-t border-red-100">
@@ -392,6 +428,7 @@
 
 <script setup lang="ts">
 const mobileMenuOpen = ref(false)
+const langDropdownOpen = ref(false)
 const { locales, locale } = useI18n()
 const { t } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
@@ -404,6 +441,38 @@ const currentUser = computed(() => auth.user?.value ?? null)
 
 const currentUserId = computed(() => currentUser.value?.id || 1)
 const unreadCount = ref(0)
+
+// Available languages with flags and full names
+const availableLanguages = [
+  { code: 'en', flag: '🇬🇧', name: 'English' },
+  { code: 'fr', flag: '🇫🇷', name: 'Français' },
+  { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
+  { code: 'ro', flag: '🇷🇴', name: 'Română' },
+  { code: 'sr', flag: '🇷🇸', name: 'Srpski' },
+  { code: 'ar', flag: '🇸🇦', name: 'العربية' },
+  { code: 'bg', flag: '🇧🇬', name: 'Български' },
+  { code: 'uk', flag: '🇺🇦', name: 'Українська' },
+  { code: 'el', flag: '🇬🇷', name: 'Ελληνικά' },
+  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
+  { code: 'pl', flag: '🇵🇱', name: 'Polski' },
+  { code: 'sq', flag: '🇦🇱', name: 'Shqip' },
+  { code: 'es', flag: '🇪🇸', name: 'Español' },
+  { code: 'it', flag: '🇮🇹', name: 'Italiano' },
+]
+
+const currentLang = computed(() => {
+  return availableLanguages.find(l => l.code === locale.value) || availableLanguages[0]
+})
+
+const switchLanguage = (code: string) => {
+  langDropdownOpen.value = false
+  const route = useRoute()
+  const cleanPath = route.fullPath.replace(
+    new RegExp(`^/(${locales.value.map(l => l.code).join('|')})`),
+    ''
+  )
+  window.location.assign(`/${code}${cleanPath || '/'}`)
+}
 
 const handleLogout = async () => {
   try {
@@ -418,16 +487,6 @@ const handleLogout = async () => {
     closeMobileMenu()
     await navigateTo(localePath('/'))
   }
-}
-
-const handleLanguageChange = async () => {
-  const route = useRoute()
-  const newLocale = locale.value as string
-  const cleanPath = route.fullPath.replace(
-    new RegExp(`^/(${locales.value.map(l => l.code).join('|')})`),
-    ''
-  )
-  window.location.assign(`/${newLocale}${cleanPath}`)
 }
 
 const toggleMobileMenu = () => {
@@ -500,19 +559,5 @@ onMounted(() => {
 
 .social-link {
   @apply w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center text-red-700 hover:text-white hover:bg-red-700 transition-all duration-300 shadow hover:shadow-lg hover:scale-105;
-}
-
-/* ============================================================
-   LANGUAGE SELECT — hide default arrow, show custom one
-   ============================================================ */
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23b91c1c'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  background-size: 1rem;
-  padding-right: 2rem !important;
 }
 </style>

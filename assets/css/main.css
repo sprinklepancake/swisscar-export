@@ -828,3 +828,41 @@ a:hover {
     padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
   }
 }
+/* ============================================================
+   FIX: Car detail page — main image overflow on mobile
+   ============================================================ */
+@media (max-width: 768px) {
+  .relative.h-80 {
+    height: 60vw !important;
+    max-height: 300px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .relative.h-80 img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+  }
+
+  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+}
+
+/* ============================================================
+   FIX: Car cards — make the entire card clickable
+   ============================================================ */
+a.car-card {
+  display: block !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+a.car-card:hover {
+  text-decoration: none !important;
+}

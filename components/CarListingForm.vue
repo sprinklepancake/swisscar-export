@@ -1521,8 +1521,7 @@ const canProceedLocation = computed(() => {
 })
 
 const isFinalStepValid = computed(() => {
-  return form.value.description.length >= 50 && 
-         form.value.acceptedTerms
+  return form.value.acceptedTerms
 })
 
 // Methods

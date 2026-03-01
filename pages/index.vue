@@ -3,7 +3,7 @@
 
     <!-- Hero Section -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <!-- Original Animated Background -->
+      <!-- Animated Background -->
       <div class="absolute inset-0 z-0">
         <div class="absolute top-20 left-20 w-72 h-72 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div class="absolute top-40 right-20 w-96 h-96 bg-red-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
@@ -51,7 +51,7 @@
                 <div class="relative flex-1">
                   <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-700 text-sm font-semibold">CHF</span>
                   <input v-model.number="filters.priceMin" type="number" :placeholder="t('min_price')" 
-                        class="search-input pl-10" :disabled="loadingFilters">
+                         class="search-input pl-10" :disabled="loadingFilters">
                 </div>
                 <span class="text-red-700 self-center">-</span>
                 <div class="relative flex-1">
@@ -161,112 +161,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Shipping Ad Section -->
-        <div class="mb-8 max-w-4xl mx-auto">
-          <div class="glass rounded-2xl p-6 md:p-8 border-2 border-red-300 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-red-50 via-white to-red-50">
-            <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
-              <!-- Image container -->
-              <div class="flex-shrink-0 w-full lg:w-[55%]">
-                <div class="rounded-xl overflow-hidden border-2 border-red-300 shadow-lg bg-white">
-                  <img 
-                    src="/assets/images/car-transport.jpeg" 
-                    :alt="t('shipping_ad.alt_text') || 'Mega cars GmbH - Auto Transport Service'"
-                    class="w-full h-full object-cover object-center"
-                    loading="lazy"
-                    style="aspect-ratio: 16/9;"
-                  />
-                </div>
-              </div>
-              
-              <!-- Content area -->
-              <div class="flex flex-col justify-between flex-grow w-full lg:w-[45%]">
-                <!-- Text Content -->
-                <div class="mb-6">
-                  <h3 class="text-2xl lg:text-3xl font-bold text-red-900 mb-4">{{ t('shipping_ad.title') || '🚛 Mega cars GmbH' }}</h3>
-                  <div class="space-y-4">
-                    <!-- Badge -->
-                    <div class="inline-flex items-center bg-gradient-to-r from-red-100 to-red-200 px-4 py-2.5 rounded-lg border border-red-300 shadow-sm">
-                      <svg class="w-5 h-5 mr-2 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                      <span class="font-semibold text-red-800 text-sm lg:text-base">{{ t('shipping_ad.badge_text') || 'Auto transport • Ganze Schweiz • Gute Preise' }}</span>
-                    </div>
-                    
-                    <!-- Info box -->
-                    <div class="bg-red-50 rounded-lg p-5 border border-red-200">
-                      <p class="text-red-800 mb-4 flex items-start text-sm lg:text-base">
-                        <svg class="w-5 h-5 mr-2 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                        </svg>
-                        <span>{{ t('shipping_ad.description') || 'Schicken Sie uns die Adresse von Punkt A nach Punkt B per Whatsapp' }}</span>
-                      </p>
-                      
-                      <div class="text-center">
-                        <p class="text-xl lg:text-2xl font-bold text-red-900 mb-1">📞 076 448 08 49</p>
-                        <p class="text-xs lg:text-sm text-red-600 font-medium">{{ t('shipping_ad.phone_subtext') || 'für ein unverbindliches Angebot' }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- WhatsApp Button -->
-                <div>
-                  <a href="https://wa.me/41764480849?text=Hallo%20Mega%20cars%20GmbH,%20ich%20benötige%20ein%20Transportangebot%20für%20ein%20Auto." 
-                    target="_blank"
-                    class="w-full px-6 py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-base lg:text-lg">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                    </svg>
-                    {{ t('shipping_ad.whatsapp_button') || 'WhatsApp Angebot anfordern' }}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Enhanced CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center">
-          <NuxtLink :to="localePath('/cars')" class="cta-button-primary group">
-            <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            {{ t('cta_browse') }}
-          </NuxtLink>
-          <NuxtLink :to="localePath('/sell')" class="cta-button-secondary group">
-            <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-            {{ t('cta_sell') }}
-          </NuxtLink>
-        </div>
-
-        <!-- Trust Indicators -->
-        <div v-if="!loadingStats" class="mt-12 flex flex-wrap justify-center items-center gap-6 md:gap-8 text-red-700">
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-red-700 rounded-full animate-pulse"></div>
-            <span class="text-sm">{{ stats.totalCars || '0' }} {{ t('stats.cars_available') || 'Cars Available' }}</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-            <span class="text-sm">{{ stats.totalSellers || '0' }} {{ t('stats.verified_sellers') || 'Verified Sellers' }}</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-red-800 rounded-full animate-pulse"></div>
-            <span class="text-sm">{{ stats.countriesServed || '0' }}+ {{ t('stats.countries_served') || 'Countries Served' }}</span>
-          </div>
-        </div>
-        <div v-else class="mt-12 text-center text-red-700">
-          <div class="inline-flex items-center">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            {{ t('loading') || 'Loading stats...' }}
-          </div>
-        </div>
       </div>
     </section>
 
@@ -289,7 +183,7 @@
         <!-- Loading State -->
         <div v-if="loadingFeaturedCars" class="text-center py-12">
           <div class="inline-flex items-center text-red-700">
-            <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-red-700" xmlns="http://www.w3.org2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -322,53 +216,29 @@
                 :src="car.images && car.images[0] ? car.images[0] : '/placeholder-car.jpg'" 
                 :alt="`${car.make} ${car.model}`"
                 class="w-full h-full object-cover"
-              />
-              
-              <!-- Premium Featured Badge -->
-              <div class="absolute top-2 left-2">
-                <div class="premium-badge flex items-center bg-gradient-to-r from-yellow-400 to-yellow-500 text-red-900 px-2 py-1 rounded-full text-xs font-bold">
-                  <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  {{ t('featured') }}
-                </div>
-              </div>
-              
-              <!-- Feature Duration Badge -->
-              <div v-if="car.featuredDaysRemaining" class="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                {{ car.featuredDaysRemaining }}d {{ t('days_left') || 'left' }}
-              </div>
-              
-              <!-- Permanent Feature Badge -->
-              <div v-if="car.permanentFeature" class="absolute bottom-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                🔥 {{ t('permanent_feature') || 'Permanent' }}
-              </div>
+              >
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <div v-if="car.isFeatured" class="absolute top-2 left-2 bg-red-700 text-white px-2 py-0.5 rounded text-xs font-semibold">⭐ {{ t('featured') || 'Featured' }}</div>
             </div>
             
-            <div class="p-3">
-              <h3 class="text-base font-bold text-red-900 mb-1 group-hover:text-red-700 transition-colors line-clamp-1">
-                {{ car.make }} {{ car.model }} ({{ car.year }})
-              </h3>
+            <div class="p-4">
+              <h3 class="font-bold text-red-900 text-sm truncate">{{ car.make }} {{ car.model }}</h3>
+              <p class="text-red-700 text-xs mb-2">{{ car.year }} • {{ formatMileage(car.mileage) }}</p>
               
-              <div class="flex justify-between items-center mb-2">
-                <div class="text-red-600 font-bold text-base">
-                  {{ car.price ? `CHF ${formatPrice(car.price)}` : t('price_on_request') || 'Price on request' }}
-                </div>
-                <div class="text-xs text-gray-600">
-                  {{ formatMileage(car.mileage) }}
+              <div class="flex justify-between items-center mb-3">
+                <div class="text-red-800 font-bold text-sm">
+                  {{ car.price ? `CHF ${formatPrice(car.price)}` : t('price_on_request') || 'On request' }}
                 </div>
               </div>
               
               <!-- Quick Specs -->
               <div class="flex items-center text-xs text-red-700 mb-2 space-x-2 flex-wrap">
                 <span>{{ formatFuelType(car.fuelType) }}</span>
-                <span>•</span>
-                <span v-if="car.power">{{ car.power }} PS</span>
-                <span v-if="car.power">•</span>
-                <span>{{ formatTransmission(car.transmission) }}</span>
+                <span v-if="car.power">• {{ car.power }} PS</span>
+                <span>• {{ formatTransmission(car.transmission) }}</span>
               </div>
               
-              <!-- Seller Info -->
+              <!-- Location -->
               <div class="flex items-center text-xs text-gray-600 mb-3">
                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -388,14 +258,12 @@
           </div>
         </div>
         
-        <!-- Pagination Controls -->
+        <!-- Load More -->
         <div v-if="featuredCars.length > 20" class="mt-8 text-center">
-          <div class="inline-flex items-center space-x-2">
-            <button @click="loadMoreFeatured" :disabled="loadingMore" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
-              <span v-if="loadingMore">{{ t('loading') || 'Loading...' }}</span>
-              <span v-else>{{ t('load_more_featured') || 'Load More Featured Cars' }}</span>
-            </button>
-          </div>
+          <button @click="loadMoreFeatured" :disabled="loadingMore" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
+            <span v-if="loadingMore">{{ t('loading') || 'Loading...' }}</span>
+            <span v-else>{{ t('load_more_featured') || 'Load More Featured Cars' }}</span>
+          </button>
         </div>
       </div>
     </section>
@@ -426,25 +294,25 @@
     <section v-if="!loadingStats" class="py-20 bg-gradient-to-br from-red-50 to-white">
       <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div class="text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0s">
+          <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
               {{ stats.totalCars || '0' }}
             </div>
             <div class="text-red-700 font-medium">{{ t('stat_label_1') }}</div>
           </div>
-          <div class="text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.1s">
+          <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
               {{ stats.totalSellers || '0' }}
             </div>
             <div class="text-red-700 font-medium">{{ t('stat_label_2') }}</div>
           </div>
-          <div class="text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.2s">
+          <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
               {{ stats.totalUsers || '0' }}
             </div>
             <div class="text-red-700 font-medium">{{ t('stat_label_3') }}</div>
           </div>
-          <div class="text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.3s">
+          <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
               {{ stats.countriesServed || '50' }}+
             </div>
@@ -453,6 +321,15 @@
         </div>
       </div>
     </section>
+    <div v-else class="py-12 text-center text-red-700">
+      <div class="inline-flex items-center">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        {{ t('loading') || 'Loading stats...' }}
+      </div>
+    </div>
 
     <!-- Enhanced Newsletter Section -->
     <section class="py-20 bg-gradient-to-br from-white to-red-50">
@@ -513,19 +390,78 @@ useHead({
   ]
 })
 
-// State
+// ─── Static fallback make/model data ─────────────────────────────────────────
+const staticMakeModels: Record<string, string[]> = {
+  'Volkswagen': ['Golf', 'Passat', 'Tiguan', 'Polo', 'T-Roc', 'Touareg', 'Arteon', 'ID.3', 'ID.4', 'Touran', 'Sharan', 'Caddy', 'Transporter'],
+  'Audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'TT', 'R8', 'e-tron', 'e-tron GT'],
+  'Mercedes-Benz': ['A-Class', 'B-Class', 'C-Class', 'E-Class', 'S-Class', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'AMG GT', 'CLA', 'CLS', 'EQC', 'EQS', 'Vito', 'Sprinter'],
+  'BMW': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'iX', 'M3', 'M5'],
+  'Opel': ['Astra', 'Corsa', 'Insignia', 'Crossland', 'Grandland', 'Mokka', 'Zafira', 'Combo', 'Vivaro'],
+  'Porsche': ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', 'Boxster', 'Cayman'],
+  'Smart': ['Fortwo', 'Forfour', '#1', '#3'],
+  'Toyota': ['Yaris', 'Corolla', 'Camry', 'RAV4', 'Highlander', 'Land Cruiser', 'Prius', 'C-HR', 'Hilux', 'GR86', 'GR Yaris', 'Supra', 'Avensis'],
+  'Honda': ['Civic', 'Accord', 'HR-V', 'CR-V', 'Jazz', 'e', 'NSX', 'Type R'],
+  'Nissan': ['Micra', 'Juke', 'Qashqai', 'X-Trail', 'Leaf', 'Ariya', 'GT-R', '370Z', 'Navara'],
+  'Mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-30', 'CX-5', 'CX-60', 'MX-5'],
+  'Mitsubishi': ['Colt', 'Lancer', 'Outlander', 'Eclipse Cross', 'L200', 'ASX'],
+  'Subaru': ['Impreza', 'Legacy', 'Outback', 'Forester', 'XV', 'BRZ', 'WRX'],
+  'Suzuki': ['Swift', 'Vitara', 'S-Cross', 'Jimny', 'Ignis', 'Baleno'],
+  'Lexus': ['IS', 'ES', 'GS', 'LS', 'UX', 'NX', 'RX', 'LX', 'LC', 'LM'],
+  'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Puma', 'Explorer', 'Mustang', 'F-150', 'Ranger', 'Transit'],
+  'Chevrolet': ['Spark', 'Malibu', 'Camaro', 'Corvette', 'Equinox', 'Traverse', 'Silverado'],
+  'Cadillac': ['CT4', 'CT5', 'Escalade', 'XT4', 'XT5', 'XT6'],
+  'Jeep': ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler', 'Avenger'],
+  'Dodge': ['Challenger', 'Charger', 'Durango', 'Journey'],
+  'Chrysler': ['300', 'Pacifica', 'Voyager'],
+  'Tesla': ['Model 3', 'Model S', 'Model X', 'Model Y', 'Cybertruck'],
+  'Hyundai': ['i10', 'i20', 'i30', 'Tucson', 'Santa Fe', 'Ioniq 5', 'Ioniq 6', 'Kona', 'Nexo'],
+  'Kia': ['Picanto', 'Rio', 'Ceed', 'Sportage', 'Sorento', 'EV6', 'Niro', 'Stinger'],
+  'Genesis': ['G70', 'G80', 'G90', 'GV70', 'GV80'],
+  'Renault': ['Clio', 'Megane', 'Captur', 'Kadjar', 'Koleos', 'Zoe', 'Arkana', 'Austral'],
+  'Peugeot': ['108', '208', '308', '508', '2008', '3008', '5008', 'e-208', 'e-2008'],
+  'Citroën': ['C1', 'C3', 'C4', 'C5', 'Berlingo', 'SpaceTourer'],
+  'DS Automobiles': ['DS3', 'DS4', 'DS7', 'DS9'],
+  'Fiat': ['500', 'Punto', 'Tipo', 'Panda', '500X', '500L', 'Ducato'],
+  'Alfa Romeo': ['Giulia', 'Stelvio', 'Tonale', 'Giulietta', '4C'],
+  'Lancia': ['Ypsilon'],
+  'Ferrari': ['Roma', 'Portofino', 'SF90', '296 GTB', 'F8 Tributo'],
+  'Lamborghini': ['Huracan', 'Urus', 'Revuelto'],
+  'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'Grecale', 'MC20'],
+  'Land Rover': ['Defender', 'Discovery', 'Discovery Sport', 'Range Rover', 'Range Rover Sport', 'Range Rover Evoque', 'Range Rover Velar'],
+  'Jaguar': ['E-Pace', 'F-Pace', 'I-Pace', 'F-Type', 'XE', 'XF', 'XJ'],
+  'Mini': ['Cooper', 'Clubman', 'Countryman', 'Paceman', 'Roadster', 'Convertible'],
+  'Bentley': ['Continental GT', 'Flying Spur', 'Bentayga', 'Mulsanne'],
+  'Rolls-Royce': ['Ghost', 'Phantom', 'Wraith', 'Dawn', 'Cullinan', 'Spectre'],
+  'Aston Martin': ['Vantage', 'DB11', 'DBS', 'DBX'],
+  'Volvo': ['S60', 'S90', 'V60', 'V90', 'XC40', 'XC60', 'XC90', 'C40'],
+  'Polestar': ['Polestar 2', 'Polestar 3', 'Polestar 4'],
+  'Skoda': ['Fabia', 'Octavia', 'Superb', 'Kamiq', 'Karoq', 'Kodiaq', 'Enyaq'],
+  'Seat': ['Ibiza', 'Leon', 'Ateca', 'Arona', 'Tarraco'],
+  'Cupra': ['Formentor', 'Born', 'Ateca'],
+  'Dacia': ['Sandero', 'Duster', 'Logan', 'Spring'],
+  'BYD': ['Atto 3', 'Han', 'Tang', 'Seal', 'Dolphin', 'Seagull'],
+  'MG': ['MG3', 'MG ZS', 'MG HS', 'MG5', 'MG4', 'Cyberster'],
+  'Geely': ['Emgrand', 'Atlas', 'Coolray'],
+  'Nio': ['ET5', 'ET7', 'ES6', 'ES8', 'EC7'],
+  'XPeng': ['P7', 'P5', 'G3', 'G9'],
+}
+
+const staticMakes = Object.keys(staticMakeModels)
+
+// ─── State ────────────────────────────────────────────────────────────────────
 const email = ref('')
 const isSubscribing = ref(false)
 const showQuickFilters = ref(false)
 const loadingFeaturedCars = ref(false)
 const loadingFilters = ref(false)
 const loadingStats = ref(false)
+const loadingMore = ref(false)
 
-// Real Data
+// Real Data — initialised with static data so dropdowns work immediately
 const featuredCars = ref([])
 const filterOptions = ref({
-  makes: [],
-  makeModels: {},
+  makes: staticMakes,
+  makeModels: staticMakeModels,
   fuelTypes: [],
   transmissionTypes: [],
   bodyTypes: [],
@@ -603,33 +539,19 @@ const fetchFeaturedCars = async () => {
     let data = null
     
     try {
-      data = await $fetch('/api/cars/featured', {
-        params: {
-          limit: 20
-        }
-      })
+      data = await $fetch('/api/cars/featured', { params: { limit: 20 } })
     } catch (error1) {
       const response = await $fetch('/api/cars', {
-        params: {
-          featured: true,
-          limit: 20,
-          status: 'active'
-        }
+        params: { featured: true, limit: 20, status: 'active' }
       })
       data = response?.cars || response || []
     }
     
     let cars = []
-    
-    if (data && Array.isArray(data)) {
-      cars = data
-    } else if (data && data.featuredCars) {
-      cars = data.featuredCars
-    } else if (data && data.cars) {
-      cars = data.cars
-    } else {
-      cars = []
-    }
+    if (data && Array.isArray(data)) cars = data
+    else if (data && data.featuredCars) cars = data.featuredCars
+    else if (data && data.cars) cars = data.cars
+    else cars = []
     
     featuredCars.value = cars
     
@@ -641,7 +563,7 @@ const fetchFeaturedCars = async () => {
   }
 }
 
-// Fetch filter options from API
+// Fetch filter options from API — merges with static fallback
 const fetchFilterOptions = async () => {
   loadingFilters.value = true
   try {
@@ -654,9 +576,14 @@ const fetchFilterOptions = async () => {
     }
     
     if (data) {
+      // Use API makeModels only if non-empty, otherwise keep static fallback
+      const apiMakeModels = data.makeModels && Object.keys(data.makeModels).length > 0
+        ? data.makeModels
+        : staticMakeModels
+
       filterOptions.value = {
-        makes: data.makes || [],
-        makeModels: data.makeModels || {},
+        makes: data.makes?.length > 0 ? data.makes : staticMakes,
+        makeModels: apiMakeModels,
         fuelTypes: data.fuelTypes || [],
         transmissionTypes: data.transmissionTypes || [],
         bodyTypes: data.bodyTypes || [],
@@ -677,93 +604,29 @@ const fetchFilterOptions = async () => {
       }
     }
   } catch (error) {
-    console.error('Error fetching filter options:', error)
-    // Use fallback options
+    console.error('Error fetching filter options, using static fallback:', error)
+    // Full static fallback — makes & models always available
     filterOptions.value = {
-      makes: ['Volkswagen', 'Toyota', 'BMW', 'Mercedes', 'Audi', 'Ford', 'Opel', 'Skoda', 'Renault', 'Peugeot'],
-      makeModels: {},
-      fuelTypes: [
-        { value: 'petrol', label: t('fuel_petrol') },
-        { value: 'diesel', label: t('fuel_diesel') },
-        { value: 'electric', label: t('fuel_electric') },
-        { value: 'hybrid', label: t('fuel_hybrid') },
-        { value: 'lpg', label: 'LPG' },
-        { value: 'cng', label: 'CNG' }
-      ],
-      transmissionTypes: [
-        { value: 'manual', label: t('transmission_manual') || 'Manual' },
-        { value: 'automatic', label: t('transmission_automatic') || 'Automatic' },
-        { value: 'semi_automatic', label: t('car_listing_form.semi_automatic') || 'Semi-Automatic' }
-      ],
-      bodyTypes: [
-        { value: 'sedan', label: 'Sedan' },
-        { value: 'suv', label: 'SUV / Off-road' },
-        { value: 'station_wagon', label: 'Station Wagon' },
-        { value: 'cabriolet', label: 'Cabriolet' },
-        { value: 'coupe', label: 'Coupé' },
-        { value: 'compact', label: 'Compact Car' },
-        { value: 'pickup', label: 'Pick-up' },
-        { value: 'minivan', label: 'Minivan' },
-        { value: 'van', label: 'Van' }
-      ],
-      conditions: [
-        { value: 'excellent', label: t('condition_excellent') },
-        { value: 'good', label: t('condition_good') },
-        { value: 'fair', label: t('condition_fair') },
-        { value: 'poor', label: t('condition_poor') }
-      ],
-      driveTypes: [
-        { value: 'fwd', label: 'Front-wheel drive' },
-        { value: 'rwd', label: 'Rear-wheel drive' },
-        { value: 'awd', label: 'All-wheel (4x4)' }
-      ],
-      sellerTypes: [
-        { value: 'private', label: 'Private Seller' },
-        { value: 'dealer', label: 'Car Dealer' },
-        { value: 'business', label: 'Business' }
-      ],
-      exteriorColors: [
-        { value: 'black', label: t('car_details.color') || 'Black' },
-        { value: 'white', label: t('car_details.color') || 'White' },
-        { value: 'silver', label: t('car_details.color') || 'Silver' },
-        { value: 'gray', label: t('car_details.color') || 'Gray' },
-        { value: 'blue', label: t('car_details.color') || 'Blue' },
-        { value: 'red', label: t('car_details.color') || 'Red' },
-        { value: 'green', label: t('car_details.color') || 'Green' },
-        { value: 'brown', label: t('car_details.color') || 'Brown' }
-      ],
-      interiorColors: [
-        { value: 'black', label: t('car_details.color') || 'Black' },
-        { value: 'beige', label: t('car_details.color') || 'Beige' },
-        { value: 'brown', label: t('car_details.color') || 'Brown' },
-        { value: 'gray', label: t('car_details.color') || 'Gray' }
-      ],
-      doorOptions: [2, 3, 4, 5],
-      seatOptions: [2, 4, 5, 7, 8],
-      cylinderOptions: [1, 2, 3, 4, 5, 6, 8, 10, 12, 16],
-      equipmentFeatures: [
-        { value: 'air_conditioning', label: 'Air Conditioning' },
-        { value: 'navigation', label: 'Navigation System' },
-        { value: 'parking_sensors', label: 'Parking Sensors' },
-        { value: 'rear_camera', label: 'Rear Camera' },
-        { value: 'leather_seats', label: 'Leather Seats' },
-        { value: 'sunroof', label: 'Sunroof' },
-        { value: 'xenon_lights', label: 'Xenon Headlights' },
-        { value: 'led_lights', label: 'LED Headlights' },
-        { value: 'alloy_wheels', label: 'Alloy Wheels' },
-        { value: 'cruise_control', label: 'Cruise Control' },
-        { value: 'bluetooth', label: 'Bluetooth' },
-        { value: 'android_auto', label: 'Android Auto' },
-        { value: 'apple_carplay', label: 'Apple CarPlay' },
-        { value: 'heated_seats', label: 'Heated Seats' },
-        { value: 'electric_seats', label: 'Electric Seats' },
-        { value: 'panorama_roof', label: 'Panorama Roof' },
-        { value: 'towbar', label: 'Towbar' },
-        { value: 'isofix', label: 'Isofix' }
-      ],
+      makes: staticMakes,
+      makeModels: staticMakeModels,
+      fuelTypes: [],
+      transmissionTypes: [],
+      bodyTypes: [],
+      conditions: [],
+      driveTypes: [],
+      sellerTypes: [],
+      exteriorColors: [],
+      interiorColors: [],
+      doorOptions: [],
+      seatOptions: [],
+      cylinderOptions: [],
+      equipmentFeatures: [],
       cantons: [
-        'Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden', 'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft', 'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen', 'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura'
-      ].map(canton => ({ value: canton, label: canton })),
+        'Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden',
+        'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft',
+        'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen',
+        'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura'
+      ],
       minYear: 2000,
       maxYear: currentYear,
       minPrice: 0,
@@ -802,57 +665,45 @@ const fetchStats = async () => {
         countriesServed: data.countriesServed || 50
       }
     } else {
-      stats.value = {
-        totalCars: 0,
-        totalUsers: 0,
-        totalSellers: 0,
-        countriesServed: 50
-      }
+      stats.value = { totalCars: 0, totalUsers: 0, totalSellers: 0, countriesServed: 50 }
     }
   } catch (error) {
     console.error('Error fetching stats:', error)
-    stats.value = {
-      totalCars: 0,
-      totalUsers: 0,
-      totalSellers: 0,
-      countriesServed: 50
-    }
+    stats.value = { totalCars: 0, totalUsers: 0, totalSellers: 0, countriesServed: 50 }
   } finally {
     loadingStats.value = false
   }
 }
 
+// Load more
+const loadMoreFeatured = async () => {
+  loadingMore.value = true
+  await new Promise(resolve => setTimeout(resolve, 500))
+  loadingMore.value = false
+}
+
 // Enhanced search function
 const searchCars = () => {
-  const queryParams = {}
+  const queryParams: Record<string, any> = {}
   
-  const filterMappings = {
-    make: 'make',
-    model: 'model',
-    priceMin: 'priceMin',
-    priceMax: 'priceMax',
-    yearMin: 'yearMin',
-    yearMax: 'yearMax',
-    fuelType: 'fuelType',
-    transmission: 'transmission',
-    bodyType: 'bodyType',
-    condition: 'condition',
-    driveType: 'driveType'
+  const filterMappings: Record<string, string> = {
+    make: 'make', model: 'model',
+    priceMin: 'priceMin', priceMax: 'priceMax',
+    yearMin: 'yearMin', yearMax: 'yearMax',
+    fuelType: 'fuelType', transmission: 'transmission',
+    bodyType: 'bodyType', condition: 'condition', driveType: 'driveType'
   }
   
   Object.entries(filterMappings).forEach(([key, param]) => {
-    if (filters.value[key]) {
-      queryParams[param] = filters.value[key]
+    if (filters.value[key as keyof typeof filters.value]) {
+      queryParams[param] = filters.value[key as keyof typeof filters.value]
     }
   })
   
-  navigateTo({
-    path: localePath('/cars'),
-    query: queryParams
-  })
+  navigateTo({ path: localePath('/cars'), query: queryParams })
 }
 
-// Features - updated to use translation keys
+// Features
 const features = ref([
   {
     key: 'swiss_quality',
@@ -877,7 +728,6 @@ const features = ref([
 // Newsletter subscription
 const subscribeNewsletter = async () => {
   if (!email.value) return
-  
   isSubscribing.value = true
   try {
     await new Promise(resolve => setTimeout(resolve, 1500))
@@ -924,65 +774,14 @@ const formatTransmission = (transmission: string) => {
   return types[transmission.toLowerCase()] || transmission.charAt(0).toUpperCase() + transmission.slice(1)
 }
 
-const getFeatureIcon = (iconName: string) => {
+const getFeatureIcon = (_iconName: string) => {
   return 'div'
 }
 </script>
 
 <style scoped>
-/* Animation Delays */
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-.animation-delay-6000 {
-  animation-delay: 6s;
-}
-
-/* Premium Badge */
-.premium-badge {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #7c2d12;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-  display: flex;
-  align-items: center;
-  backdrop-filter: blur(10px);
-}
-
-/* Search Inputs */
-.search-input {
-  @apply w-full p-4 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm transition-all duration-200;
-}
-
-.search-input:disabled {
-  @apply opacity-50 cursor-not-allowed;
-}
-
-.search-input:focus {
-  @apply bg-white shadow-lg;
-}
-
 .search-button {
-  @apply px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-900 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center whitespace-nowrap;
-}
-
-.search-button:disabled {
-  @apply opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-lg;
-}
-
-.cta-button-primary {
-  @apply inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
-}
-
-.cta-button-secondary {
-  @apply inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
+  @apply px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center;
 }
 
 .feature-card {
@@ -1005,21 +804,10 @@ const getFeatureIcon = (iconName: string) => {
   @apply px-3 py-1 rounded-full text-xs font-semibold;
 }
 
-.status-available {
-  @apply bg-green-100 text-green-800;
-}
-
-.status-reserved {
-  @apply bg-yellow-100 text-yellow-800;
-}
-
-.status-sold {
-  @apply bg-gray-100 text-gray-800;
-}
-
-.status-draft {
-  @apply bg-blue-100 text-blue-800;
-}
+.status-available { @apply bg-green-100 text-green-800; }
+.status-reserved { @apply bg-yellow-100 text-yellow-800; }
+.status-sold { @apply bg-gray-100 text-gray-800; }
+.status-draft { @apply bg-blue-100 text-blue-800; }
 
 .newsletter-input {
   @apply w-full p-4 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm transition-all duration-200;
@@ -1030,64 +818,10 @@ const getFeatureIcon = (iconName: string) => {
 }
 
 .newsletter-button {
-  @apply px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-900 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:transform-none whitespace-nowrap;
+  @apply px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-900 transition-all duration-200 shadow-lg;
 }
 
-.glass {
-  @apply bg-white/70 backdrop-blur-md border border-red-200;
-}
-
-.text-shadow {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  .car-card {
-    margin-bottom: 1rem;
-  }
-  
-  .feature-card {
-    margin-bottom: 1rem;
-  }
-  
-  .search-input, .newsletter-input {
-    font-size: 16px; /* Prevents zoom on iOS */
-  }
-}
-
-/* Custom scrollbar for webkit browsers */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #fecaca;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #dc2626, #991b1b);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
-}
-
-/* Consistent styling for both pages */
 .search-input {
-  @apply w-full p-3 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm transition-all duration-200;
-}
-
-.search-input:disabled {
-  @apply opacity-50 cursor-not-allowed;
-}
-
-.search-input:focus {
-  @apply bg-white shadow-lg;
-}
-
-.search-button {
-  @apply px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-900 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center whitespace-nowrap;
+  @apply w-full p-3 border border-red-200 rounded-xl bg-white/80 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
 }
 </style>

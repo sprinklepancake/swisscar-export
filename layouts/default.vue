@@ -156,13 +156,15 @@
           <div class="flex md:hidden items-center gap-1">
 
             <!-- Mobile Language Switcher -->
+<!-- Mobile Language Switcher -->
             <div class="relative">
               <button
                 @click="langDropdownOpen = !langDropdownOpen"
-                class="flex items-center gap-1 p-2 rounded-xl text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors"
+                class="flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-xl text-red-700 hover:bg-red-50 border border-red-200 hover:border-red-400 transition-colors"
               >
                 <span class="text-base">{{ currentLang.flag }}</span>
-                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="max-w-[56px] truncate hidden xs:inline">{{ currentLang.name }}</span>
+                <svg class="w-3 h-3 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>

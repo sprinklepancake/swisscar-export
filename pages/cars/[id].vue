@@ -1641,7 +1641,6 @@ watch(() => auth.user.value, async (newUser) => {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-
 /* ============================================================
    MOBILE FIXES — scoped so they definitely apply to this page
    ============================================================ */
@@ -1729,11 +1728,22 @@ watch(() => auth.user.value, async (newUser) => {
     padding: 1rem !important;
   }
 
-  /* 12. Tab bar — horizontally scrollable */
-  .border-b .flex.overflow-x-auto {
+  /* ===== STRONGER TAB FIX – ensures horizontal scroll ===== */
+  .border-b > .flex.overflow-x-auto {
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
+  }
+
+  .border-b > .flex.overflow-x-auto > button {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* Hide scrollbar for cleaner look */
+  .border-b > .flex.overflow-x-auto::-webkit-scrollbar {
+    display: none !important;
   }
 
   /* 13. Tab content area — smaller padding */

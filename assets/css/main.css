@@ -866,3 +866,209 @@ a.car-card {
 a.car-card:hover {
   text-decoration: none !important;
 }
+
+/* ============================================================
+   FIX BATCH: All mobile issues — paste this at the END of main.css
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   1. GLOBAL: prevent any page from overflowing horizontally
+   ---------------------------------------------------------- */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* ----------------------------------------------------------
+   2. CAR DETAIL PAGE — complete mobile overhaul
+   ---------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* Page root: no horizontal scroll */
+  .min-h-screen.bg-gradient-to-br {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  /* All max-w containers: fit to screen */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: 100% !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Image gallery card: fit viewport, no overflow */
+  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Main hero image: proportional height, never wider than screen */
+  .relative.h-80 {
+    height: 55vw !important;
+    max-height: 260px !important;
+    min-height: 160px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .relative.h-80 > img,
+  .relative.h-80 img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  /* Thumbnail strip: scrollable, thumbnails shrink to fixed size */
+  .flex.gap-2.overflow-x-auto,
+  .flex.gap-2.p-4.overflow-x-auto {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 0.75rem !important;
+  }
+
+  .flex.gap-2.overflow-x-auto::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Each thumbnail: fixed small size */
+  .flex.gap-2.overflow-x-auto > div,
+  .flex.gap-2.p-4.overflow-x-auto > div {
+    flex-shrink: 0 !important;
+    width: 72px !important;
+    height: 54px !important;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .flex.gap-2.overflow-x-auto > div img,
+  .flex.gap-2.p-4.overflow-x-auto > div img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* Main content grid: single column */
+  .grid.grid-cols-1.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Spec grids: 2 columns max, never overflow */
+  .grid.grid-cols-2.md\:grid-cols-3,
+  .grid.grid-cols-2.sm\:grid-cols-3,
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* On very small phones: single column for specs */
+  @media (max-width: 380px) {
+    .grid.grid-cols-2 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Features grid */
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Right sidebar: un-sticky, full width */
+  .lg\:col-span-1 {
+    width: 100% !important;
+  }
+
+  .lg\:sticky {
+    position: static !important;
+    top: auto !important;
+  }
+
+  /* Price: smaller on mobile so it doesn't overflow */
+  .text-3xl.font-bold.text-red-800,
+  .text-4xl.font-bold {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
+  }
+
+  /* Bid/contact panel */
+  .glass.rounded-2xl.p-6.border.border-red-200.shadow-lg {
+    padding: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Seller contact row */
+  .flex.items-center.text-red-700.bg-red-50 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .flex.items-center.text-red-700.bg-red-50 .ml-auto {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Tab bar: horizontal scroll, no wrap */
+  .flex.overflow-x-auto,
+  .tabs-nav,
+  .flex.border-b {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .flex.overflow-x-auto button,
+  .tabs-nav button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Breadcrumb: wrap gracefully */
+  nav.flex.items-center.space-x-2 {
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+  }
+}
+
+/* ----------------------------------------------------------
+   3. HEADER: ensure mobile menu doesn't overflow
+   ---------------------------------------------------------- */
+@media (max-width: 1024px) {
+  header .flex.lg\:hidden {
+    flex-shrink: 0;
+  }
+
+  /* Mobile menu dropdown: full width, scrollable if tall */
+  header .lg\:hidden.border-t {
+    max-height: calc(100vh - 5rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ----------------------------------------------------------
+   4. Language dropdown z-index fix
+   ---------------------------------------------------------- */
+header .relative .fixed.inset-0 {
+  z-index: 40 !important;
+}
+
+header .relative > div[class*="absolute"] {
+  z-index: 50 !important;
+}

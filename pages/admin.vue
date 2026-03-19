@@ -1036,6 +1036,19 @@
 </template>
 
 <script setup lang="ts">
+// ─────────────────────────────────────────────────────────────
+// AUTH HELPER — always sends the Supabase token in the header.
+// useFetch() does NOT work inside regular async functions, so
+// we use $fetch everywhere and inject the cookie token manually.
+// ─────────────────────────────────────────────────────────────
+const getAdminHeaders = () => {
+  const token = useCookie('sb-access-token').value
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+const adminFetch = (url: string, options: Record<string, any> = {}) =>
+  $fetch(url, { ...options, headers: { ...getAdminHeaders(), ...(options.headers ?? {}) } })
+
 // Stat Card Component
 const StatCard = defineComponent({
   props: {
@@ -1238,29 +1251,17 @@ const closeTransactionDetailsModal = () => {
 
 const loadUserTransactions = async () => {
   if (!viewingUser.value) return
-  
   loadingUserTransactions.value = true
   try {
-    const query: any = { ...transactionFilters.value }
-    
-    // Add userId filter for admin view
-    query.userId = viewingUser.value.id
-    
-    // Clean up empty values
+    const query: any = { ...transactionFilters.value, userId: viewingUser.value.id }
     if (!query.type) delete query.type
     if (!query.status) delete query.status
     if (!query.startDate) delete query.startDate
     if (!query.endDate) delete query.endDate
-    
-    const { data } = await useFetch('/api/admin/transactions', {
-      credentials: 'include',
-      query: query
-    })
-    
-    if (data.value?.success) {
-      userTransactions.value = data.value.transactions
-      
-      // Calculate summary
+
+    const data: any = await adminFetch('/api/admin/transactions', { query })
+    if (data?.success) {
+      userTransactions.value = data.transactions
       calculateTransactionSummary()
     }
   } catch (error) {
@@ -1331,27 +1332,19 @@ const calculateTransactionSummary = () => {
 }
 
 const issueRefund = async (transaction: any) => {
-  if (!confirm(`Issue refund for ${Math.abs(transaction.amount)} CHF?\n\nTransaction: ${transaction.description}`)) {
-    return
-  }
-  
+  if (!confirm(`Issue refund for ${Math.abs(transaction.amount)} CHF?\n\nTransaction: ${transaction.description}`)) return
   try {
     const reason = prompt('Enter refund reason:', 'Admin refund')
     if (!reason) return
-    
-    const { data } = await useFetch(`/api/admin/transactions/${transaction.id}/refund`, {
+    const data: any = await adminFetch(`/api/admin/transactions/${transaction.id}/refund`, {
       method: 'POST',
-      credentials: 'include',
       body: { reason }
     })
-    
-    if (data.value?.success) {
+    if (data?.success) {
       alert('✅ Refund issued successfully!')
       await loadUserTransactions()
       await loadAdminData()
-    } else {
-      alert('❌ Failed to issue refund')
-    }
+    } else { alert('❌ Failed to issue refund') }
   } catch (error: any) {
     console.error('Refund error:', error)
     alert('❌ Failed to issue refund: ' + (error.data?.message || error.message))
@@ -1463,28 +1456,25 @@ const formatDateTime = (dateString: string) => {
 const checkAdminAccess = async () => {
   try {
     console.log('🔄 Checking admin access...')
-    
-    const { data, error } = await useFetch('/api/admin/check', {
-      credentials: 'include'
-    })
-    
-    if (error.value) {
-      console.error('❌ Admin check error:', error.value)
-      isAdmin.value = false
-      authenticated.value = false
-      return
+
+    // Wait for Supabase auth to be ready so the cookie is populated
+    const auth = useAuth()
+    if (!auth.isInitialized.value) {
+      await auth.syncAuth()
     }
-    
-    console.log('✅ Admin check response:', data.value)
-    
-    if (data.value?.isAdmin) {
+
+    const data: any = await adminFetch('/api/admin/check')
+
+    console.log('✅ Admin check response:', data)
+
+    if (data?.isAdmin) {
       isAdmin.value = true
       authenticated.value = true
-      adminData.value = data.value.user
+      adminData.value = data.user
       await loadAdminData()
     } else {
       isAdmin.value = false
-      authenticated.value = data.value?.authenticated || false
+      authenticated.value = data?.authenticated || false
     }
   } catch (error) {
     console.error('❌ Failed to check admin access:', error)
@@ -1498,136 +1488,82 @@ const checkAdminAccess = async () => {
 const loadAdminData = async () => {
   try {
     console.log('📊 Loading admin data...')
-    
-    const { data: settingsData, error: settingsError } = await useFetch('/api/admin/settings', {
-      credentials: 'include'
-    })
-    
-    if (settingsError.value) {
-      console.error('❌ Failed to load settings:', settingsError.value)
-    } else if (settingsData.value?.success) {
-      const loadedSettings = settingsData.value.settings
-      
-      settings.value = {
-        normalListingFee: loadedSettings.listingFees?.normalListingFee || 7.5,
-        auctionListingFee: loadedSettings.listingFees?.auctionListingFee || 10,
-        requireIdVerification: loadedSettings.userSettings?.requireIdVerification !== false,
-        freeFirstSixMonths: loadedSettings.userSettings?.freeFirstSixMonths !== false,
-        autoExpireFeatures: loadedSettings.userSettings?.autoExpireFeatures !== false,
-        emailNotifications: loadedSettings.userSettings?.emailNotifications !== false
+
+    // Settings
+    try {
+      const settingsData: any = await adminFetch('/api/admin/settings')
+      if (settingsData?.success) {
+        const s = settingsData.settings
+        settings.value = {
+          normalListingFee: s.listingFees?.normalListingFee || 7.5,
+          auctionListingFee: s.listingFees?.auctionListingFee || 10,
+          requireIdVerification: s.userSettings?.requireIdVerification !== false,
+          freeFirstSixMonths: s.userSettings?.freeFirstSixMonths !== false,
+          autoExpireFeatures: s.userSettings?.autoExpireFeatures !== false,
+          emailNotifications: s.userSettings?.emailNotifications !== false,
+        }
+        featureSettings.value = {
+          price: s.featureSettings?.price || 5,
+          durationDays: s.featureSettings?.durationDays || 7,
+          listingsPerFreeFeature: s.featureSettings?.listingsPerFreeFeature || 10,
+          permanentFeaturePrice: s.featureSettings?.permanentFeaturePrice || 50,
+          allowPermanentFeature: s.featureSettings?.allowPermanentFeature !== false,
+        }
+        console.log('⚙️ Settings loaded')
+      } else {
+        console.log('⚠️ Using default settings')
       }
-      
-      featureSettings.value = {
-        price: loadedSettings.featureSettings?.price || 5,
-        durationDays: loadedSettings.featureSettings?.durationDays || 7,
-        listingsPerFreeFeature: loadedSettings.featureSettings?.listingsPerFreeFeature || 10,
-        permanentFeaturePrice: loadedSettings.featureSettings?.permanentFeaturePrice || 50,
-        allowPermanentFeature: loadedSettings.featureSettings?.allowPermanentFeature !== false
-      }
-      
-      console.log('⚙️ Settings loaded:', loadedSettings)
-    } else {
-      console.log('⚠️ Using default settings (API not available)')
-    }
-    
-    const { data: usersData, error: usersError } = await useFetch('/api/admin/users', {
-      credentials: 'include'
-    })
-    
-    if (usersError.value) {
-      console.error('❌ Failed to load users:', usersError.value)
-      users.value = []
-    } else if (usersData.value?.success) {
-      users.value = usersData.value.users
+    } catch (e) { console.warn('⚠️ Settings not loaded:', e) }
+
+    // Users
+    try {
+      const usersData: any = await adminFetch('/api/admin/users')
+      users.value = usersData?.success ? usersData.users : []
       console.log(`📊 Loaded ${users.value.length} users`)
-    } else {
-      console.error('❌ Failed to load users:', usersData.value)
+    } catch (e) {
+      console.error('❌ Failed to load users:', e)
       users.value = []
     }
-    
-    const { data: listingsData, error: listingsError } = await useFetch('/api/admin/listings', {
-      credentials: 'include'
-    })
-    
-    if (listingsError.value) {
-      console.error('❌ Failed to load listings:', listingsError.value)
-      listings.value = []
-    } else if (listingsData.value?.success) {
-      listings.value = listingsData.value.listings
+
+    // Listings
+    try {
+      const listingsData: any = await adminFetch('/api/admin/listings')
+      listings.value = listingsData?.success ? listingsData.listings : []
       console.log(`📊 Loaded ${listings.value.length} listings`)
-    } else {
-      console.error('❌ Failed to load listings:', listingsData.value)
+    } catch (e) {
+      console.error('❌ Failed to load listings:', e)
       listings.value = []
     }
-    
-    const { data: statsData, error: statsError } = await useFetch('/api/admin/stats', {
-      credentials: 'include'
-    })
-    
-    if (statsError.value) {
-      console.error('❌ Failed to load stats:', statsError.value)
-      stats.value = {
-        totalUsers: 0,
-        activeListings: 0,
-        unverifiedUsers: 0,
-        todaysRevenue: 0
-      }
-    } else if (statsData.value?.success) {
-      stats.value = statsData.value.stats
-      console.log('📊 Stats loaded:', stats.value)
-    } else {
-      console.error('❌ Failed to load stats:', statsData.value)
-      stats.value = {
-        totalUsers: 0,
-        activeListings: 0,
-        unverifiedUsers: 0,
-        todaysRevenue: 0
-      }
+
+    // Stats
+    try {
+      const statsData: any = await adminFetch('/api/admin/stats')
+      stats.value = statsData?.success
+        ? statsData.stats
+        : { totalUsers: 0, activeListings: 0, unverifiedUsers: 0, todaysRevenue: 0 }
+    } catch (e) {
+      console.error('❌ Failed to load stats:', e)
+      stats.value = { totalUsers: 0, activeListings: 0, unverifiedUsers: 0, todaysRevenue: 0 }
     }
-    
-    const { data: featureStatsData, error: featureStatsError } = await useFetch('/api/admin/feature-stats', {
-      credentials: 'include'
-    })
-    
-    if (featureStatsError.value) {
-      console.error('❌ Failed to load feature stats:', featureStatsError.value)
-      featureStats.value = {
-        activeFeaturedCars: 0,
-        permanentFeatures: 0,
-        freeFeaturesUsed: 0,
-        featureRevenue: 0
-      }
-    } else if (featureStatsData.value?.success) {
-      featureStats.value = featureStatsData.value.stats
-      console.log('📊 Feature stats loaded:', featureStats.value)
-    } else {
-      console.error('❌ Failed to load feature stats:', featureStatsData.value)
-      featureStats.value = {
-        activeFeaturedCars: 0,
-        permanentFeatures: 0,
-        freeFeaturesUsed: 0,
-        featureRevenue: 0
-      }
+
+    // Feature Stats
+    try {
+      const featureStatsData: any = await adminFetch('/api/admin/feature-stats')
+      featureStats.value = featureStatsData?.success
+        ? featureStatsData.stats
+        : { activeFeaturedCars: 0, permanentFeatures: 0, freeFeaturesUsed: 0, featureRevenue: 0 }
+    } catch (e) {
+      console.error('❌ Failed to load feature stats:', e)
+      featureStats.value = { activeFeaturedCars: 0, permanentFeatures: 0, freeFeaturesUsed: 0, featureRevenue: 0 }
     }
-    
+
     console.log('✅ All admin data loaded successfully!')
-    
   } catch (error) {
     console.error('❌ Failed to load admin data:', error)
     users.value = []
     listings.value = []
-    stats.value = {
-      totalUsers: 0,
-      activeListings: 0,
-      unverifiedUsers: 0,
-      todaysRevenue: 0
-    }
-    featureStats.value = {
-      activeFeaturedCars: 0,
-      permanentFeatures: 0,
-      freeFeaturesUsed: 0,
-      featureRevenue: 0
-    }
+    stats.value = { totalUsers: 0, activeListings: 0, unverifiedUsers: 0, todaysRevenue: 0 }
+    featureStats.value = { activeFeaturedCars: 0, permanentFeatures: 0, freeFeaturesUsed: 0, featureRevenue: 0 }
   }
 }
 
@@ -1646,139 +1582,71 @@ const roleClasses = (role: string) => {
 
 const verifyUser = async (userId: number) => {
   if (!confirm('Verify this user?')) return
-  
   try {
-    const { data } = await useFetch(`/api/admin/users/${userId}/verify`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
-      const userIndex = users.value.findIndex(u => u.id === userId)
-      if (userIndex !== -1) {
-        users.value[userIndex].verified = true
-      }
+    const data: any = await adminFetch(`/api/admin/users/${userId}/verify`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) users.value[i].verified = true
       alert('✅ User verified successfully!')
-    } else {
-      alert('❌ Failed to verify user')
-    }
-  } catch (error) {
-    console.error('Failed to verify user:', error)
-    alert('❌ Failed to verify user')
-  }
+    } else { alert('❌ Failed to verify user') }
+  } catch (e) { console.error(e); alert('❌ Failed to verify user') }
 }
 
 const unverifyUser = async (userId: number) => {
   if (!confirm('Unverify this user?')) return
-  
   try {
-    const { data } = await useFetch(`/api/admin/users/${userId}/unverify`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
-      const userIndex = users.value.findIndex(u => u.id === userId)
-      if (userIndex !== -1) {
-        users.value[userIndex].verified = false
-      }
+    const data: any = await adminFetch(`/api/admin/users/${userId}/unverify`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) users.value[i].verified = false
       alert('✅ User unverified successfully!')
-    } else {
-      alert('❌ Failed to unverify user')
-    }
-  } catch (error) {
-    console.error('Failed to unverify user:', error)
-    alert('❌ Failed to unverify user')
-  }
+    } else { alert('❌ Failed to unverify user') }
+  } catch (e) { console.error(e); alert('❌ Failed to unverify user') }
 }
 
 const banUser = async (userId: number) => {
   if (!confirm('Are you sure you want to ban this user?')) return
-  
   try {
-    const { data } = await useFetch(`/api/admin/users/${userId}/ban`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
-      const userIndex = users.value.findIndex(u => u.id === userId)
-      if (userIndex !== -1) {
-        users.value[userIndex].banned = true
-      }
+    const data: any = await adminFetch(`/api/admin/users/${userId}/ban`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) users.value[i].banned = true
       alert('✅ User banned successfully!')
-    } else {
-      alert('❌ Failed to ban user')
-    }
-  } catch (error) {
-    console.error('Failed to ban user:', error)
-    alert('❌ Failed to ban user')
-  }
+    } else { alert('❌ Failed to ban user') }
+  } catch (e) { console.error(e); alert('❌ Failed to ban user') }
 }
 
 const unbanUser = async (userId: number) => {
   try {
-    const { data } = await useFetch(`/api/admin/users/${userId}/unban`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
-      const userIndex = users.value.findIndex(u => u.id === userId)
-      if (userIndex !== -1) {
-        users.value[userIndex].banned = false
-      }
+    const data: any = await adminFetch(`/api/admin/users/${userId}/unban`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) users.value[i].banned = false
       alert('✅ User unbanned successfully!')
-    } else {
-      alert('❌ Failed to unban user')
-    }
-  } catch (error) {
-    console.error('Failed to unban user:', error)
-    alert('❌ Failed to unban user')
-  }
+    } else { alert('❌ Failed to unban user') }
+  } catch (e) { console.error(e); alert('❌ Failed to unban user') }
 }
 
 const removeListing = async (listingId: number) => {
   if (!confirm('Are you sure you want to remove this listing?')) return
-  
   try {
-    const { data } = await useFetch(`/api/admin/listings/${listingId}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
+    const data: any = await adminFetch(`/api/admin/listings/${listingId}`, { method: 'DELETE' })
+    if (data?.success) {
       listings.value = listings.value.filter(l => l.id !== listingId)
       alert('✅ Listing removed successfully!')
-    } else {
-      alert('❌ Failed to remove listing')
-    }
-  } catch (error) {
-    console.error('Failed to remove listing:', error)
-    alert('❌ Failed to remove listing')
-  }
+    } else { alert('❌ Failed to remove listing') }
+  } catch (e) { console.error(e); alert('❌ Failed to remove listing') }
 }
 
 const markAsSold = async (listingId: number) => {
   try {
-    const { data } = await useFetch(`/api/admin/listings/${listingId}/sold`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
-      const listingIndex = listings.value.findIndex(l => l.id === listingId)
-      if (listingIndex !== -1) {
-        listings.value[listingIndex].status = 'sold'
-      }
+    const data: any = await adminFetch(`/api/admin/listings/${listingId}/sold`, { method: 'POST' })
+    if (data?.success) {
+      const i = listings.value.findIndex(l => l.id === listingId)
+      if (i !== -1) listings.value[i].status = 'sold'
       alert('✅ Listing marked as sold!')
-    } else {
-      alert('❌ Failed to update listing')
-    }
-  } catch (error) {
-    console.error('Failed to mark as sold:', error)
-    alert('❌ Failed to update listing')
-  }
+    } else { alert('❌ Failed to update listing') }
+  } catch (e) { console.error(e); alert('❌ Failed to update listing') }
 }
 
 const editUserFunds = (user: any) => {
@@ -1795,32 +1663,18 @@ const closeEditFundsModal = () => {
 
 const updateUserFunds = async () => {
   if (!editingUser.value) return
-  
   try {
-    const { data } = await useFetch(`/api/admin/users/${editingUser.value.id}/funds`, {
+    const data: any = await adminFetch(`/api/admin/users/${editingUser.value.id}/funds`, {
       method: 'POST',
-      credentials: 'include',
-      body: { 
-        amount: parseFloat(newFundsAmount.value),
-        description: 'Admin manual adjustment' 
-      }
+      body: { amount: parseFloat(newFundsAmount.value), description: 'Admin manual adjustment' }
     })
-    
-    if (data.value?.success) {
-      const userIndex = users.value.findIndex(u => u.id === editingUser.value.id)
-      if (userIndex !== -1) {
-        users.value[userIndex].funds = parseFloat(newFundsAmount.value)
-      }
-      
-      if (viewingUser.value?.id === editingUser.value.id) {
-        await loadUserTransactions()
-      }
-      
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === editingUser.value.id)
+      if (i !== -1) users.value[i].funds = parseFloat(newFundsAmount.value)
+      if (viewingUser.value?.id === editingUser.value.id) await loadUserTransactions()
       closeEditFundsModal()
       alert('✅ Funds updated successfully!')
-    } else {
-      alert('❌ Failed to update funds')
-    }
+    } else { alert('❌ Failed to update funds') }
   } catch (error: any) {
     console.error('Failed to update funds:', error)
     alert('❌ Failed to update funds: ' + (error.data?.message || error.message))
@@ -1832,27 +1686,20 @@ const addFunds = async () => {
     alert('⚠️ Please select a user and enter amount')
     return
   }
-  
   try {
     const user = users.value.find(u => u.id == selectedUserForFunds.value)
     if (!user) return
-    
     const newAmount = (user.funds || 0) + parseFloat(fundsAmount.value)
-    
-    const { data } = await useFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
+    const data: any = await adminFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
       method: 'POST',
-      credentials: 'include',
       body: { amount: newAmount }
     })
-    
-    if (data.value?.success) {
+    if (data?.success) {
       await loadAdminData()
       selectedUserForFunds.value = ''
       fundsAmount.value = ''
       alert('✅ Funds added successfully!')
-    } else {
-      alert('❌ Failed to add funds')
-    }
+    } else { alert('❌ Failed to add funds') }
   } catch (error) {
     console.error('Failed to add funds:', error)
     alert('❌ Failed to add funds')
@@ -1864,27 +1711,20 @@ const removeFunds = async () => {
     alert('⚠️ Please select a user and enter amount')
     return
   }
-  
   try {
     const user = users.value.find(u => u.id == selectedUserForFunds.value)
     if (!user) return
-    
     const newAmount = Math.max(0, (user.funds || 0) - parseFloat(fundsAmount.value))
-    
-    const { data } = await useFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
+    const data: any = await adminFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
       method: 'POST',
-      credentials: 'include',
       body: { amount: newAmount }
     })
-    
-    if (data.value?.success) {
+    if (data?.success) {
       await loadAdminData()
       selectedUserForFunds.value = ''
       fundsAmount.value = ''
       alert('✅ Funds removed successfully!')
-    } else {
-      alert('❌ Failed to remove funds')
-    }
+    } else { alert('❌ Failed to remove funds') }
   } catch (error) {
     console.error('Failed to remove funds:', error)
     alert('❌ Failed to remove funds')
@@ -1911,6 +1751,74 @@ const goToHome = () => {
 
 const goToLogin = () => {
   navigateTo('/login')
+}
+
+const toggleFeatureSetting = (key: string) => {
+  (featureSettings.value as any)[key] = !(featureSettings.value as any)[key]
+}
+
+const updateListingFees = async () => {
+  updatingSettings.value = true
+  try {
+    await adminFetch('/api/admin/settings', {
+      method: 'POST',
+      body: { listingFees: { normalListingFee: settings.value.normalListingFee, auctionListingFee: settings.value.auctionListingFee } }
+    })
+    alert('✅ Listing fees updated!')
+  } catch (e) {
+    console.error(e)
+    alert('❌ Failed to update listing fees')
+  } finally {
+    updatingSettings.value = false
+  }
+}
+
+const updateFeatureSettings = async () => {
+  updatingFeatureSettings.value = true
+  try {
+    await adminFetch('/api/admin/settings', {
+      method: 'POST',
+      body: { featureSettings: featureSettings.value }
+    })
+    alert('✅ Feature settings updated!')
+  } catch (e) {
+    console.error(e)
+    alert('❌ Failed to update feature settings')
+  } finally {
+    updatingFeatureSettings.value = false
+  }
+}
+
+const updateUserSettings = async () => {
+  updatingUserSettings.value = true
+  try {
+    await adminFetch('/api/admin/settings', {
+      method: 'POST',
+      body: {
+        userSettings: {
+          requireIdVerification: settings.value.requireIdVerification,
+          freeFirstSixMonths: settings.value.freeFirstSixMonths,
+          autoExpireFeatures: settings.value.autoExpireFeatures,
+          emailNotifications: settings.value.emailNotifications
+        }
+      }
+    })
+    alert('✅ User settings updated!')
+  } catch (e) {
+    console.error(e)
+    alert('❌ Failed to update user settings')
+  } finally {
+    updatingUserSettings.value = false
+  }
+}
+
+const refreshFeatureStats = async () => {
+  try {
+    const data: any = await adminFetch('/api/admin/feature-stats')
+    if (data?.success) featureStats.value = data.stats
+  } catch (e) {
+    console.error('Failed to refresh feature stats:', e)
+  }
 }
 
 onMounted(() => {

@@ -55,5 +55,6 @@ export default defineEventHandler(async (event) => {
     event.context.auth = userData
   } catch (error) {
     // Non-fatal — unauthenticated requests are fine for public routes
+    console.error('Auth middleware error:', error) // Added for debugging
   }
 })

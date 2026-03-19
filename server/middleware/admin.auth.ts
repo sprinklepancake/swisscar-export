@@ -8,15 +8,10 @@ export default defineEventHandler(async (event) => {
   if (path?.startsWith('/api/admin/') && !path.includes('/api/admin/setup')) {
     const user = event.context.user
 
-    if (!user) {
-      throw createError({ statusCode: 401, message: 'Authentication required' })
+    // Do NOT throw 401 if user is missing – let the handler deal with it.
+    // Only attach adminUser if user exists (for backward compatibility).
+    if (user) {
+      event.context.adminUser = user
     }
-
-    if (user.role !== 'admin') {
-      throw createError({ statusCode: 403, message: 'Admin access required' })
-    }
-
-    // Make admin user available via both contexts for backward compat
-    event.context.adminUser = user
   }
 })

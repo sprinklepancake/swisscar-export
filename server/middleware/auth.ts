@@ -6,9 +6,15 @@ export default defineEventHandler(async (event) => {
   event.context.user = null
   event.context.auth = null
 
-  // FIX: check both hyphen and underscore variants for backwards compatibility
-  // The client now sets 'sb-access-token' (hyphen) to match this server middleware
+  // ─── Read token from Authorization header OR cookies ───────────────────────
+  // adminFetch() in the frontend sends: Authorization: Bearer <token>
+  // Regular page loads send it as a cookie (sb-access-token)
+  // We support both so both paths work.
+  const authHeader = getHeader(event, 'authorization')
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+
   const token =
+    bearerToken ||
     getCookie(event, 'sb-access-token') ||
     getCookie(event, 'sb_access_token') ||
     getCookie(event, 'access_token')

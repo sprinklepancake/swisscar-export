@@ -1,6 +1,6 @@
 <!-- pages/cars/[id].vue - UPDATED WITH VERIFICATION & BID ELIGIBILITY & HIDDEN CONTACT INFO -->
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-8">
+  <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-8 overflow-x-hidden">
     <!-- Error State -->
     <div v-if="error" class="max-w-4xl mx-auto px-4 text-center py-12">
       <div class="glass p-8 rounded-2xl border border-red-200">
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Main Content -->
-    <div v-else-if="car" class="max-w-7xl mx-auto px-4">
+    <div v-else-if="car" class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
       <!-- Breadcrumb Navigation -->
       <div class="mb-6">
         <nav class="flex items-center space-x-2 text-sm text-red-700">
@@ -1652,14 +1652,8 @@ watch(() => auth.user.value, async (newUser) => {
 
 /* Animation for tab content */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
@@ -1668,11 +1662,159 @@ watch(() => auth.user.value, async (newUser) => {
 
 /* Hide scrollbar for tab navigation */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+/* ============================================================
+   MOBILE FIXES — scoped so they definitely apply to this page
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* 1. Page root: no horizontal overflow ever */
+  :deep(.min-h-screen) {
+    overflow-x: hidden !important;
+  }
+
+  /* 2. Main content container: full width + safe padding */
+  .max-w-7xl {
+    max-width: 100% !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    overflow-x: hidden !important;
+  }
+
+  /* 3. Main image — proportional height, no overflow */
+  .relative.h-80 {
+    height: 52vw !important;
+    max-height: 240px !important;
+    min-height: 140px !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* 4. Thumbnail strip — scrollable row */
+  .p-4.flex.space-x-3.overflow-x-auto {
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* 5. Each thumbnail — fixed small size */
+  .p-4.flex.space-x-3.overflow-x-auto button {
+    flex-shrink: 0 !important;
+    width: 64px !important;
+    height: 48px !important;
+    min-width: 64px !important;
+  }
+
+  /* 6. Shipping ad — stack vertically, no overflow */
+  .glass.rounded-2xl.p-6.border-2 {
+    padding: 1rem !important;
+    transform: none !important; /* disable hover scale on mobile */
+  }
+
+  /* 7. Spec grid inside tabs — 2 cols max */
+  .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Key specs grid in sidebar — 2 cols is fine */
+  .grid.grid-cols-2.gap-3 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* 8. Each spec cell: smaller text so it fits */
+  .grid.grid-cols-2.gap-3 .text-center.p-3 {
+    padding: 0.5rem !important;
+  }
+
+  .grid.grid-cols-2.gap-3 .text-sm {
+    font-size: 0.7rem !important;
+  }
+
+  .grid.grid-cols-2.gap-3 .font-semibold {
+    font-size: 0.8rem !important;
+  }
+
+  /* 9. Price — fit on screen */
+  .text-3xl.font-bold {
+    font-size: 1.4rem !important;
+    word-break: break-word !important;
+  }
+
+  /* 10. Action buttons — no scale transform (causes overflow on iOS) */
+  button.transform.hover\:scale-105,
+  a.transform.hover\:scale-105 {
+    transform: none !important;
+  }
+
+  /* 11. Glass card padding — reduce on mobile */
+  .glass.rounded-2xl.p-6 {
+    padding: 1rem !important;
+  }
+
+  /* 12. Tab bar — horizontally scrollable */
+  .border-b .flex.overflow-x-auto {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+
+  /* 13. Tab content area — smaller padding */
+  .p-6 {
+    padding: 0.875rem !important;
+  }
+
+  /* 14. Features grid in description tab: 1 col on very small phones */
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* 15. Badge row in image overlay: wrap properly */
+  .absolute.top-4.left-4.flex {
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  /* 16. Seller info flex row */
+  .flex.items-center.mb-4 {
+    flex-wrap: wrap !important;
+  }
+
+  /* 17. Spec rows: allow text to wrap */
+  .flex.justify-between.py-3 {
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+  }
+
+  .flex.justify-between.py-3 span:last-child {
+    text-align: right !important;
+  }
+
+  /* 18. Gap between main columns */
+  .grid.grid-cols-1.lg\:grid-cols-3.gap-8 {
+    gap: 1rem !important;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 390px) {
+  .grid.grid-cols-2.gap-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .relative.h-80 {
+    height: 48vw !important;
+    max-height: 200px !important;
+  }
 }
 </style>

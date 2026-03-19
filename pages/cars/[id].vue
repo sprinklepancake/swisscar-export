@@ -1,4 +1,4 @@
-<!-- pages/cars/[id].vue - UPDATED WITH VERIFICATION & BID ELIGIBILITY & HIDDEN CONTACT INFO -->
+<!-- pages/cars/[id].vue - UPDATED WITH VERIFICATION & BID ELIGIBILITY & HIDDEN CONTACT INFO & LIGHTBOX -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-8 overflow-x-hidden">
     <!-- Error State -->
@@ -43,8 +43,11 @@
         <div class="lg:col-span-2">
           <!-- Image Gallery -->
           <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-6">
-            <!-- Main Image -->
-            <div class="relative h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden">
+            <!-- Main Image (clickable) -->
+            <div 
+              class="relative h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden cursor-pointer"
+              @click="openLightbox(currentImage)"
+            >
               <img 
                 :src="currentImage || car.images?.[0] || '/placeholder-car.jpg'" 
                 :alt="`${car.make} ${car.model}`" 
@@ -89,57 +92,54 @@
             </div>
           </div>
 
-<!-- Shipping Ad Section - UPDATED WITH IMAGE -->
-<div class="glass rounded-2xl p-6 border-2 border-red-300 shadow-xl mb-6 bg-gradient-to-r from-red-50 to-white transform hover:scale-[1.01] transition-all duration-300">
-  <div class="flex flex-col md:flex-row items-center gap-6">
-    <!-- Company Logo/Image -->
-    <div class="flex-shrink-0">
-      <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 border-red-300 shadow-lg bg-white">
-        <img 
-          src="/assets/images/car-transport.jpeg" 
-          :alt="$t('shipping_ad.alt_text')"
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <!-- Verified badge -->
-        <div class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">
-          ✓
-        </div>
-      </div>
-    </div>
-    
-    <div class="flex-grow text-center md:text-left">
-      <h3 class="text-xl font-bold text-red-900 mb-1">{{ $t('shipping_ad.title') }}</h3>
-      <p class="text-md font-semibold text-red-700 mb-2">{{ $t('shipping_ad.badge_text') }}</p>
-      <div class="space-y-1 text-red-800">
-        <p class="flex items-center justify-center md:justify-start">
-          <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-          </svg>
-          {{ $t('shipping_ad.description') }}
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2">
-          <p class="text-lg font-bold text-red-900">076 448 08 49</p>
-          <span class="text-sm text-red-600">{{ $t('shipping_ad.phone_subtext') }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="flex-shrink-0">
-      <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
-         target="_blank"
-         class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-        </svg>
-        {{ $t('shipping_ad.whatsapp_button') }}
-      </a>
-    </div>
-  </div>
-</div>
+          <!-- Shipping Ad Section -->
+          <div class="glass rounded-2xl p-6 border-2 border-red-300 shadow-xl mb-6 bg-gradient-to-r from-red-50 to-white transform hover:scale-[1.01] transition-all duration-300">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+              <div class="flex-shrink-0">
+                <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 border-red-300 shadow-lg bg-white">
+                  <img 
+                    src="/assets/images/car-transport.jpeg" 
+                    :alt="$t('shipping_ad.alt_text')"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">
+                    ✓
+                  </div>
+                </div>
+              </div>
+              <div class="flex-grow text-center md:text-left">
+                <h3 class="text-xl font-bold text-red-900 mb-1">{{ $t('shipping_ad.title') }}</h3>
+                <p class="text-md font-semibold text-red-700 mb-2">{{ $t('shipping_ad.badge_text') }}</p>
+                <div class="space-y-1 text-red-800">
+                  <p class="flex items-center justify-center md:justify-start">
+                    <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                    </svg>
+                    {{ $t('shipping_ad.description') }}
+                  </p>
+                  <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2">
+                    <p class="text-lg font-bold text-red-900">076 448 08 49</p>
+                    <span class="text-sm text-red-600">{{ $t('shipping_ad.phone_subtext') }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-shrink-0">
+                <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
+                   target="_blank"
+                   class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  </svg>
+                  {{ $t('shipping_ad.whatsapp_button') }}
+                </a>
+              </div>
+            </div>
+          </div>
 
           <!-- Car Details Tabs -->
           <div class="glass rounded-2xl border border-red-200 shadow-lg overflow-hidden">
-            <!-- Tab Navigation -->
+            <!-- Tab Navigation (horizontal scroll on mobile) -->
             <div class="border-b border-red-200 bg-red-50/50">
               <div class="flex overflow-x-auto scrollbar-hide">
                 <button 
@@ -160,7 +160,7 @@
               </div>
             </div>
 
-            <!-- Tab Content -->
+            <!-- Tab Content (unchanged) -->
             <div class="p-6">
               <!-- Specifications Tab -->
               <div v-if="activeTab === 'specs'" class="animate-fade-in">
@@ -293,10 +293,11 @@
           </div>
         </div>
 
-        <!-- Right Column - Price & Contact -->
+        <!-- Right Column - Price & Contact (unchanged) -->
         <div class="space-y-6">
           <!-- AUCTION LISTING -->
           <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
+            <!-- ... auction content ... -->
             <div class="text-center mb-6">
               <div class="flex items-center justify-center mb-2">
                 <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold mr-2">
@@ -553,7 +554,7 @@
               </div>
             </div>
 
-            <!-- Contact Info - UPDATED: Now hidden behind button -->
+            <!-- Contact Info - Hidden behind button -->
             <div class="space-y-3 text-sm">
               <!-- Street Address (still visible) -->
               <div v-if="car.streetAddress" class="flex items-center text-red-700 bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
@@ -624,126 +625,124 @@
             </div>
           </div>
 
-<!-- Seller's Tools Section - Place this RIGHT AFTER the Seller Information section -->
-<div v-if="auth.user.value && car.sellerId === auth.user.value.id" class="glass rounded-2xl p-6 border border-red-200 shadow-lg mt-6 relative z-10">
-  <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
-    <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-    </svg>
-    {{ $t('car_details.promote_listing_title') }}
-  </h3>
-  
-  <div class="mb-4">
-    <FeatureButton 
-      :car-id="car.id"
-      :is-featured="car.isFeatured"
-      :featured-until="car.featuredUntil"
-      :featured-days-remaining="car.featuredDaysRemaining"
-    />
-  </div>
-  
-  <div class="mt-4 text-sm text-red-700">
-    <p class="mb-2 font-medium">{{ $t('car_details.promote_benefits_title') }}:</p>
-    <ul class="space-y-1">
-      <li class="flex items-start">
-        <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        {{ $t('car_details.benefit_priority_placement') }}
-      </li>
-      <li class="flex items-start">
-        <svg class="w-4 h-4 text-green-500 mr-2 mt=0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        {{ $t('car_details.benefit_featured_badge') }}
-      </li>
-      <li class="flex items-start">
-        <svg class="w-4 h-4 text-green-500 mr-2 mt=0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        {{ $t('car_details.benefit_increased_visibility') }}
-      </li>
-    </ul>
-  </div>
-</div>
+          <!-- Seller's Tools Section -->
+          <div v-if="auth.user.value && car.sellerId === auth.user.value.id" class="glass rounded-2xl p-6 border border-red-200 shadow-lg mt-6 relative z-10">
+            <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              {{ $t('car_details.promote_listing_title') }}
+            </h3>
+            
+            <div class="mb-4">
+              <FeatureButton 
+                :car-id="car.id"
+                :is-featured="car.isFeatured"
+                :featured-until="car.featuredUntil"
+                :featured-days-remaining="car.featuredDaysRemaining"
+              />
+            </div>
+            
+            <div class="mt-4 text-sm text-red-700">
+              <p class="mb-2 font-medium">{{ $t('car_details.promote_benefits_title') }}:</p>
+              <ul class="space-y-1">
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {{ $t('car_details.benefit_priority_placement') }}
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 text-green-500 mr-2 mt=0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {{ $t('car_details.benefit_featured_badge') }}
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-4 h-4 text-green-500 mr-2 mt=0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {{ $t('car_details.benefit_increased_visibility') }}
+                </li>
+              </ul>
+            </div>
+          </div>
 
-<!-- Shipping Ad Sidebar Version - UPDATED WITH IMAGE -->
-<div class="glass rounded-2xl p-5 border-2 border-red-300 shadow-lg bg-gradient-to-br from-red-50 to-white">
-  <div class="flex flex-col items-center">
-    <!-- Company Logo/Image - Sidebar Version -->
-    <div class="relative mb-3">
-      <div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-red-300 shadow-md bg-white">
-        <img 
-          src="/assets/images/car-transport.jpeg" 
-          :alt="$t('shipping_ad.alt_text')"
-          class="w-full h-full object-cover"
-          loading="lazy"
-        />
-      </div>
-      <!-- Small badge -->
-      <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded-full">
-        ✓
-      </div>
-    </div>
-    
-    <h4 class="text-lg font-bold text-red-900 mb-1 text-center">{{ $t('shipping_ad.title') }}</h4>
-    <p class="text-red-700 font-semibold mb-2 text-center">{{ $t('shipping_ad.badge_text_short') }}</p>
-    <div class="space-y-2 text-sm text-red-800 mb-3 text-center">
-      <p class="flex items-center justify-center">
-        <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-        </svg>
-        {{ $t('shipping_ad.sidebar_features') }}
-      </p>
-      <p class="text-xs text-red-700">
-        {{ $t('shipping_ad.sidebar_description') }}
-      </p>
-    </div>
-    <div class="text-center">
-      <p class="text-xl font-bold text-red-900 mb-2">076 448 08 49</p>
-      <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
-         target="_blank"
-         class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-sm transition-all duration-200 shadow hover:shadow-lg">
-        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-        </svg>
-        {{ $t('shipping_ad.sidebar_button') }}
-      </a>
-    </div>
-  </div>
-</div>
+          <!-- Shipping Ad Sidebar Version -->
+          <div class="glass rounded-2xl p-5 border-2 border-red-300 shadow-lg bg-gradient-to-br from-red-50 to-white">
+            <div class="flex flex-col items-center">
+              <div class="relative mb-3">
+                <div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-red-300 shadow-md bg-white">
+                  <img 
+                    src="/assets/images/car-transport.jpeg" 
+                    :alt="$t('shipping_ad.alt_text')"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-1 py-0.5 rounded-full">
+                  ✓
+                </div>
+              </div>
+              
+              <h4 class="text-lg font-bold text-red-900 mb-1 text-center">{{ $t('shipping_ad.title') }}</h4>
+              <p class="text-red-700 font-semibold mb-2 text-center">{{ $t('shipping_ad.badge_text_short') }}</p>
+              <div class="space-y-2 text-sm text-red-800 mb-3 text-center">
+                <p class="flex items-center justify-center">
+                  <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                  </svg>
+                  {{ $t('shipping_ad.sidebar_features') }}
+                </p>
+                <p class="text-xs text-red-700">
+                  {{ $t('shipping_ad.sidebar_description') }}
+                </p>
+              </div>
+              <div class="text-center">
+                <p class="text-xl font-bold text-red-900 mb-2">076 448 08 49</p>
+                <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
+                   target="_blank"
+                   class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-sm transition-all duration-200 shadow hover:shadow-lg">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  </svg>
+                  {{ $t('shipping_ad.sidebar_button') }}
+                </a>
+              </div>
+            </div>
+          </div>
 
-<!-- Additional Info -->
-<div v-if="car.vin || car.firstRegistration || car.cylinders || getCylinderCount" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
-  <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
-    <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-    </svg>
-    {{ $t('car_details.vehicle_identification_title') }}
-  </h3>
-  <div class="space-y-3">
-    <div v-if="car.vin" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
-      <span class="text-red-700 font-medium">{{ $t('car_details.vin') }}:</span>
-      <span class="text-red-900 font-mono text-sm bg-white px-2 py-1 rounded border">{{ car.vin }}</span>
-    </div>
-    <div v-if="car.firstRegistration" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
-      <span class="text-red-700 font-medium">{{ $t('car_details.first_registration') }}:</span>
-      <span class="text-red-900 font-semibold">{{ formatDate(car.firstRegistration) }}</span>
-    </div>
-    <div v-if="car.cylinders" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
-      <span class="text-red-700 font-medium">{{ $t('cylinders_label') }}:</span>
-      <span class="text-red-900 font-semibold">{{ car.cylinders }}</span>
-    </div>
-    <div v-if="getCylinderCount" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
-      <span class="text-red-700 font-medium">{{ $t('cylinders_label') }}:</span>
-      <span class="text-red-900 font-semibold">{{ getCylinderCount }}</span>
-    </div>
-    <div v-if="car.typenscheinNr" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
-      <span class="text-red-700 font-medium">{{ $t('car_details.typenschein') }}:</span>
-      <span class="text-red-900 font-mono text-sm bg-white px-2 py-1 rounded border">{{ car.typenscheinNr }}</span>
-    </div>
-  </div>
-</div>
+          <!-- Additional Info -->
+          <div v-if="car.vin || car.firstRegistration || car.cylinders || getCylinderCount" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
+            <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              {{ $t('car_details.vehicle_identification_title') }}
+            </h3>
+            <div class="space-y-3">
+              <div v-if="car.vin" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
+                <span class="text-red-700 font-medium">{{ $t('car_details.vin') }}:</span>
+                <span class="text-red-900 font-mono text-sm bg-white px-2 py-1 rounded border">{{ car.vin }}</span>
+              </div>
+              <div v-if="car.firstRegistration" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
+                <span class="text-red-700 font-medium">{{ $t('car_details.first_registration') }}:</span>
+                <span class="text-red-900 font-semibold">{{ formatDate(car.firstRegistration) }}</span>
+              </div>
+              <div v-if="car.cylinders" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
+                <span class="text-red-700 font-medium">{{ $t('cylinders_label') }}:</span>
+                <span class="text-red-900 font-semibold">{{ car.cylinders }}</span>
+              </div>
+              <div v-if="getCylinderCount" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
+                <span class="text-red-700 font-medium">{{ $t('cylinders_label') }}:</span>
+                <span class="text-red-900 font-semibold">{{ getCylinderCount }}</span>
+              </div>
+              <div v-if="car.typenscheinNr" class="flex justify-between items-center bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
+                <span class="text-red-700 font-medium">{{ $t('car_details.typenschein') }}:</span>
+                <span class="text-red-900 font-mono text-sm bg-white px-2 py-1 rounded border">{{ car.typenscheinNr }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -799,12 +798,24 @@
       @update:is-open="showChatModal = $event"
       @close="closeChatModal"
     />
+
+    <!-- LIGHTBOX MODAL – new feature -->
+    <div v-if="lightboxImage" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" @click="closeLightbox">
+      <div class="relative max-w-5xl max-h-full" @click.stop>
+        <img :src="lightboxImage" :alt="`${car.make} ${car.model}`" class="max-w-full max-h-screen object-contain">
+        <button @click="closeLightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import ChatSystem from '~/components/ChatSystem.vue'
-import FeatureButton from '~/components/FeatureButton.vue' // Add this line
+import FeatureButton from '~/components/FeatureButton.vue'
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 const route = useRoute()
@@ -822,7 +833,7 @@ const loading = ref(true)
 const showChatModal = ref(false)
 const activeChatId = ref<number | null>(null)
 const isCreatingChat = ref(false)
-const contactInfoRevealed = ref(false) // NEW: Track if contact info is revealed
+const contactInfoRevealed = ref(false)
 
 // Auction-specific state
 const bidAmount = ref('')
@@ -842,6 +853,9 @@ const bidEligibility = ref({
 })
 
 const isCheckingEligibility = ref(false)
+
+// LIGHTBOX STATE
+const lightboxImage = ref<string | null>(null)
 
 // Tabs configuration with icons
 const tabs = [
@@ -905,7 +919,15 @@ useHead({
   }) || `${car.value.make} ${car.value.model} (${car.value.year}) - Swiss Car Marketplace` : 'Car Details')
 })
 
-// NEW: Function to reveal contact information
+// LIGHTBOX FUNCTIONS
+const openLightbox = (img: string) => {
+  lightboxImage.value = img
+}
+const closeLightbox = () => {
+  lightboxImage.value = null
+}
+
+// Function to reveal contact information
 const revealContactInfo = async () => {
   if (!auth.user.value) {
     alert(t('car_details.login_to_view_contact'))
@@ -914,7 +936,6 @@ const revealContactInfo = async () => {
   }
   
   try {
-    // Log the contact view for security purposes
     await $fetch('/api/contact/reveal', {
       method: 'POST',
       body: {
@@ -922,11 +943,9 @@ const revealContactInfo = async () => {
         sellerId: car.value.sellerId
       }
     })
-    
     contactInfoRevealed.value = true
   } catch (error) {
     console.error('Error logging contact view:', error)
-    // Still show the contact info even if logging fails
     contactInfoRevealed.value = true
   }
 }
@@ -935,17 +954,14 @@ const revealContactInfo = async () => {
 const getCylinderCount = computed(() => {
   if (!car.value) return null
   
-  // Try direct cylinders field first
   if (car.value.cylinders !== undefined && car.value.cylinders !== null && car.value.cylinders !== '') {
     return car.value.cylinders
   }
   
-  // Try typenschein data (Zylinder field)
   if (car.value.typenscheinData?.BaseData_DE?.Zylinder) {
     return car.value.typenscheinData.BaseData_DE.Zylinder
   }
   
-  // Try the main typenscheinData object
   if (car.value.typenscheinData?.Zylinder) {
     return car.value.typenscheinData.Zylinder
   }
@@ -966,7 +982,6 @@ const carSpecs = computed(() => {
     'Transmission': formatTransmission(car.value.transmission),
   }
 
-  // Add extended fields
   if (car.value.bodyType) specs['Body Type'] = formatBodyType(car.value.bodyType)
   if (car.value.driveType) specs['Drive Type'] = formatDriveType(car.value.driveType)
   if (car.value.power || car.value.powerPs) specs['Power'] = `${car.value.power || car.value.powerPs} ${t('power_ps')}`
@@ -991,7 +1006,6 @@ const technicalSpecs = computed(() => {
     'Transmission': formatTransmission(car.value.transmission),
   }
 
-  // Add extended technical fields
   if (car.value.power || car.value.powerPs) specs['Power'] = `${car.value.power || car.value.powerPs} ${t('power_ps')}`
   if (getCylinderCount.value) specs['Cylinders'] = `${getCylinderCount.value}`
   if (car.value.engineSize) specs['Engine Size'] = car.value.engineSize
@@ -1027,7 +1041,6 @@ const locationInfo = computed(() => {
   if (car.value.streetAddress) info['Street Address'] = car.value.streetAddress
   if (car.value.sellerType) info['Seller Type'] = formatSellerType(car.value.sellerType)
   if (car.value.sellerName) info['Contact Name'] = car.value.sellerName
-  // REMOVED: Phone and email from direct display
 
   return info
 })
@@ -1090,17 +1103,16 @@ const isReserveMet = computed(() => {
 
 const minBidAmount = computed(() => {
   const current = car.value?.currentBid || car.value?.startingPrice || 0
-  const increment = Math.max(100, current * 0.05) // 100 CHF or 5% whichever is higher
+  const increment = Math.max(100, current * 0.05)
   return current + increment
 })
 
 const bidIncrement = computed(() => {
   const current = car.value?.currentBid || car.value?.startingPrice || 0
-  return Math.max(50, current * 0.02) // 50 CHF or 2% increment
+  return Math.max(50, current * 0.02)
 })
 
 // Fetch bid history
-// In [id].vue - UPDATE loadBidHistory function
 const loadBidHistory = async () => {
   if (!car.value || car.value.listingType !== 'auction') return
   
@@ -1130,7 +1142,6 @@ const loadBidHistory = async () => {
 
 // Check if user can bid
 const checkBidEligibility = async () => {
-  // Reset eligibility first
   bidEligibility.value = {
     canBid: false,
     reason: '',
@@ -1140,13 +1151,8 @@ const checkBidEligibility = async () => {
     user: null
   }
 
-  // Double-check auth state
   if (!auth.user.value) {
-    // Try to sync auth one more time
     await auth.syncAuth()
-    
-    // If still no user, just return without setting message
-    // (The outer "Authentication Required Notice" div will handle this)
     if (!auth.user.value) {
       return
     }
@@ -1201,7 +1207,6 @@ const requestVerification = async () => {
     
     if (response.success) {
       alert(t('auction.verification_request_sent'))
-      // Refresh eligibility check
       await checkBidEligibility()
     }
   } catch (error) {
@@ -1222,7 +1227,6 @@ const placeBid = async () => {
     return
   }
   
-  // Check funds
   if (parseFloat(bidAmount.value) > (bidEligibility.value.user?.funds || 0)) {
     bidError.value = t('auction.insufficient_funds')
     return
@@ -1232,7 +1236,6 @@ const placeBid = async () => {
   bidError.value = ''
   
   try {
-    // Use the correct endpoint
     const response = await $fetch('/api/bids/create', {
       method: 'POST',
       body: {
@@ -1242,26 +1245,18 @@ const placeBid = async () => {
     })
     
     if (response.success) {
-      // Update local car data
       car.value.currentBid = parseFloat(bidAmount.value)
       car.value.bidCount = (car.value.bidCount || 0) + 1
       car.value.highestBidderId = auth.user.value.id
       
-      // Clear bid input
       bidAmount.value = ''
       
-      // Update user funds display
       if (bidEligibility.value.user) {
         bidEligibility.value.user.funds -= parseFloat(bidAmount.value)
       }
       
-      // Reload bid history
       await loadBidHistory()
-      
-      // Show success message
       alert(t('auction.bid_placed_success'))
-      
-      // Refresh eligibility to update funds
       await checkBidEligibility()
     }
   } catch (error: any) {
@@ -1277,10 +1272,8 @@ const placeBid = async () => {
         bidEligibility.value.message = error.data.message
       }
     } else if (error.status === 400) {
-      // Handle insufficient funds
       if (error.data?.message?.includes('funds')) {
         bidError.value = error.data.message
-        // Refresh eligibility to get current funds
         await checkBidEligibility()
       }
     }
@@ -1292,10 +1285,7 @@ const placeBid = async () => {
 // Start auction timer
 const startAuctionTimer = () => {
   if (car.value?.listingType === 'auction' && car.value.status === 'active') {
-    auctionTimer.value = setInterval(() => {
-      // Force recomputation
-      // You can add a dummy reactive variable to trigger updates
-    }, 60000)
+    auctionTimer.value = setInterval(() => {}, 60000)
   }
 }
 
@@ -1303,26 +1293,22 @@ const startAuctionTimer = () => {
 const startChatWithSeller = async () => {
   console.log('=== START CHAT WITH SELLER ===')
   
-  // Check if user is logged in
   if (!auth.user.value) {
     alert(t('car_details.login_to_chat'))
     await router.push('/login')
     return
   }
 
-  // Check if car data is available
   if (!car.value) {
     alert(t('car_details.car_info_unavailable'))
     return
   }
 
-  // Check if seller email is available
   if (!car.value.sellerEmail) {
     alert(t('car_details.seller_info_unavailable'))
     return
   }
 
-  // Don't allow messaging yourself
   if (auth.user.value.email === car.value.sellerEmail) {
     alert(t('car_details.cannot_message_yourself'))
     return
@@ -1334,7 +1320,6 @@ const startChatWithSeller = async () => {
     console.log('Creating chat for car:', car.value.id)
     console.log('Seller email:', car.value.sellerEmail)
 
-    // Call the API to create or get existing chat
     const response = await $fetch('/api/chat/start', {
       method: 'POST',
       body: {
@@ -1346,7 +1331,6 @@ const startChatWithSeller = async () => {
     console.log('Chat creation response:', response)
 
     if (response.success && response.chatId) {
-      // Set the chat ID and open the modal
       activeChatId.value = response.chatId
       showChatModal.value = true
       console.log('✅ Chat opened with ID:', activeChatId.value)
@@ -1382,34 +1366,26 @@ const sendMessage = () => {
 }
 
 // Helper functions
-// In [id].vue script section - JUST UPDATE formatNumber function
 const formatNumber = (num: any) => {
-  // Handle null/undefined
   if (num === null || num === undefined || num === '') {
     return '0'
   }
   
-  // Convert to number
   let numberValue: number
   
   if (typeof num === 'object' && num !== null) {
-    // Handle Decimal objects from Sequelize
     numberValue = parseFloat(num.toString())
   } else if (typeof num === 'string') {
-    // Handle string numbers
     numberValue = parseFloat(num.replace(/[^\d.-]/g, ''))
   } else {
-    // Handle regular numbers
     numberValue = Number(num)
   }
   
-  // Check if valid number
   if (isNaN(numberValue)) {
     console.warn('formatNumber received invalid value:', num, 'type:', typeof num)
     return '0'
   }
   
-  // Format with Swiss-style thousand separators
   return numberValue.toLocaleString('de-CH', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
@@ -1530,7 +1506,7 @@ const getStatusClass = (status: string) => {
 const getStatusDisplay = (status: string, listingType?: string) => {
   if (listingType === 'auction') {
     switch (status?.toLowerCase()) {
-      case 'active':  // Changed from 'auction' to 'active'
+      case 'active':
         return t('auction.live_auction')
       case 'auction_ended':
         return t('auction.auction_ended')
@@ -1589,12 +1565,10 @@ const callSeller = () => {
 
 // Lifecycle hooks
 onMounted(async () => {
-  // Load bid history if auction
   if (car.value?.listingType === 'auction') {
     await loadBidHistory()
     startAuctionTimer()
     
-    // Check bid eligibility if user is logged in
     if (auth.user.value) {
       await checkBidEligibility()
     }
@@ -1612,7 +1586,6 @@ watch(() => auth.user.value, async (newUser) => {
   if (newUser && car.value?.listingType === 'auction') {
     await checkBidEligibility()
   } else if (!newUser) {
-    // Reset eligibility when user logs out
     bidEligibility.value = {
       canBid: false,
       reason: 'not_authenticated',
@@ -1673,7 +1646,6 @@ watch(() => auth.user.value, async (newUser) => {
    MOBILE FIXES — scoped so they definitely apply to this page
    ============================================================ */
 @media (max-width: 768px) {
-
   /* 1. Page root: no horizontal overflow ever */
   :deep(.min-h-screen) {
     overflow-x: hidden !important;

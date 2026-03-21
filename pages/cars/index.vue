@@ -1244,13 +1244,7 @@ const getStatusClass = (status: string) => {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 onMounted(async () => {
-  try {
-    const response = await $fetch('/api/cars')
-    cars.value = response as any[]
-  } catch (error) {
-    console.error('Failed to fetch cars:', error)
-  }
-
+  // ✅ Read URL params FIRST so computed filteredCars is correct when data arrives
   const q = route.query
   if (q.make) filters.value.make = q.make as string
   if (q.model) filters.value.model = q.model as string
@@ -1278,6 +1272,15 @@ onMounted(async () => {
   if (q.canton) filters.value.canton = q.canton as string
   if (q.equipment) { const e = q.equipment; filters.value.equipment = Array.isArray(e) ? e as string[] : [e as string] }
   if (q.sort) sortBy.value = q.sort as string
+
+  // THEN fetch cars
+  try {
+    const response = await $fetch('/api/cars')
+    cars.value = response as any[]
+  } catch (error) {
+    console.error('Failed to fetch cars:', error)
+  }
+
   if (Object.keys(q).length > 0) applyFilters()
 })
 

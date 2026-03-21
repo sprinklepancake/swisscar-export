@@ -1,6 +1,6 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" @click.self="closeChat">
-    <div class="glass rounded-2xl max-w-4xl w-full h-[700px] border border-red-200 shadow-2xl flex flex-col">
+  <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-start md:items-center justify-center p-2 md:p-4 z-[9999] overflow-y-auto" @click.self="closeChat">
+    <div class="glass rounded-2xl max-w-4xl w-full h-[calc(100vh-1rem)] md:h-auto md:max-h-[calc(100vh-2rem)] min-h-[500px] border border-red-200 shadow-2xl flex flex-col my-auto">
       <!-- Chat Header with Car Info -->
       <div class="p-4 border-b border-red-200 bg-red-50/50 rounded-t-2xl">
         <div class="flex justify-between items-start mb-2">

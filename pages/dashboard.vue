@@ -335,14 +335,14 @@ const confirmDelete = (carId: number) => {
 // Delete listing
 const deleteListing = async (carId: number) => {
   try {
-    await $fetch(`/api/seller/listings/${carId}`, {
+    await $fetch(`/api/cars/${carId}/delete`, {
       method: 'DELETE'
     })
     await refreshData()
     alert('Listing deleted successfully!')
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to delete listing:', error)
-    alert('Failed to delete listing. Please try again.')
+    alert('Failed to delete listing: ' + (error.data?.message || error.message || 'Please try again'))
   }
 }
 

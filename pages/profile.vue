@@ -613,20 +613,31 @@ watchEffect(() => {
   error.value = fetchError.value?.message || ''
 })
 
-// Fetch user's listings if seller
-watchEffect(async () => {
+// Fetch user's listings if seller — use $fetch (not useFetch) inside watchers
+const fetchUserListings = async () => {
   if (profileData.value.user.role === 'seller' && profileData.value.user.id) {
     listingsLoading.value = true
     try {
-      const { data: listings } = await useFetch('/api/cars/my')
-      userListings.value = listings.value || []
+      const listings = await $fetch('/api/cars/my')
+      userListings.value = (listings as any[]) || []
     } catch (err) {
       console.error('Failed to fetch listings:', err)
+      userListings.value = []
     } finally {
       listingsLoading.value = false
     }
   }
-})
+}
+
+watch(
+  () => profileData.value.user.id,
+  (newId) => {
+    if (newId && profileData.value.user.role === 'seller') {
+      fetchUserListings()
+    }
+  },
+  { immediate: true }
+)
 
 // Load transactions
 const loadTransactions = async () => {

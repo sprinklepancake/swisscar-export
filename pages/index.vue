@@ -49,15 +49,15 @@
               <label class="block text-sm font-medium text-red-800 mb-2">{{ t('price_range_label') }}</label>
               <div class="flex gap-2">
                 <div class="relative flex-1">
-                  <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-700 text-sm font-semibold">CHF</span>
+                  <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 text-xs font-medium pointer-events-none select-none">CHF</span>
                   <input v-model.number="filters.priceMin" type="number" :placeholder="t('min_price')" 
-                         class="search-input pl-10" :disabled="loadingFilters">
+                        class="search-input !pl-12" :disabled="loadingFilters">
                 </div>
                 <span class="text-red-700 self-center">-</span>
                 <div class="relative flex-1">
-                  <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-700 text-sm font-semibold">CHF</span>
+                  <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 text-xs font-medium pointer-events-none select-none">CHF</span>
                   <input v-model.number="filters.priceMax" type="number" :placeholder="t('max_price')" 
-                        class="search-input pl-10" :disabled="loadingFilters">
+                        class="search-input !pl-12" :disabled="loadingFilters">
                 </div>
               </div>
             </div>
@@ -283,53 +283,44 @@
             <div class="feature-icon">
               <component :is="getFeatureIcon(feature.icon)" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-2xl font-bold text-red-800 mb-4">{{ t(`features.${feature.key}.title`) || feature.title }}</h3>
-            <p class="text-red-700 leading-relaxed">{{ t(`features.${feature.key}.desc`) || feature.description }}</p>
+            <h3 class="text-2xl font-bold text-red-800 mb-4">{{ feature.title }}</h3>
+            <p class="text-red-700 leading-relaxed">{{ feature.description }}</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Enhanced Stats Section -->
-    <section v-if="!loadingStats" class="py-20 bg-gradient-to-br from-red-50 to-white">
+    <!-- Stats Section — static marketing values -->
+    <section class="py-20 bg-gradient-to-br from-red-50 to-white">
       <div class="max-w-7xl mx-auto px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
-              {{ stats.totalCars || '0' }}
+              45+
             </div>
-            <div class="text-red-700 font-medium">{{ t('stat_label_1') }}</div>
+            <div class="text-red-700 font-medium">{{ t('stat_label_3') || 'Export Destinations' }}</div>
           </div>
           <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
-              {{ stats.totalSellers || '0' }}
+              100%
             </div>
-            <div class="text-red-700 font-medium">{{ t('stat_label_2') }}</div>
+            <div class="text-red-700 font-medium">{{ t('stat_verified_sellers') || 'Swiss Verified Sellers' }}</div>
           </div>
           <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
-              {{ stats.totalUsers || '0' }}
+              Free
             </div>
-            <div class="text-red-700 font-medium">{{ t('stat_label_3') }}</div>
+            <div class="text-red-700 font-medium">{{ t('stat_free_browse') || 'Free to Browse & Contact' }}</div>
           </div>
           <div class="text-center transform hover:scale-105 transition-transform duration-300">
             <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 mb-2">
-              {{ stats.countriesServed || '50' }}+
+              6
             </div>
-            <div class="text-red-700 font-medium">{{ t('stat_label_4') }}</div>
+            <div class="text-red-700 font-medium">{{ t('stat_free_months') || 'Free Months for Sellers' }}</div>
           </div>
         </div>
       </div>
     </section>
-    <div v-else class="py-12 text-center text-red-700">
-      <div class="inline-flex items-center">
-        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-red-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        {{ t('loading') || 'Loading stats...' }}
-      </div>
-    </div>
 
     <!-- Enhanced Newsletter Section -->
     <section class="py-20 bg-gradient-to-br from-white to-red-50">

@@ -16,6 +16,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: 'Your account has been banned.' })
   }
 
+  if (!user.verified) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Your account must be verified before you can post listings. Please wait for admin verification.',
+    })
+  }
+
   const body = await readBody(event)
 
   if (!body.canton || !body.city || !body.zipCode) {

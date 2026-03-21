@@ -598,6 +598,20 @@ const { data, pending, error: fetchError } = await useLazyFetch('/api/user/profi
 watchEffect(() => {
   if (data.value) {
     profileData.value = data.value
+
+    // ✅ Listings are already in the profile API response — map snake_case → camelCase
+    const rawListings = (data.value as any).listings || []
+    userListings.value = rawListings.map((car: any) => ({
+      ...car,
+      // Map snake_case DB fields to camelCase used by the template
+      listingType: car.listing_type,
+      isFeatured: car.is_featured,
+      featuredUntil: car.featured_until,
+      currentBid: car.current_bid,
+      bidCount: car.bid_count || 0,
+      createdAt: car.created_at,
+    }))
+
     // Initialize edit form with current data
     editForm.value = {
       name: profileData.value.user.name,
@@ -608,36 +622,13 @@ watchEffect(() => {
       canton: profileData.value.user.canton || '',
       zipCode: profileData.value.user.zipCode || ''
     }
+
+    // Set loading false after data is processed
+    listingsLoading.value = false
   }
   loading.value = pending.value
   error.value = fetchError.value?.message || ''
 })
-
-// Fetch user's listings if seller — use $fetch (not useFetch) inside watchers
-const fetchUserListings = async () => {
-  if (profileData.value.user.role === 'seller' && profileData.value.user.id) {
-    listingsLoading.value = true
-    try {
-      const listings = await $fetch('/api/cars/my')
-      userListings.value = (listings as any[]) || []
-    } catch (err) {
-      console.error('Failed to fetch listings:', err)
-      userListings.value = []
-    } finally {
-      listingsLoading.value = false
-    }
-  }
-}
-
-watch(
-  () => profileData.value.user.id,
-  (newId) => {
-    if (newId && profileData.value.user.role === 'seller') {
-      fetchUserListings()
-    }
-  },
-  { immediate: true }
-)
 
 // Load transactions
 const loadTransactions = async () => {

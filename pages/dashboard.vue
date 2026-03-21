@@ -1,9 +1,8 @@
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-red-800 mb-6">Seller Dashboard</h1>
-    
+  <div class="max-w-6xl mx-auto px-4 py-8 min-h-[70vh]">
+
     <!-- Loading state -->
-    <div v-if="pending" class="text-center py-12">
+    <div v-if="pending" class="flex flex-col items-center justify-center py-24">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600 mx-auto mb-4"></div>
       <p class="text-red-600">Loading dashboard...</p>
     </div>
@@ -112,7 +111,7 @@
                 <th class="pb-3 text-red-600 font-medium">Price</th>
                 <th class="pb-3 text-red-600 font-medium">Status</th>
                 <th class="pb-3 text-red-600 font-medium">Actions</th>
-              </tr>
+               </tr>
             </thead>
             <tbody>
               <tr v-for="car in filteredListings" :key="car.id" class="border-b border-red-200 hover:bg-red-50/50 transition-colors">

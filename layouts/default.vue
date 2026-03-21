@@ -51,6 +51,18 @@
                 </svg>
                 {{ t('contact') }}
               </NuxtLink>
+
+              <!-- Sell Car — in center nav, visible to logged-out users and sellers -->
+              <NuxtLink
+                v-if="!currentUser || currentUser?.role === 'seller'"
+                :to="localePath('/sell')"
+                class="flex items-center px-3 lg:px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-xl hover:from-red-700 hover:to-red-900 shadow-md transition-all duration-200 text-sm lg:text-base whitespace-nowrap"
+              >
+                <svg class="w-4 h-4 lg:w-5 lg:h-5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                {{ t('sell_car') || 'Sell Car' }}
+              </NuxtLink>
             </div>
           </nav>
 
@@ -95,27 +107,18 @@
             </div>
 
             <template v-else-if="currentUser">
-              <!-- Messages -->
-              <NuxtLink :to="localePath('/messages')" class="nav-link relative">
-                <svg class="w-4 h-4 lg:w-5 lg:h-5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- Messages — icon only, title for accessibility -->
+              <NuxtLink
+                :to="localePath('/messages')"
+                class="relative p-2 rounded-xl text-red-700 hover:bg-red-50 transition-colors"
+                :title="t('messages.title') || 'Messages'"
+              >
+                <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                 </svg>
-                {{ t('messages.title') || 'Messages' }}
-                <span v-if="unreadCount > 0" class="ml-1 bg-red-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center leading-none">
-                  {{ unreadCount }}
+                <span v-if="unreadCount > 0" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center leading-none">
+                  {{ unreadCount > 9 ? '9+' : unreadCount }}
                 </span>
-              </NuxtLink>
-
-              <!-- Sell Car CTA — shown to sellers and unregistered visitors -->
-              <NuxtLink
-                v-if="!currentUser || currentUser?.role === 'seller'"
-                :to="localePath('/sell')"
-                class="nav-link bg-gradient-to-r from-red-600 to-red-800 !text-white hover:from-red-700 hover:to-red-900 shadow-md"
-              >
-                <svg class="w-4 h-4 lg:w-5 lg:h-5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                {{ t('sell_car') || 'Sell Your Car' }}
               </NuxtLink>
 
               <!-- Dashboard (seller only) -->

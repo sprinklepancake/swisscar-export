@@ -6,6 +6,9 @@ export const useAuth = () => {
   const user = useState('user', () => null as any)
   const isAuthenticated = computed(() => !!user.value)
   const isInitialized = useState('auth-initialized', () => false)
+  // Guard to prevent registering multiple onAuthStateChange listeners.
+  // useState ensures this flag persists across composable calls within the same app instance.
+  const listenerRegistered = useState('auth-listener-registered', () => false)
 
   const getSupabase = () => {
     try {
@@ -16,16 +19,26 @@ export const useAuth = () => {
     }
   }
 
-  // FIX: cookie name must use hyphens to match server/middleware/auth.ts
-  // which reads 'sb-access-token' (hyphen), not 'sb_access_token' (underscore)
+  // ─── CRITICAL FIX ────────────────────────────────────────────────────────────
+  // useCookie MUST be called synchronously at the top level of the composable,
+  // NOT inside an async function after an `await`. After an await, the Nuxt
+  // context may be gone, causing the cookie to silently fail to set — which
+  // means the server middleware never sees a token and treats every request as
+  // unauthenticated.
+  //
+  // Also changed sameSite from 'strict' to 'lax': 'strict' blocks cookies on
+  // redirects and navigations from external URLs, which breaks auth on Render
+  // and any reverse-proxy deployment.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const authCookie = useCookie('sb-access-token', {
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'lax',           // was 'strict' — causes cookie to be blocked on redirects
+    secure: process.env.NODE_ENV === 'production',
+    // NOT httpOnly — must be readable/writable from client JS
+  })
+
   const setAuthCookie = (token: string | null) => {
-    const cookie = useCookie('sb-access-token', {
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      // NOT httpOnly - needs to be set from client JS
-    })
-    cookie.value = token
+    authCookie.value = token   // just update the already-initialised ref
   }
 
   const syncAuth = async () => {
@@ -64,14 +77,20 @@ export const useAuth = () => {
       user.value = { ...userData, auth_uid: sessionData.session.user.id }
       isInitialized.value = true
       return true
-    } catch (error) {
+    } catch (err) {
       user.value = null
       isInitialized.value = true
       return false
     }
   }
 
-  if (process.client) {
+  // Register the auth state listener only once per app instance.
+  // Previously this block ran every time useAuth() was called (middleware,
+  // layout, page components, etc.), stacking up duplicate listeners that all
+  // fired syncAuth() simultaneously and caused race conditions.
+  if (process.client && !listenerRegistered.value) {
+    listenerRegistered.value = true
+
     nextTick(() => {
       const supabase = getSupabase()
       if (supabase) {
@@ -87,7 +106,10 @@ export const useAuth = () => {
           }
         })
       }
-      syncAuth()
+      // Only sync on initial load, not on every composable call
+      if (!isInitialized.value) {
+        syncAuth()
+      }
     })
   }
 
@@ -110,24 +132,29 @@ export const useAuth = () => {
         }
 
         if (data.user) {
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('auth_uid', data.user.id)
             .single()
 
-          if (profileData) {
-            user.value = { ...profileData, auth_uid: data.user.id }
-
-            // Update last login
-            await supabase
-              .from('users')
-              .update({
-                last_login: new Date().toISOString(),
-                login_count: (profileData.login_count || 0) + 1,
-              })
-              .eq('id', profileData.id)
+          // FIX: was silently returning false — now throws so the login page
+          // can show the user a meaningful error instead of just doing nothing.
+          if (profileError || !profileData) {
+            throw new Error('Account profile not found. Please contact support.')
           }
+
+          user.value = { ...profileData, auth_uid: data.user.id }
+
+          // Update last login (fire-and-forget, don't block the login flow)
+          supabase
+            .from('users')
+            .update({
+              last_login: new Date().toISOString(),
+              login_count: (profileData.login_count || 0) + 1,
+            })
+            .eq('id', profileData.id)
+            .then(() => {}) // intentionally not awaited
 
           return true
         }

@@ -33,32 +33,46 @@
             </div>
           </div>
 
-          <!-- Role Selection -->
+          <!-- Role Selection (3 buttons) -->
           <div>
             <label class="block text-sm font-medium text-red-700 mb-2">{{ t('auth.role_label') }} *</label>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-3 gap-2">
               <button
                 type="button"
-                @click="form.role = 'buyer'"
+                @click="setRole('direct_buyer')"
                 :class="{
-                  'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'buyer',
-                  'bg-white/80 hover:bg-white text-red-800': form.role !== 'buyer'
+                  'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'direct_buyer',
+                  'bg-white/80 hover:bg-white text-red-800': form.role !== 'direct_buyer'
                 }"
-                class="p-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-red-300"
+                class="p-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-red-300 text-sm"
               >
-                <svg v-if="form.role === 'buyer'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-if="form.role === 'direct_buyer'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
-                {{ t('auth.role_buyer') }}
+                {{ t('auth.role_direct_buyer') || 'Direct Buyer' }}
               </button>
               <button
                 type="button"
-                @click="form.role = 'seller'"
+                @click="setRole('auction_buyer')"
+                :class="{
+                  'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'auction_buyer',
+                  'bg-white/80 hover:bg-white text-red-800': form.role !== 'auction_buyer'
+                }"
+                class="p-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-red-300 text-sm"
+              >
+                <svg v-if="form.role === 'auction_buyer'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                {{ t('auth.role_auction_buyer') || 'Auction Buyer' }}
+              </button>
+              <button
+                type="button"
+                @click="setRole('seller')"
                 :class="{
                   'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'seller',
                   'bg-white/80 hover:bg-white text-red-800': form.role !== 'seller'
                 }"
-                class="p-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-red-300"
+                class="p-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-red-300 text-sm"
               >
                 <svg v-if="form.role === 'seller'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -109,57 +123,69 @@
             </div>
           </div>
 
-          <!-- Location Information -->
+          <!-- Location Information (conditional) -->
           <div class="space-y-4">
-            <!-- Street Address - NEW FIELD -->
-            <div>
-              <label for="streetAddress" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.street_address') }}</label>
-              <input
-                v-model="form.streetAddress"
-                type="text"
-                id="streetAddress"
-                class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                :placeholder="t('register.location.street_address_placeholder')"
-              />
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Seller: full address with Swiss canton -->
+            <template v-if="form.role === 'seller'">
               <div>
-                <label for="canton" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.canton') }}</label>
-                <select
-                  v-model="form.canton"
-                  id="canton"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                >
-                  <option value="">{{ t('register.location.select_canton') }}</option>
-                  <option v-for="canton in cantons" :key="canton" :value="canton">{{ canton }}</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="city" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.city') }}</label>
+                <label for="streetAddress" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.street_address') }}</label>
                 <input
-                  v-model="form.city"
+                  v-model="form.streetAddress"
                   type="text"
-                  id="city"
+                  id="streetAddress"
                   class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  :placeholder="t('register.location.city_placeholder')"
+                  :placeholder="t('register.location.street_address_placeholder')"
                 />
               </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="zipCode" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.zip_code') }}</label>
-                <input
-                  v-model="form.zipCode"
-                  type="text"
-                  id="zipCode"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  :placeholder="t('register.location.zip_code_placeholder')"
-                />
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="canton" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.canton') }}</label>
+                  <select
+                    v-model="form.canton"
+                    id="canton"
+                    class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">{{ t('register.location.select_canton') }}</option>
+                    <option v-for="canton in cantons" :key="canton" :value="canton">{{ canton }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="city" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.city') }}</label>
+                  <input
+                    v-model="form.city"
+                    type="text"
+                    id="city"
+                    class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    :placeholder="t('register.location.city_placeholder')"
+                  />
+                </div>
               </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="zipCode" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.zip_code') }}</label>
+                  <input
+                    v-model="form.zipCode"
+                    type="text"
+                    id="zipCode"
+                    class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    :placeholder="t('register.location.zip_code_placeholder')"
+                  />
+                </div>
+                <!-- Country fixed for Swiss sellers -->
+                <div>
+                  <label for="country" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.country') }}</label>
+                  <input
+                    type="text"
+                    disabled
+                    value="Switzerland"
+                    class="w-full p-3 bg-gray-100 border border-red-300 rounded-lg text-red-900 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+            </template>
 
+            <!-- Auction & Direct Buyer: country (any), city, zip only -->
+            <template v-else>
               <div>
                 <label for="country" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.country') }}</label>
                 <select
@@ -175,21 +201,61 @@
                   <option value="Other">{{ t('register.location.countries.other') }}</option>
                 </select>
               </div>
-            </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="city" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.city') }}</label>
+                  <input
+                    v-model="form.city"
+                    type="text"
+                    id="city"
+                    class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    :placeholder="t('register.location.city_placeholder')"
+                  />
+                </div>
+                <div>
+                  <label for="zipCode" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.zip_code') }}</label>
+                  <input
+                    v-model="form.zipCode"
+                    type="text"
+                    id="zipCode"
+                    class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    :placeholder="t('register.location.zip_code_placeholder')"
+                  />
+                </div>
+              </div>
+            </template>
           </div>
 
-          <!-- Phone Number -->
+          <!-- Phone Number (required for auction buyers and sellers) -->
           <div>
-            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.phone.label') }} *</label>
+            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">
+              {{ t('register.phone.label') }} 
+              <span v-if="form.role !== 'direct_buyer'" class="text-red-500">*</span>
+            </label>
             <input
               v-model="form.phone"
               type="tel"
               id="phone"
-              required
+              :required="form.role !== 'direct_buyer'"
               class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               :placeholder="t('register.phone.placeholder')"
               @input="formatPhoneNumber"
             />
+          </div>
+
+          <!-- Auction Buyer: ID Upload -->
+          <div v-if="form.role === 'auction_buyer'" class="border border-red-200 rounded-lg p-4 bg-red-50">
+            <label for="idDocument" class="block text-sm font-medium text-red-700 mb-1">
+              {{ t('register.auction_buyer.id_document') || 'ID / Passport Upload' }}
+            </label>
+            <input
+              type="file"
+              id="idDocument"
+              accept="image/*,.pdf"
+              @change="handleIdUpload"
+              class="w-full text-sm text-red-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-700 hover:file:bg-red-200"
+            />
+            <p class="text-red-600 text-xs mt-1">{{ t('register.auction_buyer.id_hint') || 'Required for auction verification' }}</p>
           </div>
 
           <!-- Passwords -->
@@ -300,11 +366,7 @@
             </svg>
             <h2 class="text-xl font-bold text-red-800 mb-2">{{ t('register.join_title') }}</h2>
             <p class="text-red-700 text-sm mb-4">
-              {{
-                form.role === 'buyer' 
-                ? t('register.buyer_message')
-                : t('register.seller_message')
-              }}
+              {{ roleMessage }}
             </p>
             
             <div class="text-left text-sm text-red-600 space-y-2">
@@ -364,7 +426,8 @@ const form = ref({
   phone: '',
   password: '',
   confirmPassword: '',
-  role: 'buyer' as 'buyer' | 'seller',
+  role: 'direct_buyer' as 'direct_buyer' | 'auction_buyer' | 'seller',
+  buyerType: 'direct' as 'direct' | 'auction',
   companyName: '',
   businessType: '' as 'private' | 'dealer' | 'business' | '',
   canton: '',
@@ -372,16 +435,44 @@ const form = ref({
   zipCode: '',
   country: 'Switzerland',
   taxId: '',
-  streetAddress: '', // NEW FIELD ADDED
+  streetAddress: '',
   termsAccepted: false,
   privacyAccepted: false,
-  marketingAccepted: false
+  marketingAccepted: false,
+  idDocument: null as File | null,
 })
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 
 const cantons = ['Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden', 'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft', 'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen', 'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura']
+
+const setRole = (role: 'direct_buyer' | 'auction_buyer' | 'seller') => {
+  form.value.role = role
+  if (role === 'direct_buyer') {
+    form.value.buyerType = 'direct'
+  } else if (role === 'auction_buyer') {
+    form.value.buyerType = 'auction'
+  }
+  // seller keeps empty buyerType, but not used
+}
+
+const roleMessage = computed(() => {
+  if (form.value.role === 'direct_buyer') {
+    return t('register.direct_buyer_message') || 'Browse and purchase vehicles directly from Swiss sellers.'
+  }
+  if (form.value.role === 'auction_buyer') {
+    return t('register.auction_buyer_message') || 'Bid on exclusive Swiss vehicle auctions and win your dream car.'
+  }
+  return t('register.seller_message')
+})
+
+const handleIdUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    form.value.idDocument = target.files[0]
+  }
+}
 
 const validatePhoneNumber = (phone: string): string | null => {
   const cleaned = phone.replace(/\D/g, '')
@@ -430,11 +521,13 @@ const handleRegister = async () => {
     return
   }
 
-  // Validate phone number
-  const phoneError = validatePhoneNumber(form.value.phone)
-  if (phoneError) {
-    error.value = phoneError
-    return
+  // Validate phone (only for non-direct_buyer)
+  if (form.value.role !== 'direct_buyer') {
+    const phoneError = validatePhoneNumber(form.value.phone)
+    if (phoneError) {
+      error.value = phoneError
+      return
+    }
   }
 
   // Validate terms
@@ -447,7 +540,6 @@ const handleRegister = async () => {
     loading.value = true
     error.value = null
     
-    // Clean phone number
     const cleanedPhone = form.value.phone.replace(/\D/g, '')
     
     const { data, error: fetchError } = await useFetch('/api/auth/register', {
@@ -458,15 +550,16 @@ const handleRegister = async () => {
         password: form.value.password,
         phone: cleanedPhone,
         role: form.value.role,
+        buyerType: form.value.buyerType,
         companyName: form.value.companyName,
         businessType: form.value.businessType,
-        canton: form.value.canton,
+        canton: form.value.role === 'seller' ? form.value.canton : undefined,
         city: form.value.city,
         zipCode: form.value.zipCode,
-        country: form.value.country,
+        country: form.value.role === 'seller' ? 'Switzerland' : form.value.country,
         taxId: form.value.taxId,
-        streetAddress: form.value.streetAddress, // NEW FIELD INCLUDED
-        marketingAccepted: form.value.marketingAccepted
+        streetAddress: form.value.role === 'seller' ? form.value.streetAddress : undefined,
+        marketingAccepted: form.value.marketingAccepted,
       }
     })
     
@@ -475,7 +568,11 @@ const handleRegister = async () => {
       return
     }
     
-    // Show success message and redirect to login
+    // If auction buyer and ID file selected, upload separately (to be implemented)
+    if (form.value.role === 'auction_buyer' && form.value.idDocument) {
+      // TODO: implement ID document upload endpoint
+    }
+    
     alert(t('register.messages.success') || 'Account created successfully! Please login to continue.')
     await navigateTo('/login')
   } catch (err) {

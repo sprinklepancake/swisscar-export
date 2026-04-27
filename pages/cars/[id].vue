@@ -1,6 +1,6 @@
 <!-- pages/cars/[id].vue - UPDATED WITH VERIFICATION & BID ELIGIBILITY & HIDDEN CONTACT INFO & LIGHTBOX -->
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-8 overflow-x-hidden">
+  <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-4 sm:py-8 overflow-x-hidden">
     <!-- Error State -->
     <div v-if="error" class="max-w-4xl mx-auto px-4 text-center py-12">
       <div class="glass p-8 rounded-2xl border border-red-200">
@@ -38,14 +38,14 @@
       </div>
 
       <!-- Main Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         <!-- Left Column - Images & Details -->
         <div class="lg:col-span-2">
           <!-- Image Gallery -->
-          <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-6">
+          <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-3 sm:mb-6">
             <!-- Main Image (clickable) -->
             <div 
-              class="relative h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden cursor-pointer"
+              class="relative h-48 sm:h-64 md:h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden cursor-pointer"
               @click="openLightbox(currentImage)"
             >
               <img 
@@ -53,26 +53,26 @@
                 :alt="`${car.make} ${car.model}`" 
                 class="w-full h-full object-cover"
               >
-              <div class="absolute top-4 left-4 flex space-x-2 flex-wrap gap-2">
-                <div v-if="car.isFeatured" class="bg-red-700 text-white px-3 py-1 rounded-full text-xs font-semibold">
+              <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100%-1rem)]">
+                <div v-if="car.isFeatured" class="bg-red-700 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   ⭐ {{ $t('featured') }}
                 </div>
-                <div class="car-status" :class="getStatusClass(car.status)">
+                <div class="car-status text-xs px-2 py-0.5 sm:px-3 sm:py-1" :class="getStatusClass(car.status)">
                   {{ getStatusDisplay(car.status, car.listingType) }}
                 </div>
-                <div v-if="car.listingType === 'auction' && car.status === 'active'" class="bg-purple-700 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div v-if="car.listingType === 'auction' && car.status === 'active'" class="bg-purple-700 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   🏆 {{ $t('auction.live_auction') }}
                 </div>
-                <div v-if="car.exportDocuments" class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div v-if="car.exportDocuments" class="bg-green-600 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   📄 {{ $t('export_ready') }}
                 </div>
-                <div v-if="car.withWarranty" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div v-if="car.withWarranty" class="bg-blue-600 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   🛡️ {{ $t('with_warranty') }}
                 </div>
-                <div v-if="car.validInspection" class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div v-if="car.validInspection" class="bg-green-600 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   ✅ {{ $t('valid_inspection') }}
                 </div>
-                <div v-if="car.hasAccident" class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div v-if="car.hasAccident" class="bg-orange-600 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   ⚠️ {{ $t('accident_vehicle') }}
                 </div>
               </div>
@@ -93,7 +93,7 @@
           </div>
 
           <!-- Shipping Ad Section - Redesigned for mobile -->
-          <div class="glass rounded-2xl p-4 sm:p-6 border border-red-200 shadow-lg mb-6">
+          <div class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg mb-3 sm:mb-6">
             <div class="flex flex-col sm:flex-row items-center gap-4">
               <div class="flex-shrink-0">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-red-300 bg-white">
@@ -150,40 +150,40 @@
               </div>
             </div>
 
-            <!-- Tab Content (unchanged) -->
-            <div class="p-6">
+            <!-- Tab Content -->
+            <div class="p-3 sm:p-6">
               <!-- Specifications Tab -->
               <div v-if="activeTab === 'specs'" class="animate-fade-in">
-                <h3 class="text-xl font-bold text-red-900 mb-6 flex items-center">
-                  <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 class="text-base sm:text-xl font-bold text-red-900 mb-3 sm:mb-6 flex items-center">
+                  <svg class="w-4 h-4 sm:w-6 sm:h-6 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                   </svg>
                   {{ $t('car_details.specifications_title') }}
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div v-for="(value, key) in carSpecs" :key="key" class="flex justify-between py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-3 transition-colors">
-                    <span class="text-red-700 font-medium">{{ $t(`car_details.specs_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-2">
+                  <div v-for="(value, key) in carSpecs" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
+                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.specs_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
                   </div>
                 </div>
               </div>
 
               <!-- Description Tab -->
               <div v-if="activeTab === 'description'" class="animate-fade-in">
-                <h3 class="text-xl font-bold text-red-900 mb-6 flex items-center">
-                  <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 class="text-base sm:text-xl font-bold text-red-900 mb-3 sm:mb-6 flex items-center">
+                  <svg class="w-4 h-4 sm:w-6 sm:h-6 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                   </svg>
                   {{ $t('car_details.description_title') }}
                 </h3>
                 
-                <div class="bg-red-50 rounded-xl p-6 mb-6 border border-red-200">
+                <div class="bg-red-50 rounded-xl p-3 sm:p-6 mb-3 sm:mb-6 border border-red-200">
                   <h4 class="text-lg font-semibold text-red-900 mb-3">{{ $t('car_details.description_label') }}</h4>
                   <p class="text-red-800 leading-relaxed whitespace-pre-line">{{ car.description || $t('car_details.no_description') }}</p>
                 </div>
                 
                 <!-- Features -->
-                <div v-if="car.equipment && car.equipment.length" class="bg-red-50 rounded-xl p-6 border border-red-200 mb-6">
+                <div v-if="car.equipment && car.equipment.length" class="bg-red-50 rounded-xl p-3 sm:p-6 border border-red-200 mb-3 sm:mb-6">
                   <h4 class="text-lg font-semibold text-red-900 mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -203,34 +203,34 @@
 
               <!-- Technical Details Tab -->
               <div v-if="activeTab === 'technical'" class="animate-fade-in">
-                <h3 class="text-xl font-bold text-red-900 mb-6 flex items-center">
-                  <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 class="text-base sm:text-xl font-bold text-red-900 mb-3 sm:mb-6 flex items-center">
+                  <svg class="w-4 h-4 sm:w-6 sm:h-6 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
                   {{ $t('car_details.technical_title') }}
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div v-for="(value, key) in technicalSpecs" :key="key" class="flex justify-between py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-3 transition-colors">
-                    <span class="text-red-700 font-medium">{{ $t(`car_details.tech_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-2">
+                  <div v-for="(value, key) in technicalSpecs" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
+                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.tech_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
                   </div>
                 </div>
               </div>
 
               <!-- Location Tab -->
               <div v-if="activeTab === 'location'" class="animate-fade-in">
-                <h3 class="text-xl font-bold text-red-900 mb-6 flex items-center">
-                  <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 class="text-base sm:text-xl font-bold text-red-900 mb-3 sm:mb-6 flex items-center">
+                  <svg class="w-4 h-4 sm:w-6 sm:h-6 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
                   {{ $t('car_details.location_title') }}
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  <div v-for="(value, key) in locationInfo" :key="key" class="flex justify-between py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-3 transition-colors">
-                    <span class="text-red-700 font-medium">{{ $t(`car_details.location_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-2 mb-6 sm:mb-8">
+                  <div v-for="(value, key) in locationInfo" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
+                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.location_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
                   </div>
                 </div>
                 
@@ -248,16 +248,16 @@
 
               <!-- Documents Tab -->
               <div v-if="activeTab === 'documents'" class="animate-fade-in">
-                <h3 class="text-xl font-bold text-red-900 mb-6 flex items-center">
-                  <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 class="text-base sm:text-xl font-bold text-red-900 mb-3 sm:mb-6 flex items-center">
+                  <svg class="w-4 h-4 sm:w-6 sm:h-6 mr-2 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
                   {{ $t('car_details.documents_title') }}
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  <div v-for="(value, key) in documentInfo" :key="key" class="flex justify-between py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-3 transition-colors">
-                    <span class="text-red-700 font-medium">{{ $t(`car_details.document_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="font-semibold" :class="{
+                <div class="grid grid-cols-1 gap-2 mb-6 sm:mb-8">
+                  <div v-for="(value, key) in documentInfo" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
+                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.document_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="font-semibold text-sm text-right" :class="{
                       'text-green-600': value === $t('yes'), 
                       'text-red-600': value === $t('no'),
                       'text-red-900': value !== $t('yes') && value !== $t('no')
@@ -286,7 +286,7 @@
         <!-- Right Column - Price & Contact (unchanged) -->
         <div class="space-y-6">
           <!-- AUCTION LISTING -->
-          <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
+          <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
             <!-- ... auction content ... -->
             <div class="text-center mb-6">
               <div class="flex items-center justify-center mb-2">
@@ -300,7 +300,7 @@
               
               <div class="mb-4">
                 <p class="text-gray-600 text-sm">{{ $t('auction.current_bid') }}</p>
-                <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-red-800">
+                <span class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-red-800">
                   {{ $t('currency.chf') }} {{ formatNumber(car.currentBid || car.startingPrice) }}
                 </span>
               </div>
@@ -419,9 +419,9 @@
           </div>
 
           <!-- NORMAL LISTING -->
-          <div v-else class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
-            <div class="text-center mb-6">
-              <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
+          <div v-else class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
+            <div class="text-center mb-4 sm:mb-6">
+              <span class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
                 {{ car.price ? `${$t('currency.chf')} ${formatNumber(car.price)}` : $t('car_details.price_on_request') }}
               </span>
               <div v-if="car.negotiable" class="inline-block bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full ml-2 mt-2">
@@ -430,40 +430,40 @@
             </div>
 
             <!-- Key Specs -->
-            <div class="grid grid-cols-2 gap-3 mb-6">
-              <div class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.year') }}</p>
                 <p class="font-semibold text-red-900">{{ car.year }}</p>
               </div>
-              <div class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.mileage') }}</p>
                 <p class="font-semibold text-red-900">{{ formatNumber(car.mileage) }} km</p>
               </div>
-              <div class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.fuel_type') }}</p>
                 <p class="font-semibold text-red-900">{{ formatFuelType(car.fuelType) }}</p>
               </div>
-              <div class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.transmission') }}</p>
                 <p class="font-semibold text-red-900">{{ formatTransmission(car.transmission) }}</p>
               </div>
-              <div v-if="car.power || car.powerPs" class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div v-if="car.power || car.powerPs" class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.power') }}</p>
                 <p class="font-semibold text-red-900">{{ car.power || car.powerPs }} {{ $t('power_ps') }}</p>
               </div>
-              <div v-if="car.cylinders" class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div v-if="car.cylinders" class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('cylinders_label') }}</p>
                 <p class="font-semibold text-red-900">{{ car.cylinders }}</p>
               </div>
-              <div v-if="getCylinderCount" class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div v-if="getCylinderCount" class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('cylinders_label') }}</p>
                 <p class="font-semibold text-red-900">{{ getCylinderCount }}</p>
               </div>
-              <div v-if="car.engineSize" class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div v-if="car.engineSize" class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.engine_size') }}</p>
                 <p class="font-semibold text-red-900">{{ car.engineSize }}</p>
               </div>
-              <div v-if="car.bodyType" class="text-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div v-if="car.bodyType" class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.body_type') }}</p>
                 <p class="font-semibold text-red-900">{{ formatBodyType(car.bodyType) }}</p>
               </div>
@@ -497,8 +497,8 @@
           </div>
           
           <!-- Bid History (for auctions) -->
-          <div v-if="car.listingType === 'auction' && bidHistory.length > 0" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
-            <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
+          <div v-if="car.listingType === 'auction' && bidHistory.length > 0" class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
+            <h3 class="text-base sm:text-lg font-bold text-red-900 mb-3 sm:mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
               </svg>
@@ -524,8 +524,8 @@
           </div>
 
           <!-- Seller Information -->
-          <div class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
-            <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
+          <div class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
+            <h3 class="text-base sm:text-lg font-bold text-red-900 mb-3 sm:mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
@@ -1597,178 +1597,12 @@ watch(() => auth.user.value, async (newUser) => {
 
 /* Animation for tab content */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+.animate-fade-in { animation: fade-in 0.25s ease-out; }
 
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Hide scrollbar for tab navigation */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-/* ============================================================
-   MOBILE FIXES — scoped so they definitely apply to this page
-   ============================================================ */
-@media (max-width: 768px) {
-  /* 1. Page root: no horizontal overflow ever */
-  :deep(.min-h-screen) {
-    overflow-x: hidden !important;
-  }
-
-  /* 2. Main content container: full width + safe padding */
-  .max-w-7xl {
-    max-width: 100% !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-    overflow-x: hidden !important;
-  }
-
-  /* 3. Main image — proportional height, no overflow */
-  .relative.h-80 {
-    height: 52vw !important;
-    max-height: 240px !important;
-    min-height: 140px !important;
-    width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  /* 4. Thumbnail strip — scrollable row */
-  .p-4.flex.space-x-3.overflow-x-auto {
-    padding: 0.5rem 0.75rem !important;
-    gap: 0.5rem !important;
-  }
-
-  /* 5. Each thumbnail — fixed small size */
-  .p-4.flex.space-x-3.overflow-x-auto button {
-    flex-shrink: 0 !important;
-    width: 64px !important;
-    height: 48px !important;
-    min-width: 64px !important;
-  }
-
-  /* 6. Shipping ad — stack vertically, no overflow */
-  .glass.rounded-2xl.p-6.border-2 {
-    padding: 1rem !important;
-    transform: none !important; /* disable hover scale on mobile */
-  }
-
-  /* 7. Spec grid inside tabs — 2 cols max */
-  .grid.grid-cols-1.md\:grid-cols-2 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Key specs grid in sidebar — 2 cols is fine */
-  .grid.grid-cols-2.gap-3 {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.5rem !important;
-  }
-
-  /* 8. Each spec cell: smaller text so it fits */
-  .grid.grid-cols-2.gap-3 .text-center.p-3 {
-    padding: 0.5rem !important;
-  }
-
-  .grid.grid-cols-2.gap-3 .text-sm {
-    font-size: 0.7rem !important;
-  }
-
-  .grid.grid-cols-2.gap-3 .font-semibold {
-    font-size: 0.8rem !important;
-  }
-
-  /* 9. Price — fit on screen */
-  .text-3xl.font-bold {
-    font-size: 1.4rem !important;
-    word-break: break-word !important;
-  }
-
-  /* 10. Action buttons — no scale transform (causes overflow on iOS) */
-  button.transform.hover\:scale-105,
-  a.transform.hover\:scale-105 {
-    transform: none !important;
-  }
-
-  /* 11. Glass card padding — reduce on mobile */
-  .glass.rounded-2xl.p-6 {
-    padding: 1rem !important;
-  }
-
-  /* ===== STRONGER TAB FIX – ensures horizontal scroll ===== */
-  .border-b > .flex.overflow-x-auto {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .border-b > .flex.overflow-x-auto > button {
-    flex: 0 0 auto !important;
-    white-space: nowrap !important;
-  }
-
-  /* Hide scrollbar for cleaner look */
-  .border-b > .flex.overflow-x-auto::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  /* 13. Tab content area — smaller padding */
-  .p-6 {
-    padding: 0.875rem !important;
-  }
-
-  /* 14. Features grid in description tab: 1 col on very small phones */
-  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* 15. Badge row in image overlay: wrap properly */
-  .absolute.top-4.left-4.flex {
-    flex-wrap: wrap !important;
-    gap: 0.25rem !important;
-    max-width: calc(100% - 1rem) !important;
-  }
-
-  /* 16. Seller info flex row */
-  .flex.items-center.mb-4 {
-    flex-wrap: wrap !important;
-  }
-
-  /* 17. Spec rows: allow text to wrap */
-  .flex.justify-between.py-3 {
-    flex-wrap: wrap !important;
-    gap: 0.25rem !important;
-  }
-
-  .flex.justify-between.py-3 span:last-child {
-    text-align: right !important;
-  }
-
-  /* 18. Gap between main columns */
-  .grid.grid-cols-1.lg\:grid-cols-3.gap-8 {
-    gap: 1rem !important;
-  }
-}
-
-/* Extra small phones */
-@media (max-width: 390px) {
-  .grid.grid-cols-2.gap-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  .relative.h-80 {
-    height: 48vw !important;
-    max-height: 200px !important;
-  }
-}
+/* Hide scrollbar on tab bar */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 </style>

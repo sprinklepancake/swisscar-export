@@ -25,7 +25,7 @@
     </div>
 
     <!-- Main Content -->
-    <div v-else-if="car" class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+    <div v-else-if="car" class="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6" style="overflow-x:hidden">
       <!-- Breadcrumb Navigation -->
       <div class="mb-6">
         <nav class="flex items-center space-x-2 text-sm text-red-700">
@@ -40,7 +40,7 @@
       <!-- Main Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         <!-- Left Column - Images & Details -->
-        <div class="lg:col-span-2">
+        <div class="lg:col-span-2 min-w-0 overflow-hidden">
           <!-- Image Gallery -->
           <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-3 sm:mb-6">
             <!-- Main Image (clickable) -->
@@ -94,41 +94,33 @@
 
           <!-- Shipping Ad Section - Redesigned for mobile -->
           <div class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg mb-3 sm:mb-6">
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-              <div class="flex-shrink-0">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-red-300 bg-white">
-                  <img 
-                    src="/assets/images/car-transport.jpeg" 
-                    :alt="$t('shipping_ad.alt_text')"
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
+            <div class="flex items-center gap-3 overflow-hidden">
+              <div class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-red-300 bg-white">
+                <img 
+                  src="/assets/images/car-transport.jpeg" 
+                  :alt="$t('shipping_ad.alt_text')"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
-              <div class="flex-1 text-center sm:text-left">
-                <h3 class="text-lg font-bold text-red-900">{{ $t('shipping_ad.title') }}</h3>
-                <p class="text-sm font-medium text-red-700">{{ $t('shipping_ad.badge_text_short') }}</p>
-                <p class="text-xs sm:text-sm text-red-600 mt-1">{{ $t('shipping_ad.description') }}</p>
-                <div class="mt-2 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2">
-                  <p class="text-xl font-bold text-red-800">076 448 08 49</p>
-                  <span class="text-xs text-red-500">{{ $t('shipping_ad.phone_subtext') }}</span>
-                </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm text-red-900 truncate">{{ $t('shipping_ad.title') }}</p>
+                <p class="text-xs text-red-600 truncate">{{ $t('shipping_ad.badge_text_short') }}</p>
+                <p class="text-sm font-bold text-red-800 mt-0.5">076 448 08 49</p>
               </div>
-              <div class="flex-shrink-0">
-                <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
-                   target="_blank"
-                   class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-sm transition-all duration-200 shadow">
-                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                  </svg>
-                  {{ $t('shipping_ad.whatsapp_button') }}
-                </a>
-              </div>
+              <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
+                 target="_blank"
+                 class="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                </svg>
+                WhatsApp
+              </a>
             </div>
           </div>
 
           <!-- Car Details Tabs -->
-          <div class="glass rounded-2xl border border-red-200 shadow-lg overflow-hidden">
+          <div class="glass rounded-2xl border border-red-200 shadow-lg overflow-hidden min-w-0">
             <!-- Tab Navigation (horizontal scroll on mobile) -->
             <div class="border-b border-red-200 bg-red-50/50">
               <div class="flex overflow-x-auto scrollbar-hide">
@@ -160,10 +152,10 @@
                   </svg>
                   {{ $t('car_details.specifications_title') }}
                 </h3>
-                <div class="grid grid-cols-1 gap-2">
-                  <div v-for="(value, key) in carSpecs" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
-                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.specs_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-1">
+                  <div v-for="(value, key) in carSpecs" :key="key" class="flex items-baseline justify-between py-2 border-b border-red-100 px-2 gap-3">
+                    <span class="text-red-700 font-medium text-sm flex-1 min-w-0">{{ $t(`car_details.specs_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm flex-shrink-0 text-right max-w-[55%] break-words">{{ value }}</span>
                   </div>
                 </div>
               </div>
@@ -210,10 +202,10 @@
                   </svg>
                   {{ $t('car_details.technical_title') }}
                 </h3>
-                <div class="grid grid-cols-1 gap-2">
-                  <div v-for="(value, key) in technicalSpecs" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
-                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.tech_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-1">
+                  <div v-for="(value, key) in technicalSpecs" :key="key" class="flex items-baseline justify-between py-2 border-b border-red-100 px-2 gap-3">
+                    <span class="text-red-700 font-medium text-sm flex-1 min-w-0">{{ $t(`car_details.tech_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm flex-shrink-0 text-right max-w-[55%] break-words">{{ value }}</span>
                   </div>
                 </div>
               </div>
@@ -227,10 +219,10 @@
                   </svg>
                   {{ $t('car_details.location_title') }}
                 </h3>
-                <div class="grid grid-cols-1 gap-2 mb-6 sm:mb-8">
-                  <div v-for="(value, key) in locationInfo" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
-                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.location_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="text-red-900 font-semibold text-sm text-right">{{ value }}</span>
+                <div class="grid grid-cols-1 gap-1 mb-6 sm:mb-8">
+                  <div v-for="(value, key) in locationInfo" :key="key" class="flex items-baseline justify-between py-2 border-b border-red-100 px-2 gap-3">
+                    <span class="text-red-700 font-medium text-sm flex-1 min-w-0">{{ $t(`car_details.location_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="text-red-900 font-semibold text-sm flex-shrink-0 text-right max-w-[55%] break-words">{{ value }}</span>
                   </div>
                 </div>
                 
@@ -254,10 +246,10 @@
                   </svg>
                   {{ $t('car_details.documents_title') }}
                 </h3>
-                <div class="grid grid-cols-1 gap-2 mb-6 sm:mb-8">
-                  <div v-for="(value, key) in documentInfo" :key="key" class="flex justify-between items-start py-2 sm:py-3 border-b border-red-100 hover:bg-red-50/30 rounded-lg px-2 sm:px-3 transition-colors gap-2">
-                    <span class="text-red-700 font-medium text-sm">{{ $t(`car_details.document_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
-                    <span class="font-semibold text-sm text-right" :class="{
+                <div class="grid grid-cols-1 gap-1 mb-6 sm:mb-8">
+                  <div v-for="(value, key) in documentInfo" :key="key" class="flex items-baseline justify-between py-2 border-b border-red-100 px-2 gap-3">
+                    <span class="text-red-700 font-medium text-sm flex-1 min-w-0">{{ $t(`car_details.document_labels.${key.toLowerCase().replace(/ /g, '_')}`, key) }}</span>
+                    <span class="font-semibold text-sm flex-shrink-0 text-right max-w-[55%]" :class="{
                       'text-green-600': value === $t('yes'), 
                       'text-red-600': value === $t('no'),
                       'text-red-900': value !== $t('yes') && value !== $t('no')
@@ -284,7 +276,7 @@
         </div>
 
         <!-- Right Column - Price & Contact (unchanged) -->
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
           <!-- AUCTION LISTING -->
           <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
             <!-- ... auction content ... -->

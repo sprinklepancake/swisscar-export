@@ -460,18 +460,25 @@ const handleRegister = async () => {
     loading.value = true
     error.value = null
 
-    // Upload ID file if present
-    let idDocumentUrl = ''
+    // Convert ID file to base64 so the server can upload it with admin credentials
+    let idFileBase64 = ''
+    let idFileMimeType = ''
     if (idFile.value) {
-      const fd = new FormData()
-      fd.append('file', idFile.value)
-      const uploadRes = await $fetch('/api/user/upload-id', { method: 'POST', body: fd })
-      idDocumentUrl = (uploadRes as any).url || ''
+      idFileMimeType = idFile.value.type
+      idFileBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const result = reader.result as string
+          resolve(result.split(',')[1])
+        }
+        reader.onerror = () => reject(new Error('Failed to read file'))
+        reader.readAsDataURL(idFile.value!)
+      })
     }
 
-    const cleanedPhone = form.value.phone.replace(/\D/g, '')
+    const cleanedPhone = form.value.phone ? form.value.phone.replace(/\D/g, '') : null
 
-    const { data, error: fetchError } = await useFetch('/api/auth/register', {
+    await $fetch('/api/auth/register', {
       method: 'POST',
       body: {
         name: form.value.name,
@@ -488,20 +495,16 @@ const handleRegister = async () => {
         country: form.value.country,
         taxId: form.value.taxId,
         streetAddress: form.value.streetAddress,
-        idDocumentUrl: idDocumentUrl,
+        idFileBase64,
+        idFileMimeType,
         marketingAccepted: form.value.marketingAccepted
       }
     })
 
-    if (fetchError.value) {
-      error.value = fetchError.value.message || t('register.messages.registration_failed') || 'Registration failed'
-      return
-    }
-
     alert(t('register.messages.success') || 'Account created successfully! Please login to continue.')
     await navigateTo('/login')
-  } catch (err) {
-    error.value = t('register.messages.registration_failed') || 'Registration failed. Please try again.'
+  } catch (err: any) {
+    error.value = err.data?.statusMessage || err.message || t('register.messages.registration_failed') || 'Registration failed. Please try again.'
   } finally {
     loading.value = false
   }

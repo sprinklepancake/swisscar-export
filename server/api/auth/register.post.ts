@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const { name, email, password, phone, role, companyName, businessType, canton, city, zipCode, country, taxId, streetAddress, buyerType, idDocumentUrl } = body
+  const { name, email, password, phone, role, companyName, businessType, canton, city, zipCode, country, taxId, streetAddress, buyerType, idDocumentUrl, idFileBase64, idFileMimeType } = body
 
   if (!name || !email || !password) {
     throw createError({ statusCode: 400, statusMessage: 'Name, email, and password are required' })
@@ -36,6 +36,31 @@ export default defineEventHandler(async (event) => {
     authUserId = authData.user.id
     console.log('[register] Auth user created:', authUserId)
 
+    // Upload ID document server-side using admin client (user is not yet authenticated client-side)
+    let resolvedIdDocumentUrl: string | null = idDocumentUrl || null
+    if (idFileBase64 && idFileMimeType) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf']
+      if (allowedTypes.includes(idFileMimeType)) {
+        try {
+          const ext = idFileMimeType.split('/')[1].replace('jpeg', 'jpg')
+          const fileName = `id-${authUserId}-${Date.now()}.${ext}`
+          const filePath = `id-documents/${fileName}`
+          const fileBuffer = Buffer.from(idFileBase64, 'base64')
+          const { error: uploadError } = await supabase.storage
+            .from('car-images')
+            .upload(filePath, fileBuffer, { contentType: idFileMimeType, upsert: false })
+          if (!uploadError) {
+            const { data: { publicUrl } } = supabase.storage.from('car-images').getPublicUrl(filePath)
+            resolvedIdDocumentUrl = publicUrl
+          } else {
+            console.warn('[register] ID upload failed (non-blocking):', uploadError.message)
+          }
+        } catch (uploadErr) {
+          console.warn('[register] ID upload exception (non-blocking):', uploadErr)
+        }
+      }
+    }
+
     const { data: existing } = await supabase
       .from('users')
       .select('id')
@@ -50,7 +75,7 @@ export default defineEventHandler(async (event) => {
         phone: phone || null,
         role: role || 'buyer',
         buyer_type: buyerType || 'direct',
-        id_document_url: idDocumentUrl || null,
+        id_document_url: resolvedIdDocumentUrl,
         company_name: isSeller ? (companyName || null) : null,
         business_type: isSeller ? (businessType || null) : null,
         canton: canton || null,
@@ -74,7 +99,7 @@ export default defineEventHandler(async (event) => {
       phone: phone || null,
       role: role || 'buyer',
       buyer_type: buyerType || 'direct',
-      id_document_url: idDocumentUrl || null,
+      id_document_url: resolvedIdDocumentUrl,
       company_name: isSeller ? (companyName || null) : null,
       business_type: isSeller ? (businessType || null) : null,
       canton: canton || null,

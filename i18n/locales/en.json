@@ -282,7 +282,7 @@
     "success_created": "Car listing created successfully! ",
     "free_listing_success": "Your listing is free (first 6 months).",
     "fee_deducted": "{fee} CHF was deducted from your account.",
-    "auction_live": "\n\nYour auction is now live for 7 days. Good luck!",
+    "auction_live": "\n\nYour auction is now live. Good luck!",
     "error_creating": "Error creating listing. Please try again.",
     "select_canton": "Select Canton",
     "auction_duration": "Auction Duration (days)",

@@ -153,41 +153,42 @@
             <div class="bg-green-50 border border-green-200 rounded-lg p-4 sm:p-6">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
                 <div class="flex-1">
-                  <h4 class="text-base sm:text-lg font-semibold text-green-900 mb-2">
+                  <h4 class="text-base sm:text-lg font-semibold text-green-900 mb-3">
                     {{ typenscheinResults.BaseData_DE.Typenbezeichnung }}
                   </h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.vehicle_type') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Fahrzeugart }}</span>
+                  <!-- Mobile-friendly card grid -->
+                  <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.vehicle_type') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Fahrzeugart }}</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.body_type') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Karosserieform }}</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.body_type') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Karosserieform }}</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.power') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Kw }} ({{ extractPowerPs(typenscheinResults.BaseData_DE.Kw) }} PS)</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.power') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Kw }} ({{ extractPowerPs(typenscheinResults.BaseData_DE.Kw) }} PS)</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.fuel_type') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Treibstoffcode }}</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.fuel_type') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Treibstoffcode }}</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.displacement') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Ccm }} cc</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.displacement') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Ccm }} cc</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.seats') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Sitplätze }}</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.seats') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Sitplätze }}</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.drive_type') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Antrieb }}</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.drive_type') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Antrieb }}</span>
                     </div>
-                    <div>
-                      <span class="font-medium text-gray-700">{{ $t('car_listing_form.weight') }}:</span>
-                      <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE['Leergewicht kg'] }} kg</span>
+                    <div class="p-2 bg-white rounded border border-green-100">
+                      <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.weight') }}</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE['Leergewicht kg'] }} kg</span>
                     </div>
                   </div>
                 </div>
@@ -595,6 +596,20 @@
               <p class="text-gray-500 text-xs mt-1">{{ $t('car_listing_form.reserve_price_help') }}</p>
             </div>
             
+            <!-- Auction Duration Input -->
+            <div v-if="form.listingType === 'auction'" class="form-group">
+              <label class="swiss-form-label">{{ $t('car_listing_form.auction_duration') || 'Auction Duration (days)' }}</label>
+              <input 
+                v-model="form.auctionDurationDays"
+                type="number"
+                min="1"
+                max="90"
+                class="swiss-form-input p-3 text-sm sm:text-base w-full"
+                placeholder="7"
+              />
+              <p class="text-gray-500 text-xs mt-1">{{ $t('car_listing_form.auction_duration_help') || 'How many days should the auction run? Default is 7 days.' }}</p>
+            </div>
+            
             <!-- Mileage -->
             <div class="form-group">
               <label class="swiss-form-label">{{ $t('car_listing_form.mileage') }} *</label>
@@ -847,7 +862,7 @@
             <h3 class="text-lg sm:text-xl font-bold text-swiss-dark">{{ $t('car_listing_form.equipment_features') }}</h3>
           </div>
           
-          <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
             <label 
               v-for="feature in equipmentFeatures" 
               :key="feature.value"
@@ -857,9 +872,9 @@
                 type="checkbox" 
                 v-model="form.equipment" 
                 :value="feature.value"
-                class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
               >
-              <span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm">{{ $t(`equipment.${feature.value}`) || feature.label }}</span>
+              <span class="ml-2 text-gray-700 text-xs sm:text-sm break-words leading-tight">{{ $t(`equipment.${feature.value}`) || feature.label }}</span>
             </label>
           </div>
 
@@ -1313,6 +1328,7 @@ const form = ref({
   listingType: 'normal',
   startingPrice: '',
   reservePrice: '',
+  auctionDurationDays: 7,
   
   // Basic Information
   make: '',
@@ -1559,8 +1575,11 @@ const searchTypenschein = async () => {
   typenscheinError.value = null
   typenscheinResults.value = null
   
+  // Convert to uppercase to make search case-insensitive
+  const searchTerm = typenscheinSearch.value.trim().toUpperCase()
+  
   try {
-    const { data, error } = await useFetch(`/api/typenschein/${typenscheinSearch.value.trim()}`, {
+    const { data, error } = await useFetch(`/api/typenschein/${searchTerm}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -2267,7 +2286,7 @@ const submitListing = async () => {
   try {
     const submissionData: any = {
       // Listing Type
-      listingType: form.value.listingType,      
+      auctionDurationDays: form.value.auctionDurationDays || 7,      
       
       // Basic Information
       make: form.value.make,

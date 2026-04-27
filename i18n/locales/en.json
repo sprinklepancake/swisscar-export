@@ -67,7 +67,7 @@
   "swiss_quality": "Swiss Quality",
   "worldwide_export": "Worldwide Export",
   "export_active": "Export Active",
-  
+
   "car_listing_form": {
     "title": "Export Your Swiss Car",
     "title_highlight": "to International Buyers",
@@ -127,7 +127,6 @@
     "publishing": "Publishing Export Listing...",
     "success": "Export listing published successfully! Your Swiss car is now visible to international buyers worldwide.",
     "error": "Error publishing export listing. Please try again or contact SwissExportCar support.",
-    
     "choose_method": "Choose Listing Method",
     "with_typenschein": "With Typenschein",
     "typenschein_description": "Quick and easy. Enter your Typenschein number and we'll auto-fill most details.",
@@ -182,7 +181,7 @@
     "auction_description": "Competitive bidding format. Let buyers compete for the best price.",
     "benefit_bidding": "Competitive bidding",
     "benefit_set_prices": "Set starting price & reserve",
-    "benefit_7_days": "7-day auction duration",
+    "benefit_7_days": "Auction duration (days)",
     "fee_auction": "Fee: {amount} CHF will be deducted from your balance",
     "insufficient_funds": "Insufficient Funds",
     "funds_needed": "You need {required} CHF for this listing type, but your balance is only {balance} CHF.",
@@ -286,7 +285,8 @@
     "auction_live": "\n\nYour auction is now live for 7 days. Good luck!",
     "error_creating": "Error creating listing. Please try again.",
     "select_canton": "Select Canton",
-    
+    "auction_duration": "Auction Duration (days)",
+    "auction_duration_help": "How many days should the auction run?",
     "body_types": {
       "sedan": "Sedan",
       "hatchback": "Hatchback",
@@ -314,7 +314,6 @@
       "business": "Business"
     }
   },
-
   "cars_page": {
     "title": "Browse Export Cars",
     "subtitle": "Quality Swiss vehicles at affordable export prices",
@@ -342,7 +341,6 @@
       "next": "Next"
     }
   },
-
   "auth": {
     "login_title": "Log In",
     "signup_title": "Create Account",
@@ -365,7 +363,6 @@
     "logged_in": "Logged In",
     "logged_out": "Logged Out"
   },
-
   "price_range_label": "Price Range",
   "min_price": "Min",
   "max_price": "Max",
@@ -429,13 +426,11 @@
   "permanent_feature": "Permanent",
   "subscribing": "Subscribing...",
   "load_more_featured": "Load More Featured Cars",
-
   "stats": {
     "cars_available": "Cars Available",
     "verified_sellers": "Verified Sellers",
     "countries_served": "Countries Served"
   },
-
   "power_label": "Power (PS)",
   "min_power": "Min PS",
   "max_power": "Max PS",
@@ -463,7 +458,6 @@
   "equipment_features_label": "Equipment & Features",
   "power_ps": "PS",
   "more": "more",
-
   "equipment": {
     "air_conditioning": "Air Conditioning",
     "navigation": "Navigation System",
@@ -484,7 +478,6 @@
     "towbar": "Towbar",
     "isofix": "Isofix"
   },
-
   "car_details": {
     "specifications": "Specifications",
     "description": "Description",
@@ -513,7 +506,6 @@
     "body_type": "Body Type",
     "seats": "Seats",
     "make": "Make",
-    
     "error": {
       "title": "Car Not Found",
       "message": "Sorry, we couldn't find the car you're looking for.",
@@ -632,7 +624,6 @@
     "chat_generic_error": "Failed to start conversation. Please try again.",
     "message_sent": "Message sent to seller!"
   },
-
   "auction": {
     "live_auction": "Live Auction",
     "current_bid": "Current Bid",
@@ -678,7 +669,6 @@
     "auction_ended": "Auction Ended",
     "auction_sold": "Auction Sold",
     "auction": "Auction",
-    
     "status": "Auction Status",
     "starting_price": "Starting Price",
     "bid_increment": "Bid Increment",
@@ -701,7 +691,6 @@
     "bid_increment_error": "Bid must be in increments of 50 CHF",
     "bid_failed": "Failed to place bid"
   },
-
   "shipping_ad": {
     "title": "🚛 Mega cars GmbH",
     "alt_text": "Mega cars GmbH - Auto Transport Service",
@@ -715,7 +704,6 @@
     "sidebar_description": "Adresse A → B per Whatsapp",
     "sidebar_button": "Angebot anfordern"
   },
-
   "colors": {
     "black": "Black",
     "white": "White",
@@ -727,14 +715,11 @@
     "brown": "Brown",
     "beige": "Beige"
   },
-
   "page_title": "Export Your Car",
-  
   "placeholder": {
     "email": "your{'@'}email.com",
     "password": "••••••••"
   },
-
   "messages": {
     "title": "Your Messages",
     "subtitle": "Manage your conversations with sellers and buyers",
@@ -763,13 +748,11 @@
       "default": "U"
     }
   },
-
   "currency": {
     "chf": "CHF"
   },
-
   "profile": {
-        "my_profile": "My Profile",
+    "my_profile": "My Profile",
     "seo": {
       "title": "Your Profile - SwissExportCar",
       "description": "View and manage your profile, listings, and transaction history on SwissExportCar"
@@ -875,7 +858,6 @@
       "verification_failed": "Failed to send verification request. Please try again."
     }
   },
-
   "register": {
     "seo": {
       "title": "Create Account - SwissExportCar",
@@ -907,6 +889,7 @@
       "zip_code": "ZIP Code",
       "zip_code_placeholder": "ZIP code",
       "country": "Country",
+      "select_country": "Select Country",
       "countries": {
         "switzerland": "Switzerland",
         "germany": "Germany",
@@ -952,9 +935,15 @@
       "export_support": "Export documentation support",
       "secure_payment": "Secure payment system",
       "multi_language": "Multi-language support"
-    }
+    },
+    "buyer_type_label": "I want to",
+    "buyer_type_direct": "Buy cars directly (no verification needed)",
+    "buyer_type_auction": "Participate in auctions (ID verification required)",
+    "id_upload_label": "Upload your ID (passport, driver's license)",
+    "id_upload_help": "Required for auction participation. Accepted formats: JPG, PNG, PDF (max 5MB).",
+    "id_upload_button": "Choose File",
+    "auction_warning": "⚠️ Providing false ID or failing to complete a won auction will result in permanent ban."
   },
-
   "chat": {
     "chat_with": "Chat with",
     "you_are_seller": "You are the seller",
@@ -975,7 +964,6 @@
     "buyer": "Buyer",
     "seller": "Seller"
   },
-
   "feature": {
     "cant_feature": "Can't Feature",
     "feature_car": "Feature Car",
@@ -1012,7 +1000,6 @@
     "success_paid": "Car featured for {days} days!",
     "success": "Success!"
   },
-
   "transactions": {
     "title": "Transaction History",
     "all_types": "All Types",
@@ -1033,7 +1020,6 @@
     "total_refunds": "Total Refunds",
     "total_withdrawals": "Total Withdrawals"
   },
-
   "seo": {
     "home": {
       "title": "Export Swiss - Premium Car Marketplace",
@@ -1051,17 +1037,15 @@
       "title": "{make} {model} ({year}) - Swiss Car Marketplace"
     }
   },
-    "company_name": "SwissExportCar",
+  "company_name": "SwissExportCar",
   "company_tagline": "Affordable Swiss Vehicles",
   "company_tagline_full": "Affordable Swiss Vehicles Worldwide",
   "logo_alt": "SwissExportCar Logo",
-  
   "logout": "Logout",
-  
   "social": {
     "twitter": "Twitter",
     "facebook": "Facebook",
     "linkedin": "LinkedIn",
     "instagram": "Instagram"
-}
+  }
 }

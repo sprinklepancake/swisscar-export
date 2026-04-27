@@ -1,11 +1,12 @@
-// server/api/chat/[id]/send.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   const user = event.context.user
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
-  if (!user) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  // Require verified
+  if (!user.verified) {
+    throw createError({ statusCode: 403, statusMessage: 'Only verified users can send messages.' })
   }
 
   const chatId = getRouterParam(event, 'id')
@@ -17,7 +18,6 @@ export default defineEventHandler(async (event) => {
   try {
     const supabase = getSupabaseAdmin()
 
-    // Verify access to this chat
     const { data: chat } = await supabase
       .from('chats')
       .select('id, buyer_id, seller_id')
@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 403, statusMessage: 'Access denied' })
     }
 
-    // Create message
     const { data: message, error } = await supabase
       .from('messages')
       .insert({
@@ -38,19 +37,12 @@ export default defineEventHandler(async (event) => {
         content: content.trim(),
         read: false,
       })
-      .select(`
-        id, content, sender_id, read, created_at,
-        sender:users!sender_id (id, name, profile_image)
-      `)
+      .select('id, content, sender_id, read, created_at, sender:users!sender_id (id, name, profile_image)')
       .single()
 
     if (error) throw error
 
-    // Update chat's last_message_at
-    await supabase
-      .from('chats')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', chatId)
+    await supabase.from('chats').update({ last_message_at: new Date().toISOString() }).eq('id', chatId)
 
     return {
       success: true,

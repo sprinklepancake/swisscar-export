@@ -61,7 +61,8 @@ export default defineEventHandler(async (event) => {
     // Calculate auction end if applicable
     let auctionEndDate: string | null = null
     if (listingType === 'auction') {
-      const durationHours = body.auctionDuration || 72
+      const durationDays = body.auctionDurationDays || 7
+      const durationHours = durationDays * 24
       const endDate = new Date()
       endDate.setHours(endDate.getHours() + durationHours)
       auctionEndDate = endDate.toISOString()

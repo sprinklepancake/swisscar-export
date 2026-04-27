@@ -4,7 +4,7 @@
       <!-- Left Column (Form) -->
       <div>
         <h1 class="text-3xl font-bold text-center md:text-left text-red-800 mb-8">{{ t('auth.signup_title') }}</h1>
-        
+
         <form @submit.prevent="handleRegister" class="space-y-4">
           <!-- Name and Email -->
           <div class="grid grid-cols-1 gap-4">
@@ -19,7 +19,7 @@
                 :placeholder="t('register.name.placeholder')"
               />
             </div>
-            
+
             <div>
               <label for="email" class="block text-sm font-medium text-red-700 mb-1">{{ t('auth.email') }} *</label>
               <input
@@ -39,7 +39,7 @@
             <div class="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                @click="form.role = 'buyer'"
+                @click="setRole('buyer')"
                 :class="{
                   'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'buyer',
                   'bg-white/80 hover:bg-white text-red-800': form.role !== 'buyer'
@@ -53,7 +53,7 @@
               </button>
               <button
                 type="button"
-                @click="form.role = 'seller'"
+                @click="setRole('seller')"
                 :class="{
                   'bg-red-600 ring-2 ring-red-400 text-white': form.role === 'seller',
                   'bg-white/80 hover:bg-white text-red-800': form.role !== 'seller'
@@ -68,10 +68,35 @@
             </div>
           </div>
 
+          <!-- Buyer type selection (only for buyer) -->
+          <div v-if="form.role === 'buyer'" class="border border-red-200 rounded-lg p-4 bg-red-50">
+            <label class="block text-sm font-semibold text-red-800 mb-2">{{ t('register.buyer_type_label') }} *</label>
+            <div class="space-y-2">
+              <label class="flex items-center p-2 rounded hover:bg-red-100 cursor-pointer">
+                <input
+                  type="radio"
+                  v-model="form.buyerType"
+                  value="direct"
+                  class="mr-2 text-red-600"
+                />
+                <span class="text-sm">{{ t('register.buyer_type_direct') }}</span>
+              </label>
+              <label class="flex items-center p-2 rounded hover:bg-red-100 cursor-pointer">
+                <input
+                  type="radio"
+                  v-model="form.buyerType"
+                  value="auction"
+                  class="mr-2 text-red-600"
+                />
+                <span class="text-sm">{{ t('register.buyer_type_auction') }}</span>
+              </label>
+            </div>
+          </div>
+
           <!-- Additional Seller Information -->
           <div v-if="form.role === 'seller'" class="space-y-4 border border-red-200 rounded-lg p-4 bg-red-50">
             <h3 class="text-lg font-semibold text-red-800">{{ t('register.seller_info.title') }}</h3>
-            
+
             <div>
               <label for="companyName" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.seller_info.company_name') }}</label>
               <input
@@ -109,9 +134,8 @@
             </div>
           </div>
 
-          <!-- Location Information -->
-          <div class="space-y-4">
-            <!-- Street Address - NEW FIELD -->
+          <!-- Location Information (for sellers and auction buyers) -->
+          <div v-if="form.role === 'seller' || (form.role === 'buyer' && form.buyerType === 'auction')" class="space-y-4">
             <div>
               <label for="streetAddress" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.street_address') }}</label>
               <input
@@ -124,42 +148,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="canton" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.canton') }}</label>
-                <select
-                  v-model="form.canton"
-                  id="canton"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                >
-                  <option value="">{{ t('register.location.select_canton') }}</option>
-                  <option v-for="canton in cantons" :key="canton" :value="canton">{{ canton }}</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="city" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.city') }}</label>
-                <input
-                  v-model="form.city"
-                  type="text"
-                  id="city"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  :placeholder="t('register.location.city_placeholder')"
-                />
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="zipCode" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.zip_code') }}</label>
-                <input
-                  v-model="form.zipCode"
-                  type="text"
-                  id="zipCode"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  :placeholder="t('register.location.zip_code_placeholder')"
-                />
-              </div>
-
               <div>
                 <label for="country" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.country') }}</label>
                 <select
@@ -175,21 +163,64 @@
                   <option value="Other">{{ t('register.location.countries.other') }}</option>
                 </select>
               </div>
+              <div v-if="form.country === 'Switzerland'">
+                <label for="canton" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.canton') }}</label>
+                <select
+                  v-model="form.canton"
+                  id="canton"
+                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                >
+                  <option value="">{{ t('register.location.select_canton') }}</option>
+                  <option v-for="canton in cantons" :key="canton" :value="canton">{{ canton }}</option>
+                </select>
+              </div>
+              <div>
+                <label for="city" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.city') }}</label>
+                <input
+                  v-model="form.city"
+                  type="text"
+                  id="city"
+                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  :placeholder="t('register.location.city_placeholder')"
+                />
+              </div>
+              <div>
+                <label for="zipCode" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.zip_code') }}</label>
+                <input
+                  v-model="form.zipCode"
+                  type="text"
+                  id="zipCode"
+                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  :placeholder="t('register.location.zip_code_placeholder')"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- Phone Number -->
+          <!-- Phone Number (always shown) -->
           <div>
-            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.phone.label') }} *</label>
+            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.phone.label') }} <span v-if="form.role === 'seller' || form.buyerType === 'auction'">*</span></label>
             <input
               v-model="form.phone"
               type="tel"
               id="phone"
-              required
+              :required="form.role === 'seller' || form.buyerType === 'auction'"
               class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               :placeholder="t('register.phone.placeholder')"
-              @input="formatPhoneNumber"
             />
+          </div>
+
+          <!-- ID Upload (auction buyers only) -->
+          <div v-if="form.role === 'buyer' && form.buyerType === 'auction'" class="border border-red-200 rounded-lg p-4 bg-red-50">
+            <label class="block text-sm font-semibold text-red-800 mb-2">{{ t('register.id_upload_label') }} *</label>
+            <input
+              type="file"
+              @change="onIdFileChange"
+              accept="image/*,.pdf"
+              class="block w-full text-sm text-red-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-800 hover:file:bg-red-200"
+            />
+            <p class="text-red-600 text-xs mt-1">{{ t('register.id_upload_help') }}</p>
+            <div v-if="idFile" class="mt-2 text-sm text-green-700">{{ idFileName }}</div>
           </div>
 
           <!-- Passwords -->
@@ -272,6 +303,9 @@
             <p class="text-red-700 text-sm">
               <strong>{{ t('register.important_notice.title') }}:</strong> {{ t('register.important_notice.message') }}
             </p>
+            <p v-if="form.buyerType === 'auction'" class="text-red-700 text-sm mt-1 font-semibold">
+              {{ t('register.auction_warning') }}
+            </p>
           </div>
 
           <!-- Error Message -->
@@ -282,7 +316,7 @@
           <!-- Submit Button -->
           <button
             type="submit"
-            :disabled="loading || !form.termsAccepted || !form.privacyAccepted"
+            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || (form.role === 'buyer' && form.buyerType === 'auction' && !idFile)"
             class="w-full py-3 px-4 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200 disabled:opacity-50 mt-4"
           >
             <span v-if="loading">{{ t('register.creating_account') || 'Creating account...' }}</span>
@@ -301,12 +335,12 @@
             <h2 class="text-xl font-bold text-red-800 mb-2">{{ t('register.join_title') }}</h2>
             <p class="text-red-700 text-sm mb-4">
               {{
-                form.role === 'buyer' 
+                form.role === 'buyer'
                 ? t('register.buyer_message')
                 : t('register.seller_message')
               }}
             </p>
-            
+
             <div class="text-left text-sm text-red-600 space-y-2">
               <div class="flex items-center">
                 <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,7 +370,7 @@
           </div>
         </div>
         <div class="mt-6 text-center text-sm text-red-600">
-          {{ t('auth.have_account') }} 
+          {{ t('auth.have_account') }}
           <NuxtLink to="/login" class="text-red-800 hover:text-red-900 font-semibold">{{ t('auth.login_link') }}</NuxtLink>
         </div>
       </div>
@@ -347,7 +381,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-// Set SEO meta tags
 useHead({
   title: t('register.seo.title') || 'Create Account - SwissExportCar',
   meta: [
@@ -365,6 +398,7 @@ const form = ref({
   password: '',
   confirmPassword: '',
   role: 'buyer' as 'buyer' | 'seller',
+  buyerType: 'direct' as 'direct' | 'auction',
   companyName: '',
   businessType: '' as 'private' | 'dealer' | 'business' | '',
   canton: '',
@@ -372,7 +406,7 @@ const form = ref({
   zipCode: '',
   country: 'Switzerland',
   taxId: '',
-  streetAddress: '', // NEW FIELD ADDED
+  streetAddress: '',
   termsAccepted: false,
   privacyAccepted: false,
   marketingAccepted: false
@@ -380,76 +414,63 @@ const form = ref({
 
 const loading = ref(false)
 const error = ref<string | null>(null)
+const idFile = ref<File | null>(null)
+const idFileName = ref('')
 
 const cantons = ['Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden', 'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft', 'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen', 'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura']
 
-const validatePhoneNumber = (phone: string): string | null => {
-  const cleaned = phone.replace(/\D/g, '')
-  if (cleaned.length < 9) {
-    return t('register.validation.phone_too_short') || 'Phone number too short'
+const setRole = (role: 'buyer' | 'seller') => {
+  form.value.role = role
+  if (role === 'seller') {
+    form.value.buyerType = 'direct'
   }
-  return null
 }
 
-const validatePassword = (password: string): string | null => {
-  if (password.length < 8) {
-    return t('register.validation.password_length') || 'Password must be at least 8 characters long'
-  }
-  return null
-}
-
-const formatPhoneNumber = (event: Event) => {
+const onIdFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
-  let value = target.value.replace(/\D/g, '')
-  
-  if (value.startsWith('41')) {
-    value = '+' + value
-  } else if (!value.startsWith('+')) {
-    value = '+41' + value
+  if (target.files && target.files[0]) {
+    idFile.value = target.files[0]
+    idFileName.value = target.files[0].name
   }
-  
-  // Format: +41 79 123 45 67
-  if (value.length > 3) {
-    value = value.replace(/(\+\d{2})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')
-  }
-  
-  form.value.phone = value
 }
 
 const handleRegister = async () => {
-  // Validate passwords match
   if (form.value.password !== form.value.confirmPassword) {
     error.value = t('register.validation.passwords_not_match') || 'Passwords do not match'
     return
   }
-
-  // Validate password strength
-  const passwordError = validatePassword(form.value.password)
-  if (passwordError) {
-    error.value = passwordError
+  if (form.value.password.length < 8) {
+    error.value = t('register.validation.password_length') || 'Password must be at least 8 characters long'
     return
   }
-
-  // Validate phone number
-  const phoneError = validatePhoneNumber(form.value.phone)
-  if (phoneError) {
-    error.value = phoneError
+  if ((form.value.role === 'seller' || form.value.buyerType === 'auction') && !form.value.phone) {
+    error.value = 'Phone number is required'
     return
   }
-
-  // Validate terms
   if (!form.value.termsAccepted || !form.value.privacyAccepted) {
     error.value = t('register.validation.accept_terms') || 'Please accept the terms and privacy policy'
+    return
+  }
+  if (form.value.role === 'buyer' && form.value.buyerType === 'auction' && !idFile.value) {
+    error.value = 'ID document is required for auction participation'
     return
   }
 
   try {
     loading.value = true
     error.value = null
-    
-    // Clean phone number
+
+    // Upload ID file if present
+    let idDocumentUrl = ''
+    if (idFile.value) {
+      const fd = new FormData()
+      fd.append('file', idFile.value)
+      const uploadRes = await $fetch('/api/user/upload-id', { method: 'POST', body: fd })
+      idDocumentUrl = (uploadRes as any).url || ''
+    }
+
     const cleanedPhone = form.value.phone.replace(/\D/g, '')
-    
+
     const { data, error: fetchError } = await useFetch('/api/auth/register', {
       method: 'POST',
       body: {
@@ -458,6 +479,7 @@ const handleRegister = async () => {
         password: form.value.password,
         phone: cleanedPhone,
         role: form.value.role,
+        buyerType: form.value.buyerType,
         companyName: form.value.companyName,
         businessType: form.value.businessType,
         canton: form.value.canton,
@@ -465,22 +487,21 @@ const handleRegister = async () => {
         zipCode: form.value.zipCode,
         country: form.value.country,
         taxId: form.value.taxId,
-        streetAddress: form.value.streetAddress, // NEW FIELD INCLUDED
+        streetAddress: form.value.streetAddress,
+        idDocumentUrl: idDocumentUrl,
         marketingAccepted: form.value.marketingAccepted
       }
     })
-    
+
     if (fetchError.value) {
       error.value = fetchError.value.message || t('register.messages.registration_failed') || 'Registration failed'
       return
     }
-    
-    // Show success message and redirect to login
+
     alert(t('register.messages.success') || 'Account created successfully! Please login to continue.')
     await navigateTo('/login')
   } catch (err) {
     error.value = t('register.messages.registration_failed') || 'Registration failed. Please try again.'
-    console.error('Registration error:', err)
   } finally {
     loading.value = false
   }
@@ -492,11 +513,5 @@ const handleRegister = async () => {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 0, 0, 0.2);
-}
-
-@media (max-width: 768px) {
-  .grid-cols-2 {
-    grid-template-columns: 1fr;
-  }
 }
 </style>

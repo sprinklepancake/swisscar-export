@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const { name, email, password, phone, role, companyName, businessType, canton, city, zipCode, country, taxId, streetAddress } = body
+  const { name, email, password, phone, role, companyName, businessType, canton, city, zipCode, country, taxId, streetAddress, buyerType, idDocumentUrl } = body
 
   if (!name || !email || !password) {
     throw createError({ statusCode: 400, statusMessage: 'Name, email, and password are required' })
@@ -16,7 +16,6 @@ export default defineEventHandler(async (event) => {
   let authUserId: string | null = null
 
   try {
-    // Step 1: Create auth user
     console.log('[register] Creating auth user for:', email)
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
@@ -37,7 +36,6 @@ export default defineEventHandler(async (event) => {
     authUserId = authData.user.id
     console.log('[register] Auth user created:', authUserId)
 
-    // Step 2: Check if profile already exists (e.g. created by a DB trigger)
     const { data: existing } = await supabase
       .from('users')
       .select('id')
@@ -51,6 +49,8 @@ export default defineEventHandler(async (event) => {
         name,
         phone: phone || null,
         role: role || 'buyer',
+        buyer_type: buyerType || 'direct',
+        id_document_url: idDocumentUrl || null,
         company_name: isSeller ? (companyName || null) : null,
         business_type: isSeller ? (businessType || null) : null,
         canton: canton || null,
@@ -64,9 +64,8 @@ export default defineEventHandler(async (event) => {
       return { success: true, userId: existing.id }
     }
 
-    // Step 3: Insert profile row
     const isSeller = (role || 'buyer') === 'seller'
-    console.log('[register] Inserting profile row, isSeller:', isSeller)
+    console.log('[register] Inserting profile row, isSeller:', isSeller, 'buyerType:', buyerType)
 
     const { data: profile, error: profileError } = await supabase.from('users').insert({
       auth_uid: authUserId,
@@ -74,6 +73,8 @@ export default defineEventHandler(async (event) => {
       name,
       phone: phone || null,
       role: role || 'buyer',
+      buyer_type: buyerType || 'direct',
+      id_document_url: idDocumentUrl || null,
       company_name: isSeller ? (companyName || null) : null,
       business_type: isSeller ? (businessType || null) : null,
       canton: canton || null,
@@ -98,11 +99,9 @@ export default defineEventHandler(async (event) => {
 
   } catch (error: any) {
     console.error('[register] Unhandled error:', error)
-
     if (authUserId && !error.statusCode) {
       await supabase.auth.admin.deleteUser(authUserId).catch(() => {})
     }
-
     if (error.statusCode) throw error
     throw createError({ statusCode: 500, statusMessage: error.message || 'Registration failed' })
   }

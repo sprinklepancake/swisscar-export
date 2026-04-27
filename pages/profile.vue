@@ -22,10 +22,10 @@
     <div v-else class="space-y-8">
       <!-- Profile Header -->
       <div class="bg-gradient-to-r from-red-100 to-red-200 rounded-xl p-6 border border-red-300">
-        <div class="flex flex-col md:flex-row items-center justify-between">
-          <div class="flex items-center">
-            <div class="relative">
-              <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full sm:w-auto">
+            <div class="relative flex-shrink-0">
+              <div class="w-20 h-20 sm:w-24 sm:h-24 bg-red-600 rounded-full flex items-center justify-center">
                 <span class="text-3xl font-bold text-white">{{ userInitial }}</span>
               </div>
               <button 
@@ -38,8 +38,8 @@
                 </svg>
               </button>
             </div>
-            <div class="text-center md:text-left">
-              <h1 class="text-2xl font-bold text-red-800">{{ profileData.user.name }}</h1>
+            <div class="text-center sm:text-left">
+              <h1 class="text-xl sm:text-2xl font-bold text-red-800">{{ profileData.user.name }}</h1>
               <p class="text-red-700 flex items-center gap-2">
                 <span>{{ profileData.user.role === 'seller' ? t('profile.role.verified_seller') : t('profile.role.registered_buyer') }}</span>
                 <span v-if="profileData.user.verifiedBuyer" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
@@ -51,7 +51,7 @@
           </div>
           
           <!-- Account Balance -->
-          <div class="mt-4 md:mt-0 bg-white/50 rounded-lg p-4 text-center border border-red-200 min-w-[200px]">
+          <div class="w-full sm:w-auto sm:min-w-[200px] bg-white/50 rounded-lg p-4 text-center border border-red-200 mt-2 sm:mt-0">
             <p class="text-red-600 text-sm">{{ t('profile.account_balance') }}</p>
             <p class="text-2xl font-bold text-red-800">{{ profileData.user.funds || 0 }} {{ t('currency.chf') }}</p>
             <p class="text-red-500 text-xs mt-1">{{ t('profile.contact_admin_funds') || 'Contact admin for fund management' }}</p>
@@ -60,7 +60,7 @@
       </div>
 
       <!-- Stats Section -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div class="glass p-4 rounded-lg border border-red-200">
           <p class="text-red-600 text-sm">{{ t('profile.stats.listings') }}</p>
           <p class="text-2xl font-bold text-red-800">{{ profileData.stats.totalListings || 0 }}</p>
@@ -101,7 +101,7 @@
 
           <!-- View Mode -->
           <div v-if="!editMode" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p class="text-red-600 text-sm">{{ t('profile.personal_info.full_name') }}</p>
                 <p class="text-red-800 font-medium">{{ profileData.user.name }}</p>
@@ -315,7 +315,7 @@
 
       <!-- My Listings Section (For Sellers) -->
       <div v-if="profileData.user.role === 'seller'" class="glass p-6 rounded-xl border border-red-200">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
           <h2 class="text-xl font-bold text-red-800">{{ t('profile.my_listings.title') }}</h2>
           <NuxtLink 
             to="/sell"
@@ -387,22 +387,22 @@
               </div>
               
               <!-- Actions -->
-              <div class="flex space-x-2">
+              <div class="flex flex-wrap gap-2 mt-3">
                 <NuxtLink 
                   :to="`/cars/${car.id}`"
-                  class="flex-1 px-3 py-2 bg-red-100 text-red-800 text-sm font-medium rounded-lg hover:bg-red-200 text-center"
+                  class="flex-1 px-3 py-2 bg-red-100 text-red-800 text-sm font-medium rounded-lg hover:bg-red-200 text-center min-w-0"
                 >
                   {{ t('messages.view') }}
                 </NuxtLink>
                 <NuxtLink 
                   :to="`/seller/cars/edit/${car.id}`"
-                  class="px-3 py-2 bg-red-200 text-red-800 text-sm font-medium rounded-lg hover:bg-red-300"
+                  class="flex-1 px-3 py-2 bg-red-200 text-red-800 text-sm font-medium rounded-lg hover:bg-red-300 text-center min-w-0"
                 >
                   {{ t('profile.actions.edit') }}
                 </NuxtLink>
                 <button 
                   @click="confirmDelete(car.id)"
-                  class="px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700"
+                  class="flex-1 px-3 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 min-w-0"
                 >
                   {{ t('profile.actions.delete') }}
                 </button>
@@ -477,7 +477,7 @@
             :key="transaction.id"
             class="border border-red-200 rounded-lg p-4 hover:bg-red-50 transition-colors"
           >
-            <div class="flex justify-between items-start">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="font-medium text-red-800">{{ formatTransactionType(transaction.type) }}</span>
@@ -504,7 +504,7 @@
                   {{ t('profile.transactions.reference') || 'Ref' }}: {{ transaction.referenceId }}
                 </p>
               </div>
-              <div class="text-right ml-4">
+              <div class="sm:text-right ml-0 sm:ml-4 flex-shrink-0">
                 <!-- FIXED: Show transaction change amount, not new balance -->
                 <p class="font-bold text-lg" :class="getAmountClass(transaction)">
                   {{ getAmountPrefix(transaction) }}{{ Math.abs(transaction.amount) }} {{ t('currency.chf') }}
@@ -522,7 +522,7 @@
           
           <!-- Summary -->
           <div v-if="transactions.length > 0" class="mt-6 pt-6 border-t border-red-200">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 gap-3 sm:gap-4">
               <div class="text-center">
                 <p class="text-red-600 text-sm">{{ t('profile.transactions.total_transactions') }}</p>
                 <p class="text-lg font-bold text-red-800">{{ transactions.length }}</p>

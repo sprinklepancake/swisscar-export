@@ -1,10 +1,9 @@
-/* Global Design System - Swiss Car Marketplace - Swiss Flag Theme */
+/* Global Design System - Swiss Car Marketplace */
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Custom Font Import */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 /* ============================================================
@@ -17,15 +16,12 @@
   --swiss-dark: #1a1a1a;
   --swiss-gray: #333333;
   --swiss-light-gray: #f5f5f5;
-
   --primary-gradient: linear-gradient(135deg, var(--swiss-red) 0%, var(--swiss-red-dark) 100%);
   --secondary-gradient: linear-gradient(135deg, var(--swiss-red-dark) 0%, #b30000 100%);
-  --dark-gradient: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
-  --light-gradient: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-red: rgba(255, 0, 0, 0.1);
-  --glass-red-border: rgba(255, 0, 0, 0.3);
+  --glass-bg: rgba(255,255,255,0.1);
+  --glass-border: rgba(255,255,255,0.2);
+  --glass-red: rgba(255,0,0,0.1);
+  --glass-red-border: rgba(255,0,0,0.3);
   --text-primary: var(--swiss-white);
   --text-secondary: #d1d5db;
   --text-muted: #9ca3af;
@@ -35,57 +31,36 @@
 /* ============================================================
    BASE STYLES
    ============================================================ */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
   color: var(--text-dark);
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: transparent !important;
-  /* Prevent horizontal scroll on mobile */
   overflow-x: hidden;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: var(--text-dark);
   line-height: 1.2;
   margin: 0;
 }
+h1 { font-size: clamp(1.75rem, 5vw, 4rem); font-weight: 800; }
+h2 { font-size: clamp(1.4rem,  4vw, 3rem); font-weight: 700; }
+h3 { font-size: clamp(1.1rem,  3vw, 2rem); font-weight: 600; }
 
-h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; }
-h2 { font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700; }
-h3 { font-size: clamp(1.25rem, 3vw, 2rem); font-weight: 600; }
+p { color: var(--text-dark); margin: 0 0 1rem 0; }
+a { text-decoration: none; color: var(--swiss-red); transition: color 0.2s ease; }
+a:hover { color: var(--swiss-red-dark); }
 
-p {
-  color: var(--text-dark);
-  margin: 0 0 1rem 0;
-}
-
-a {
-  text-decoration: none;
-  color: var(--swiss-red);
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  color: var(--swiss-red-dark);
-}
-
-/* ============================================================
-   MOBILE: PREVENT IOS ZOOM ON INPUTS
-   ============================================================ */
+/* Prevent iOS zoom on inputs */
 @media (max-width: 768px) {
   input[type="text"],
   input[type="email"],
@@ -94,234 +69,126 @@ a:hover {
   input[type="tel"],
   input[type="number"],
   input[type="url"],
-  textarea,
-  select {
-    font-size: 16px !important; /* Prevents iOS zoom */
-  }
+  textarea, select { font-size: 16px !important; }
 }
 
 /* ============================================================
-   COMPONENT LAYER — shared utility classes
+   COMPONENT LAYER
    ============================================================ */
 @layer components {
-  /* Glass card effect */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255,255,255,0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239,68,68,0.2);
   }
-
   .glass-strong {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255,255,255,0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(239,68,68,0.3);
   }
-
-  /* Gradient text */
   .gradient-text {
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
-  .gradient-text-secondary {
-    background: var(--secondary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  .status-available { @apply bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold; }
+  .status-reserved  { @apply bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold; }
+  .status-sold      { @apply bg-red-700   text-white px-3 py-1 rounded-full text-sm font-semibold; }
+  .status-draft     { @apply bg-blue-100  text-blue-800; }
 
-  /* Status badges */
-  .status-available {
-    @apply bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
-  }
-
-  .status-reserved {
-    @apply bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold;
-  }
-
-  .status-sold {
-    @apply bg-red-700 text-white px-3 py-1 rounded-full text-sm font-semibold;
-  }
-
-  /* Text shadow */
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  }
-
-  .backdrop-blur-strong {
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-  }
-
-  /* ============================================================
-     BUTTON CONTRAST FIXES
-     ============================================================ */
-
-  .view-toggle {
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    color: #b91c1c;
-    transition: colors 0.2s;
-  }
-
-  .view-toggle:hover {
-    background-color: #dc2626;
-    color: #ffffff;
-  }
-
-  .view-toggle.active {
-    background-color: #dc2626;
-    color: #ffffff;
-  }
+  .view-toggle { padding: 0.5rem; border-radius: 0.375rem; color: #b91c1c; transition: colors 0.2s; }
+  .view-toggle:hover, .view-toggle.active { background-color: #dc2626; color: #ffffff; }
 
   .btn-ghost-red {
     @apply border-2 border-red-600 text-red-700 bg-transparent font-semibold rounded-xl px-4 py-2 hover:bg-red-600 hover:text-white transition-all duration-200;
   }
-
-  /* White button on red/dark background */
   .btn-white {
     @apply bg-white text-red-800 font-semibold rounded-xl px-4 py-2 hover:bg-red-50 border border-red-200 transition-all duration-200 shadow-sm;
   }
 
-  /* Page-number buttons */
   .page-button {
     @apply w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 text-red-800 font-medium;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255,255,255,0.9);
     transition: background-color 0.2s, color 0.2s;
   }
+  .page-button:hover { background-color: #dc2626; color: #fff; border-color: #dc2626; }
+  .page-button.active { background: linear-gradient(to right, #dc2626, #991b1b); color: #fff; border-color: transparent; }
 
-  .page-button:hover {
-    background-color: #dc2626;
-    color: #ffffff;
-    border-color: #dc2626;
-  }
-
-  .page-button.active {
-    background: linear-gradient(to right, #dc2626, #991b1b);
-    color: #ffffff;
-    border-color: transparent;
-  }
-
-  /* Car cards */
   .car-card {
-    @apply bg-white/80 rounded-2xl overflow-hidden border border-red-200 hover:bg-white transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl;
+    @apply bg-white/80 rounded-2xl overflow-hidden border border-red-200 hover:bg-white transition-all duration-300;
   }
+  .car-image { @apply relative h-48 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden; }
+  .car-status { @apply px-3 py-1 rounded-full text-xs font-semibold; }
 
-  .car-image {
-    @apply relative h-48 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden;
-  }
-
-  .car-status {
-    @apply px-3 py-1 rounded-full text-xs font-semibold;
-  }
-
-  .status-draft {
-    @apply bg-blue-100 text-blue-800;
-  }
-
-  /* Feature cards */
   .feature-card {
-    @apply bg-white/80 p-8 rounded-2xl border border-red-200 hover:bg-white transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl;
+    @apply bg-white/80 p-8 rounded-2xl border border-red-200 hover:bg-white transition-all duration-300;
   }
-
   .feature-icon {
-    @apply w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-300 shadow-lg;
+    @apply w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-2xl flex items-center justify-center mb-6 shadow-lg;
   }
 
-  /* Newsletter */
   .newsletter-input {
-    @apply w-full p-4 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm transition-all duration-200;
+    @apply w-full p-4 rounded-xl bg-white/90 border border-red-300 text-red-900 placeholder-red-400
+           focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
   }
-
-  .newsletter-input:focus {
-    @apply bg-white shadow-lg;
+  .swiss-form-input {
+    @apply w-full px-4 py-3 rounded-xl border border-red-300 bg-white text-red-900 placeholder-red-400
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
   }
 }
 
 /* ============================================================
-   SWISS THEME UTILITIES
+   UTILITIES
    ============================================================ */
-.bg-swiss-white { background-color: var(--swiss-white); }
-.bg-swiss-red { background-color: var(--swiss-red); }
-.text-swiss-red { color: var(--swiss-red); }
+.bg-swiss-white   { background-color: var(--swiss-white); }
+.bg-swiss-red     { background-color: var(--swiss-red); }
+.text-swiss-red   { color: var(--swiss-red); }
 .border-swiss-red { border-color: var(--swiss-red); }
 
 .swiss-form-container {
   background: var(--swiss-white);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   border: 1px solid #e5e5e5;
 }
 
 /* ============================================================
-   FORM INPUTS — global defaults
+   ANIMATIONS
    ============================================================ */
-.swiss-form-input {
-  @apply w-full px-4 py-3 rounded-xl border border-red-300 bg-white text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
-}
+@keyframes float    { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+@keyframes pulse-glow { 0%,100%{box-shadow:0 0 20px rgba(220,38,38,.3)}50%{box-shadow:0 0 40px rgba(220,38,38,.6)} }
+@keyframes loading  { to{left:100%} }
 
-/* ============================================================
-   CUSTOM ANIMATIONS
-   ============================================================ */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.6); }
-}
-
-@keyframes loading {
-  to { left: 100%; }
-}
-
-.float { animation: float 3s ease-in-out infinite; }
+.float      { animation: float 3s ease-in-out infinite; }
 .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 
 /* ============================================================
-   LOADING STATE SKELETON
+   LOADING SKELETON
    ============================================================ */
-.loading {
-  position: relative;
-  overflow: hidden;
-}
-
+.loading { position: relative; overflow: hidden; }
 .loading::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.15), transparent);
+  content:""; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,.15), transparent);
   animation: loading 1.5s infinite;
 }
 
 /* ============================================================
-   SCROLLBAR STYLING
+   SCROLLBAR
    ============================================================ */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #fef2f2; border-radius: 4px; }
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #dc2626, #991b1b);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #b91c1c, #7f1d1d); }
+::-webkit-scrollbar-thumb { background: linear-gradient(135deg,#dc2626,#991b1b); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg,#b91c1c,#7f1d1d); }
+::selection      { background: rgba(220,38,38,.25); color: #1a1a1a; }
+::-moz-selection { background: rgba(220,38,38,.25); color: #1a1a1a; }
 
 /* ============================================================
-   SELECTION
-   ============================================================ */
-::selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
-::-moz-selection { background: rgba(220, 38, 38, 0.25); color: #1a1a1a; }
-
-/* ============================================================
-   PRINT STYLES
+   PRINT
    ============================================================ */
 @media print {
   body { background: white; color: black; }
@@ -333,16 +200,11 @@ a:hover {
    ACCESSIBILITY
    ============================================================ */
 @media (prefers-contrast: high) {
-  :root {
-    --glass-bg: rgba(255, 255, 255, 0.95);
-    --glass-border: rgba(153, 27, 27, 0.6);
-  }
-
+  :root { --glass-bg: rgba(255,255,255,.95); --glass-border: rgba(153,27,27,.6); }
   .status-available { @apply bg-green-700; }
-  .status-reserved { @apply bg-yellow-700; }
-  .status-sold { @apply bg-red-800; }
+  .status-reserved  { @apply bg-yellow-700; }
+  .status-sold      { @apply bg-red-800; }
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -352,852 +214,232 @@ a:hover {
 }
 
 /* ============================================================
-   RESPONSIVE — MOBILE FIRST
+   CAR CARD LINK STYLE
    ============================================================ */
-@media (max-width: 640px) {
-  /* Tighter container on phones */
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+a.car-card { display: block !important; cursor: pointer !important; text-decoration: none !important; }
 
-  /* Prevent tables from breaking layout */
-  table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Full-width buttons on mobile */
-  .mobile-full-width {
-    width: 100% !important;
-  }
-
-  /* Stack flex rows on mobile */
-  .mobile-stack {
-    flex-direction: column !important;
-  }
-}
-
-@media (max-width: 768px) {
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.75rem; }
-  h3 { font-size: 1.375rem; }
-
-  /* Ensure modals are full-width on mobile */
-  .modal-content {
-    width: 100% !important;
-    max-width: 100vw !important;
-    margin: 0 !important;
-    border-radius: 1rem 1rem 0 0 !important;
-  }
-
-  /* Car cards: disable hover scale on mobile */
-  .car-card:hover {
-    transform: none !important;
-  }
-
-  /* Feature cards: same */
-  .feature-card:hover {
-    transform: none !important;
-  }
+/* Disable hover scale on actual touch devices */
+@media (hover: none) {
+  .car-card:hover, .feature-card:hover, .hover\:scale-105:hover { transform: none !important; }
 }
 
 /* ============================================================
-   MOBILE TAP TARGETS — minimum 44x44px
+   SAFE AREA (iPhone notch)
    ============================================================ */
-@media (max-width: 768px) {
-  button, a, [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Exception: small inline badges/tags */
-  .badge, .tag, .chip {
-    min-height: unset;
-    min-width: unset;
-  }
-}
-
-/* ============================================================
-   PAGE-SPECIFIC MOBILE FIXES
-   ============================================================ */
-
-/* ---- INDEX PAGE (homepage) ---- */
-@media (max-width: 640px) {
-  /* Hero section — shrink giant headings */
-  .min-h-screen h1,
-  section h1 {
-    font-size: 1.875rem !important;
-    line-height: 1.2 !important;
-  }
-
-  section p.text-xl,
-  section p.text-2xl {
-    font-size: 1rem !important;
-  }
-
-  /* Hero padding */
-  section.relative.py-20,
-  section.py-20 {
-    padding-top: 3rem !important;
-    padding-bottom: 3rem !important;
-  }
-
-  /* Filter row stacks on small screens */
-  .flex.flex-col.md\:flex-row {
-    flex-direction: column !important;
-  }
-}
-
-/* ---- CARS/INDEX PAGE ---- */
-
-/* List-view cards: stack image + content vertically on mobile */
-@media (max-width: 640px) {
-  .car-card.flex {
-    flex-direction: column !important;
-  }
-
-  .car-card.flex .car-image,
-  .car-card.flex [class*="w-1/3"],
-  .car-card.flex [class*="w-2/3"] {
-    width: 100% !important;
-  }
-
-  /* Sort bar: wrap on mobile */
-  .flex.items-center.gap-4 {
-    flex-wrap: wrap;
-    gap: 0.5rem !important;
-  }
-
-  /* Sort label hide on tiny screens */
-  .whitespace-nowrap {
-    white-space: normal !important;
-  }
-
-  /* Cars page hero shrink */
-  .cars-hero h1,
-  .text-4xl.md\:text-5xl {
-    font-size: 1.75rem !important;
-  }
-
-  /* Active filter badges — wrap nicely */
-  .flex.flex-wrap.gap-2 {
-    flex-wrap: wrap;
-  }
-
-  /* Advanced filter grid: single col on phone */
-  .grid.grid-cols-2.md\:grid-cols-3,
-  .grid.grid-cols-2.md\:grid-cols-4 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Equipment checkboxes: 2 per row max */
-  .grid.grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Search/action buttons row */
-  .flex.gap-2 > .secondary-button,
-  .flex.gap-2 > .search-button {
-    flex: 1;
-    text-align: center;
-    justify-content: center;
-  }
-}
-
-/* ---- CARS/[ID] DETAIL PAGE ---- */
-@media (max-width: 768px) {
-  /* Prevent the whole detail page from scrolling sideways */
-  .min-h-screen.bg-gradient-to-br {
-    overflow-x: hidden !important;
-  }
-
-  /* Main grid: stack left/right columns */
-  .grid.grid-cols-1.lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Tab nav: horizontal scroll */
-  .flex.overflow-x-auto,
-  .tabs-nav {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-wrap: nowrap !important;
-  }
-
-  .tabs-nav::-webkit-scrollbar { display: none; }
-
-  /* Tab buttons: don't shrink */
-  .tabs-nav button,
-  .flex.overflow-x-auto button {
-    flex-shrink: 0 !important;
-    white-space: nowrap;
-    min-width: auto;
-  }
-
-  /* ✅ FIXED: Main image — constrain fully to viewport width */
-  .relative.h-80 {
-    height: 56vw !important;
-    max-height: 260px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  .relative.h-80 img {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-  }
-
-  /* Image gallery card: never exceed viewport */
-  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  /* Image thumbnails: horizontal scroll */
-  .flex.gap-2.overflow-x-auto {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Spec grid: single column */
-  .grid.grid-cols-1.md\:grid-cols-2 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Features grid */
-  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Right sidebar sticky: disable on mobile */
-  .lg\:sticky {
-    position: static !important;
-  }
-
-  /* Bid panel — add top margin */
-  .glass.rounded-2xl.p-6.border.border-red-200.shadow-lg {
-    margin-top: 1rem;
-  }
-
-  /* Price — slightly smaller */
-  .text-3xl.font-bold.text-red-800 {
-    font-size: 1.5rem !important;
-  }
-
-  /* Seller contact row: stack icon+info+button */
-  .flex.items-center.text-red-700.bg-red-50 {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .flex.items-center.text-red-700.bg-red-50 .ml-auto {
-    margin-left: 0 !important;
-    width: 100%;
-  }
-}
-
-/* ---- DASHBOARD PAGE ---- */
-@media (max-width: 768px) {
-  /* Welcome header: stack vertically */
-  .bg-gradient-to-r.rounded-xl .flex.items-center.justify-between {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 1rem;
-  }
-
-  /* Balance box: full width on mobile */
-  .bg-white\/50.rounded-lg.p-4.text-center.border.border-red-200 {
-    min-width: unset !important;
-    width: 100%;
-  }
-
-  /* Stats grid: 2 cols on phone */
-  .grid.grid-cols-1.md\:grid-cols-3 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  @media (max-width: 400px) {
-    .grid.grid-cols-1.md\:grid-cols-3 {
-      grid-template-columns: 1fr !important;
-    }
-  }
-
-  /* Listings table: don't overflow */
-  .overflow-x-auto table {
-    min-width: 500px;
-  }
-
-  /* Dashboard table header filter row: stack */
-  .flex.justify-between.items-center.mb-6 {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 0.75rem;
-  }
-
-  /* Quick actions 2-col grid */
-  .grid.grid-cols-2.gap-3 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Listing card rows: stack on mobile */
-  .flex.flex-col.md\:flex-row.md\:items-center.justify-between {
-    flex-direction: column !important;
-    gap: 0.75rem;
-  }
-
-  /* Action button rows: wrap */
-  .flex.space-x-2 {
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-}
-
-/* ---- PROFILE PAGE ---- */
-@media (max-width: 768px) {
-  /* Profile header: stack avatar + info + balance */
-  .glass.p-6.rounded-xl .flex.flex-col.md\:flex-row.items-start.md\:items-center {
-    flex-direction: column !important;
-  }
-
-  /* Balance section */
-  .mt-4.md\:mt-0.bg-white\/50 {
-    margin-top: 1rem !important;
-    width: 100%;
-  }
-
-  /* Stats grid: 2 cols on mobile */
-  .grid.grid-cols-1.md\:grid-cols-4 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Listings grid: single col on phone */
-  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Edit form: stack the action buttons */
-  .flex.justify-end.space-x-3 {
-    flex-direction: column !important;
-    gap: 0.5rem;
-  }
-
-  .flex.justify-end.space-x-3 button {
-    width: 100%;
-  }
-
-  /* Quick actions links: ensure full width tap */
-  .flex.items-center.justify-between.p-4 {
-    padding: 0.75rem !important;
-  }
-
-  /* Transaction history: full width amounts */
-  .flex.justify-between.items-center {
-    gap: 0.5rem;
-  }
-}
-
-/* ---- ADMIN PAGE ---- */
-@media (max-width: 768px) {
-  /* Admin stats: 2 cols */
-  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Tab nav: horizontal scroll */
-  .flex.space-x-1.overflow-x-auto,
-  .border-b.border-gray-200 .flex {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* User / listing tables: horizontal scroll */
-  .overflow-x-auto {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .overflow-x-auto table {
-    min-width: 600px;
-  }
-}
-
-/* ---- CHAT PAGE ---- */
-@media (max-width: 768px) {
-  /* Chat sidebar + main: stack vertically */
-  .flex.h-screen > .w-80,
-  .flex.h-screen > .w-1\/3 {
-    width: 100% !important;
-    height: auto !important;
-  }
-
-  /* Message input bar: make sure keyboard doesn't cover it */
-  .fixed.bottom-0,
-  .sticky.bottom-0 {
-    position: sticky !important;
-    bottom: 0;
-  }
-}
-
-/* ---- SELL / CAR LISTING FORM ---- */
-@media (max-width: 640px) {
-  /* Step progress bar text: smaller */
-  .text-xs.font-medium {
-    font-size: 0.625rem !important;
-  }
-
-  /* Multi-step form: ensure inputs don't zoom */
-  input, select, textarea {
-    font-size: 16px !important;
-  }
-}
-
-/* ---- GENERAL MOBILE POLISH ---- */
-@media (max-width: 640px) {
-  /* Any "hero" with py-20 is too tall on mobile */
-  .py-20 {
-    padding-top: 2.5rem !important;
-    padding-bottom: 2.5rem !important;
-  }
-
-  /* Cards: remove scale transform on mobile */
-  .hover\:scale-105:hover,
-  .hover\:transform:hover {
-    transform: none !important;
-  }
-
-  /* Ensure modal backdrop covers full screen including notch */
-  .fixed.inset-0 {
-    padding-top: env(safe-area-inset-top) !important;
-  }
-
-  /* Price tags: don't overflow */
-  .text-2xl.font-bold,
-  .text-3xl.font-bold {
-    word-break: break-word;
-  }
-
-  /* Button groups in cards: stack */
-  .flex.gap-2 > button,
-  .flex.gap-2 > a {
-    flex: 1 1 auto;
-    text-align: center;
-    justify-content: center;
-  }
-
-  /* Breadcrumbs: allow wrap */
-  nav.flex.items-center.space-x-2 {
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  /* Container padding on very small phones */
-  .max-w-7xl, .max-w-6xl, .max-w-4xl {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-  }
-}
-
-/* Fix: list view cards in cars/index at medium mobile (landscape phones) */
-@media (min-width: 641px) and (max-width: 900px) {
-  .car-card.flex {
-    flex-direction: row !important;
-  }
-
-  .car-card.flex .car-image {
-    width: 40% !important;
-    max-height: 180px;
-  }
-
-  .car-card.flex [class*="w-2/3"] {
-    width: 60% !important;
-  }
-}
-
-/* Safe area insets for iPhone notch/home bar */
 @supports (padding: env(safe-area-inset-bottom)) {
-  .sticky.bottom-0,
-  footer {
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-  }
+  .sticky.bottom-0, footer { padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); }
 }
+
 /* ============================================================
-   FIX: Car detail page — main image overflow on mobile
+   MOBILE TAP TARGETS (min 44x44)
    ============================================================ */
 @media (max-width: 768px) {
-  .relative.h-80 {
-    height: 60vw !important;
-    max-height: 300px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-
-  .relative.h-80 img {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    object-fit: cover !important;
-    object-position: center top !important;
-  }
-
-  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
+  button, a, [role="button"] { min-height: 44px; min-width: 44px; }
+  .badge, .tag, .chip, .rounded-full.text-xs { min-height: unset; min-width: unset; }
 }
 
 /* ============================================================
-   FIX: Car cards — make the entire card clickable
+   HEADER
    ============================================================ */
-a.car-card {
-  display: block !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-}
-
-a.car-card:hover {
-  text-decoration: none !important;
-}
-
-/* ============================================================
-   FIX BATCH: All mobile issues — paste this at the END of main.css
-   ============================================================ */
-
-/* ----------------------------------------------------------
-   1. GLOBAL: prevent any page from overflowing horizontally
-   ---------------------------------------------------------- */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-}
-
-/* ----------------------------------------------------------
-   2. CAR DETAIL PAGE — complete mobile overhaul
-   ---------------------------------------------------------- */
-@media (max-width: 768px) {
-  /* Page root: no horizontal scroll */
-  .min-h-screen.bg-gradient-to-br {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-  }
-
-  /* All max-w containers: fit to screen */
-  .max-w-7xl,
-  .max-w-6xl,
-  .max-w-5xl,
-  .max-w-4xl {
-    max-width: 100% !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Image gallery card: fit viewport, no overflow */
-  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
-    max-width: 100% !important;
-    width: 100% !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Main hero image: proportional height, never wider than screen */
-  .relative.h-80 {
-    height: 55vw !important;
-    max-height: 260px !important;
-    min-height: 160px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    position: relative !important;
-  }
-
-  .relative.h-80 > img,
-  .relative.h-80 img {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-  }
-
-  /* Thumbnail strip: scrollable, thumbnails shrink to fixed size */
-  .flex.gap-2.overflow-x-auto,
-  .flex.gap-2.p-4.overflow-x-auto {
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    padding: 0.75rem !important;
-  }
-
-  .flex.gap-2.overflow-x-auto::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  /* Each thumbnail: fixed small size */
-  .flex.gap-2.overflow-x-auto > div,
-  .flex.gap-2.p-4.overflow-x-auto > div {
-    flex-shrink: 0 !important;
-    width: 72px !important;
-    height: 54px !important;
-    border-radius: 0.5rem;
-    overflow: hidden;
-  }
-
-  .flex.gap-2.overflow-x-auto > div img,
-  .flex.gap-2.p-4.overflow-x-auto > div img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-  }
-
-  /* Main content grid: single column */
-  .grid.grid-cols-1.lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
-  }
-
-  /* Spec grids: 2 columns max, never overflow */
-  .grid.grid-cols-2.md\:grid-cols-3,
-  .grid.grid-cols-2.sm\:grid-cols-3,
-  .grid.grid-cols-2 {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 0.5rem !important;
-  }
-
-  /* On very small phones: single column for specs */
-  @media (max-width: 380px) {
-    .grid.grid-cols-2 {
-      grid-template-columns: 1fr !important;
-    }
-  }
-
-  /* Features grid */
-  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* Right sidebar: un-sticky, full width */
-  .lg\:col-span-1 {
-    width: 100% !important;
-  }
-
-  .lg\:sticky {
-    position: static !important;
-    top: auto !important;
-  }
-
-  /* Price: smaller on mobile so it doesn't overflow */
-  .text-3xl.font-bold.text-red-800,
-  .text-4xl.font-bold {
-    font-size: 1.5rem !important;
-    line-height: 1.3 !important;
-    word-break: break-word !important;
-  }
-
-  /* Bid/contact panel */
-  .glass.rounded-2xl.p-6.border.border-red-200.shadow-lg {
-    padding: 1rem !important;
-    margin-top: 0.5rem !important;
-  }
-
-  /* Seller contact row */
-  .flex.items-center.text-red-700.bg-red-50 {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-
-  .flex.items-center.text-red-700.bg-red-50 .ml-auto {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-
-  /* Tab bar: horizontal scroll, no wrap */
-  .flex.overflow-x-auto,
-  .tabs-nav,
-  .flex.border-b {
-    overflow-x: auto !important;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .flex.overflow-x-auto button,
-  .tabs-nav button {
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-  }
-
-  /* Breadcrumb: wrap gracefully */
-  nav.flex.items-center.space-x-2 {
-    flex-wrap: wrap !important;
-    gap: 0.25rem !important;
-  }
-}
-
-/* ----------------------------------------------------------
-   3. HEADER: ensure mobile menu doesn't overflow
-   ---------------------------------------------------------- */
 @media (max-width: 1024px) {
-  header .flex.lg\:hidden {
-    flex-shrink: 0;
-  }
-
-  /* Mobile menu dropdown: full width, scrollable if tall */
   header .lg\:hidden.border-t {
     max-height: calc(100vh - 5rem);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 }
+header .relative .fixed.inset-0 { z-index: 40 !important; }
+header .relative > div[class*="absolute"] { z-index: 50 !important; }
 
-/* ----------------------------------------------------------
-   4. Language dropdown z-index fix
-   ---------------------------------------------------------- */
-header .relative .fixed.inset-0 {
-  z-index: 40 !important;
-}
-
-header .relative > div[class*="absolute"] {
-  z-index: 50 !important;
-}
 /* ============================================================
-   FINAL MOBILE FIXES – Car detail page & general overflow
+   HOMEPAGE
+   ============================================================ */
+@media (max-width: 640px) {
+  .min-h-screen h1, section h1 { font-size: 1.875rem !important; line-height: 1.2 !important; }
+  section p.text-xl, section p.text-2xl { font-size: 1rem !important; }
+  section.py-20 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+}
+
+/* ============================================================
+   CARS LISTING PAGE
+   ============================================================ */
+@media (max-width: 640px) {
+  .car-card.flex { flex-direction: column !important; }
+  .car-card.flex .car-image,
+  .car-card.flex [class*="w-1/3"],
+  .car-card.flex [class*="w-2/3"] { width: 100% !important; }
+  .grid.grid-cols-2.md\:grid-cols-3,
+  .grid.grid-cols-2.md\:grid-cols-4 { grid-template-columns: 1fr !important; }
+  .grid.grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 { grid-template-columns: repeat(2,1fr) !important; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .car-card.flex { flex-direction: row !important; }
+  .car-card.flex .car-image { width: 40% !important; max-height: 180px; }
+  .car-card.flex [class*="w-2/3"] { width: 60% !important; }
+}
+
+/* ============================================================
+   CAR DETAIL PAGE
    ============================================================ */
 @media (max-width: 768px) {
-  /* Force every element to respect container width */
-  body, html, #__nuxt, .min-h-screen {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-  }
+  /* Layout */
+  .grid.grid-cols-1.lg\:grid-cols-3 { grid-template-columns: 1fr !important; gap: 1rem !important; }
+  .lg\:sticky { position: static !important; top: auto !important; }
+  .lg\:col-span-1 { width: 100% !important; }
 
-  /* All images, videos, iframes scale down */
-  img, video, iframe {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  /* Main image container – use aspect ratio instead of fixed height */
+  /* Main image */
   .relative.h-80 {
-    height: auto !important;
-    aspect-ratio: 16 / 9 !important;
-    max-height: 50vw !important;
+    height: 56vw !important;
+    max-height: 280px !important;
+    min-height: 160px !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
-
-  /* Ensure the image inside fills the container correctly */
   .relative.h-80 img {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
+    position: absolute !important; inset: 0 !important;
+    width: 100% !important; height: 100% !important;
+    object-fit: cover !important; object-position: center !important;
+  }
+  .glass.rounded-2xl.overflow-hidden.border.border-red-200.shadow-lg {
+    max-width: 100% !important; overflow: hidden !important;
   }
 
-  /* All glass cards – prevent internal overflow */
-  .glass, .glass-strong, [class*="rounded-2xl"] {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    word-wrap: break-word !important;
+  /* Thumbnails */
+  .flex.gap-2.overflow-x-auto,
+  .flex.gap-2.p-4.overflow-x-auto {
+    overflow-x: auto !important; overflow-y: hidden !important;
+    flex-wrap: nowrap !important; -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important; padding: 0.5rem 0.75rem !important;
   }
-
-  /* Tables (bid history, specs) become scrollable horizontally */
-  table, .overflow-x-auto {
-    display: block !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  /* Force text to wrap */
-  p, h1, h2, h3, h4, h5, h6, span, div, .text-3xl {
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-  }
-
-  /* Grid adjustments – prevent columns from forcing width */
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !important;
-  }
-
-  /* Specifically for the 3‑column layout on detail page */
-  .lg\:grid-cols-3 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Badge container – wrap and don’t overflow */
-  .absolute.top-4.left-4.flex {
-    flex-wrap: wrap !important;
-    gap: 0.25rem !important;
-    max-width: calc(100% - 1rem) !important;
-  }
-
-  /* Right sidebar cards – no fixed width */
-  .lg\:col-span-1 > div {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  /* Spec rows – allow wrapping */
-  .flex.justify-between {
-    flex-wrap: wrap !important;
-    gap: 0.25rem !important;
-  }
-
-  /* Price text – never overflow */
-  .text-3xl.font-bold {
-    font-size: 1.5rem !important;
-    line-height: 1.3 !important;
-  }
-
-  /* Thumbnail strip – horizontal scroll only */
-  .flex.gap-2.overflow-x-auto {
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding-bottom: 0.5rem !important;
-  }
-
-  .flex.gap-2.overflow-x-auto > * {
+  .flex.gap-2.overflow-x-auto::-webkit-scrollbar { display: none !important; }
+  .flex.gap-2.overflow-x-auto > div,
+  .flex.gap-2.p-4.overflow-x-auto > div {
     flex-shrink: 0 !important;
+    width: 72px !important; height: 54px !important;
+    border-radius: 0.5rem; overflow: hidden;
+  }
+  .flex.gap-2.overflow-x-auto > div img { width:100% !important; height:100% !important; object-fit:cover !important; }
+
+  /* Tab bar */
+  .flex.overflow-x-auto, .tabs-nav {
+    overflow-x: auto !important; flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important; scrollbar-width: none !important;
+  }
+  .flex.overflow-x-auto::-webkit-scrollbar, .tabs-nav::-webkit-scrollbar { display: none !important; }
+  .flex.overflow-x-auto > button, .tabs-nav > button { flex-shrink: 0 !important; white-space: nowrap !important; }
+
+  /* Typography */
+  .text-3xl.font-bold.text-red-800, .text-4xl.font-bold {
+    font-size: 1.5rem !important; line-height: 1.3 !important; word-break: break-word !important;
   }
 
-  /* ===== TAB NAVIGATION FIXES – ensure horizontal scroll on mobile ===== */
-  /* Target the tabs container specifically */
-  .border-b .flex.overflow-x-auto,
-  .tabs-nav,
-  [class*="tab"] .flex.overflow-x-auto {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    max-width: 100vw !important;
+  /* Panels */
+  .glass.rounded-2xl.p-6.border.border-red-200.shadow-lg { padding: 1rem !important; }
+
+  /* Seller row */
+  .flex.items-center.text-red-700.bg-red-50 { flex-wrap: wrap !important; gap: 0.5rem !important; }
+  .flex.items-center.text-red-700.bg-red-50 .ml-auto { margin-left: 0 !important; width: 100% !important; }
+
+  /* Spec grids */
+  .grid.grid-cols-1.md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* Badge overlay */
+  .absolute.top-4.left-4.flex { flex-wrap: wrap !important; gap: 0.25rem !important; max-width: calc(100% - 1rem) !important; }
+
+  /* Breadcrumb */
+  nav.flex.items-center.space-x-2 { flex-wrap: wrap !important; gap: 0.25rem !important; }
+}
+
+/* ============================================================
+   DASHBOARD PAGE
+   ============================================================ */
+@media (max-width: 768px) {
+  .grid.grid-cols-1.md\:grid-cols-3 { grid-template-columns: repeat(2,1fr) !important; }
+  .grid.grid-cols-2.gap-3 { grid-template-columns: repeat(2,1fr) !important; }
+  .overflow-x-auto { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .overflow-x-auto table { min-width: 500px; }
+  .flex.space-x-2 { flex-wrap: wrap; gap: 0.25rem; }
+}
+@media (max-width: 400px) {
+  .grid.grid-cols-1.md\:grid-cols-3 { grid-template-columns: 1fr !important; }
+}
+
+/* ============================================================
+   PROFILE PAGE
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Stats 4-col → 2-col */
+  .grid.grid-cols-1.md\:grid-cols-4 { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* Listings 3-col → 1-col */
+  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+
+  /* Balance box full width */
+  .mt-4.md\:mt-0.bg-white\/50 { margin-top: 1rem !important; width: 100%; }
+
+  /* Edit form buttons: stack */
+  .flex.justify-end.space-x-3 { flex-direction: column !important; gap: 0.5rem; }
+  .flex.justify-end.space-x-3 button { width: 100%; }
+
+  /* Transaction rows: wrap amount below description */
+  .border.border-red-200.rounded-lg.p-4 > .flex.justify-between.items-start {
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .border.border-red-200.rounded-lg.p-4 > .flex.justify-between.items-start > .text-right.ml-4 {
+    width: 100%; text-align: left; margin-left: 0 !important;
   }
 
-  .border-b .flex.overflow-x-auto > button,
-  .tabs-nav button,
-  [class*="tab"] button {
-    flex: 0 0 auto !important;
-    width: auto !important;
-    min-width: max-content !important;
-    white-space: nowrap !important;
-  }
+  /* Listing action buttons: wrap */
+  .flex.space-x-2 { flex-wrap: wrap; gap: 0.375rem; }
+  .flex.space-x-2 > * { flex: 1 1 auto; min-width: fit-content; text-align: center; justify-content: center; }
+}
 
-  /* Hide scrollbar for cleaner look */
-  .border-b .flex.overflow-x-auto::-webkit-scrollbar,
-  .tabs-nav::-webkit-scrollbar {
-    display: none !important;
+/* ============================================================
+   ADMIN PAGE
+   ============================================================ */
+@media (max-width: 768px) {
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 { grid-template-columns: repeat(2,1fr) !important; }
+  .border-b.border-gray-200 .flex {
+    overflow-x: auto; flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
+  .border-b.border-gray-200 .flex::-webkit-scrollbar { display: none; }
+  .border-b.border-gray-200 .flex > button { flex-shrink: 0; white-space: nowrap; }
+  .overflow-x-auto table { min-width: 600px; }
+}
+
+/* ============================================================
+   CHAT PAGE
+   ============================================================ */
+@media (max-width: 768px) {
+  .flex.h-screen > .w-80,
+  .flex.h-screen > .w-1\/3 { width: 100% !important; height: auto !important; }
+  .sticky.bottom-0 { position: sticky !important; bottom: 0; }
+}
+
+/* ============================================================
+   SELL / LISTING FORM
+   ============================================================ */
+@media (max-width: 640px) {
+  .text-xs.font-medium { font-size: 0.625rem !important; }
+}
+
+/* ============================================================
+   GENERAL MOBILE POLISH
+   ============================================================ */
+@media (max-width: 640px) {
+  .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  .py-20 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+  .text-2xl.font-bold, .text-3xl.font-bold { word-break: break-word; }
+  .modal-content {
+    width: 100% !important; max-width: 100vw !important;
+    margin: 0 !important; border-radius: 1rem 1rem 0 0 !important;
+  }
+  img, video, iframe { max-width: 100% !important; }
+  .glass, .glass-strong { max-width: 100%; overflow-x: hidden; word-wrap: break-word; }
 }

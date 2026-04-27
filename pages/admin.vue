@@ -225,7 +225,7 @@
                     </td>
                     <td class="px-4 py-4">
                       <div v-if="user.idDocumentUrl">
-                        
+                        <a
                           :href="user.idDocumentUrl"
                           target="_blank"
                           rel="noopener noreferrer"

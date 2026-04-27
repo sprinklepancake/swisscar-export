@@ -92,40 +92,52 @@
             </div>
           </div>
 
-          <!-- Shipping Ad Section - Compact Mobile Design -->
-<div class="glass rounded-xl p-3 sm:p-4 border border-red-200 shadow-md mb-4 sm:mb-6 bg-gradient-to-r from-red-50 to-white">
-<div class="flex flex-row items-center gap-2 sm:gap-3">
-<div class="flex-shrink-0">
-<div class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden border border-red-200 bg-white">
-<img
-src="/assets/images/car-transport.jpeg"
-:alt="$t('shipping_ad.alt_text')"
-class="w-full h-full object-cover"
-loading="lazy"
-/>
-</div>
-</div>
-<div class="flex-grow min-w-0">
-<h3 class="text-xs sm:text-sm font-bold text-red-900 truncate">{{ $t('shipping_ad.title') }}</h3>
-<p class="text-xs text-red-600 font-medium">Transport from Switzerland</p>
-<p class="text-xs text-red-500 mt-0.5">Call: 076 448 08 49</p>
-</div>
-<div class="flex-shrink-0">
-<a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`"
-target="_blank"
-class="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg font-semibold flex items-center gap-1 transition-all duration-200">
-<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
-<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-</svg>
-<span class="hidden sm:inline">{{ $t('shipping_ad.whatsapp_button') }}</span>
-<span class="inline sm:hidden">WhatsApp</span>
-</a>
-</div>
-</div>
-</div>
+          <!-- Shipping Ad Section -->
+          <div class="glass rounded-2xl p-6 border-2 border-red-300 shadow-xl mb-6 bg-gradient-to-r from-red-50 to-white transform hover:scale-[1.01] transition-all duration-300">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+              <div class="flex-shrink-0">
+                <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 border-red-300 shadow-lg bg-white">
+                  <img 
+                    src="/assets/images/car-transport.jpeg" 
+                    :alt="$t('shipping_ad.alt_text')"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">
+                    ✓
+                  </div>
+                </div>
+              </div>
+              <div class="flex-grow text-center md:text-left">
+                <h3 class="text-xl font-bold text-red-900 mb-1">{{ $t('shipping_ad.title') }}</h3>
+                <p class="text-md font-semibold text-red-700 mb-2">{{ $t('shipping_ad.badge_text') }}</p>
+                <div class="space-y-1 text-red-800">
+                  <p class="flex items-center justify-center md:justify-start">
+                    <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                    </svg>
+                    {{ $t('shipping_ad.description') }}
+                  </p>
+                  <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2">
+                    <p class="text-lg font-bold text-red-900">076 448 08 49</p>
+                    <span class="text-sm text-red-600">{{ $t('shipping_ad.phone_subtext') }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-shrink-0">
+                <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
+                   target="_blank"
+                   class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  </svg>
+                  {{ $t('shipping_ad.whatsapp_button') }}
+                </a>
+              </div>
+            </div>
+          </div>
 
-<!-- Car Details Tabs -->
-
+          <!-- Car Details Tabs -->
           <div class="glass rounded-2xl border border-red-200 shadow-lg overflow-hidden">
             <!-- Tab Navigation (horizontal scroll on mobile) -->
             <div class="border-b border-red-200 bg-red-50/50">

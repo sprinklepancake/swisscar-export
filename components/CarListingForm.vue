@@ -156,7 +156,7 @@
                   <h4 class="text-base sm:text-lg font-semibold text-green-900 mb-2">
                     {{ typenscheinResults.BaseData_DE.Typenbezeichnung }}
                   </h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                     <div>
                       <span class="font-medium text-gray-700">{{ $t('car_listing_form.vehicle_type') }}:</span>
                       <span class="ml-2 text-gray-900">{{ typenscheinResults.BaseData_DE.Fahrzeugart }}</span>
@@ -594,23 +594,6 @@
               </div>
               <p class="text-gray-500 text-xs mt-1">{{ $t('car_listing_form.reserve_price_help') }}</p>
             </div>
-
-<!-- Auction Duration (Auctions Only) -->
-<div v-if="form.listingType === 'auction'" class="form-group">
-  <label class="swiss-form-label">{{ $t('auction.duration_days') }} *</label>
-  <div class="relative">
-    <input
-      v-model="form.auctionDays"
-      type="number"
-      class="swiss-form-input p-3 pl-12 text-sm sm:text-base w-full"
-      placeholder="7"
-      min="1"
-      max="60"
-    >
-    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold text-sm pointer-events-none">{{ $t('car_listing_form.days') }}</span>
-  </div>
-  <p class="text-gray-500 text-xs mt-1">{{ $t('auction.duration_help') }}</p>
-</div>
             
             <!-- Mileage -->
             <div class="form-group">
@@ -864,7 +847,7 @@
             <h3 class="text-lg sm:text-xl font-bold text-swiss-dark">{{ $t('car_listing_form.equipment_features') }}</h3>
           </div>
           
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+          <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             <label 
               v-for="feature in equipmentFeatures" 
               :key="feature.value"
@@ -876,7 +859,7 @@
                 :value="feature.value"
                 class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
               >
-              <span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm break-words">{{ $t(`equipment.${feature.value}`) || feature.label }}</span>
+              <span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm">{{ $t(`equipment.${feature.value}`) || feature.label }}</span>
             </label>
           </div>
 
@@ -1329,7 +1312,7 @@ const form = ref({
   // NEW: Listing Type & Auction Fields
   listingType: 'normal',
   startingPrice: '',
-  reservePrice: '',\n    auctionDays: '7',
+  reservePrice: '',
   
   // Basic Information
   make: '',
@@ -1577,9 +1560,7 @@ const searchTypenschein = async () => {
   typenscheinResults.value = null
   
   try {
-    // Convert search input to uppercase since stored Typenschein data is uppercase
-    const searchNr = typenscheinSearch.value.trim().toUpperCase()
-    const { data, error } = await useFetch(`/api/typenschein/${searchNr}`, {
+    const { data, error } = await useFetch(`/api/typenschein/${typenscheinSearch.value.trim()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -2301,7 +2282,7 @@ const submitListing = async () => {
       ...(form.value.listingType === 'auction' ? {
         startingPrice: parseFloat(form.value.startingPrice),
         price: parseFloat(form.value.startingPrice), // Also send as price for compatibility
-        reservePrice: form.value.reservePrice ? parseFloat(form.value.reservePrice) : null,\n    auctionDuration: parseInt(form.value.auctionDays) || 7
+        reservePrice: form.value.reservePrice ? parseFloat(form.value.reservePrice) : null
       } : {
         price: parseFloat(form.value.price)
       }),

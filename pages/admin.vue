@@ -179,6 +179,7 @@
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Funds</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID Doc</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transactions</th>
                   </tr>
@@ -203,6 +204,9 @@
                       <span class="px-3 py-1 text-xs font-semibold rounded-full" :class="roleClasses(user.role)">
                         {{ user.role }}
                       </span>
+                      <span v-if="user.role === 'buyer' && user.buyerType === 'auction'" class="ml-1 px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700">
+                        auction
+                      </span>
                     </td>
                     <td class="px-4 py-4">
                       <div class="space-y-1">
@@ -218,6 +222,23 @@
                     </td>
                     <td class="px-4 py-4">
                       <span class="font-bold text-gray-900">{{ user.funds || 0 }} CHF</span>
+                    </td>
+                    <td class="px-4 py-4">
+                      <div v-if="user.idDocumentUrl">
+                        
+                          :href="user.idDocumentUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-800 text-xs rounded hover:bg-indigo-200 font-medium"
+                        >
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          View ID
+                        </a>
+                        <p class="text-xs text-gray-400 mt-1">{{ user.buyerType === 'auction' ? 'Auction buyer' : user.role }}</p>
+                      </div>
+                      <span v-else class="text-xs text-gray-400">No ID uploaded</span>
                     </td>
                     <td class="px-4 py-4">
                       <div class="flex flex-wrap gap-2">

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, email, name, phone, role, verified, banned, funds, company_name, business_type, canton, city, zip_code, country, profile_image, created_at, updated_at, free_feature_credits')
+      .select('id, email, name, phone, role, verified, banned, funds, company_name, business_type, canton, city, zip_code, country, profile_image, created_at, updated_at, free_feature_credits, id_document_url, buyer_type')
       .order('created_at', { ascending: false })
 
     if (error) throw error
@@ -24,6 +24,8 @@ export default defineEventHandler(async (event) => {
         city: u.city || '', zipCode: u.zip_code || '', country: u.country || '',
         profileImage: u.profile_image || '', freeFeatureCredits: u.free_feature_credits || 0,
         createdAt: u.created_at, updatedAt: u.updated_at,
+        idDocumentUrl: u.id_document_url || null,
+        buyerType: u.buyer_type || 'direct',
       })),
     }
   } catch (error: any) {

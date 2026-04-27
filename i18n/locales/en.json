@@ -764,6 +764,14 @@
     "account_balance": "Account Balance",
     "contact_admin_funds": "Contact admin for fund management",
     "verified": "Verified",
+    "pending_verification": "Pending Verification",
+    "verification_status": {
+      "verified_title": "Account Verified",
+      "pending_title": "Pending Verification",
+      "verified_direct": "You can contact sellers and browse listings.",
+      "verified_auction": "You can bid on auctions and contact sellers.",
+      "pending_message": "An admin is reviewing your account. You will be able to contact sellers once verified."
+    },
     "role": {
       "verified_seller": "Verified Seller",
       "registered_buyer": "Registered Buyer"

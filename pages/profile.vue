@@ -259,6 +259,38 @@
               </svg>
             </NuxtLink>
 
+            <!-- Verification Status Banner -->
+            <div v-if="profileData.user.role === 'buyer'" class="w-full p-4 rounded-lg border mb-2"
+              :class="profileData.user.verified
+                ? 'bg-green-50 border-green-200'
+                : 'bg-yellow-50 border-yellow-200'"
+            >
+              <div class="flex items-center gap-3">
+                <div v-if="profileData.user.verified" class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div v-else class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-sm"
+                    :class="profileData.user.verified ? 'text-green-800' : 'text-yellow-800'">
+                    {{ profileData.user.verified ? '✅ Account Verified' : '⏳ Pending Verification' }}
+                  </p>
+                  <p class="text-xs mt-0.5"
+                    :class="profileData.user.verified ? 'text-green-600' : 'text-yellow-600'">
+                    {{ profileData.user.verified
+                      ? (profileData.user.buyerType === 'auction' ? 'You can bid on auctions and contact sellers.' : 'You can contact sellers and browse listings.')
+                      : 'An admin is reviewing your account. You will be able to contact sellers once verified.' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <button 
               v-if="profileData.user.role === 'buyer' && !profileData.user.verifiedBuyer"
               @click="requestVerification"

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
     <!-- Navigation Header -->
-    <header class="relative z-50 bg-white backdrop-blur-lg border-b border-red-200 shadow-sm">
+    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 

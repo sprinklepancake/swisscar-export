@@ -1,4 +1,4 @@
-<!-- pages/cars/[id].vue - FINAL: Single shipping ad below tabs, removed duplicate sidebar ad -->
+<!-- pages/cars/[id].vue - FINAL: Only sidebar shipping ad, removed left column ad -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-4 sm:py-8 overflow-x-hidden">
     <!-- Error State -->
@@ -39,7 +39,7 @@
 
       <!-- Main Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-        <!-- Left Column - Images & Details -->
+        <!-- Left Column - Images & Details (NO SHIPPING AD HERE) -->
         <div class="lg:col-span-2 min-w-0 overflow-hidden">
           <!-- Image Gallery -->
           <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-3 sm:mb-6">
@@ -246,40 +246,12 @@
               </div>
             </div>
           </div>
-
-          <!-- ===== SINGLE SHIPPING AD (MOVED BELOW TABS) ===== -->
-          <div class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg mt-3 sm:mt-6">
-            <div class="flex items-center gap-3 overflow-hidden">
-              <div class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-red-300 bg-white">
-                <img 
-                  src="/assets/images/car-transport.jpeg" 
-                  :alt="$t('shipping_ad.alt_text')"
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-bold text-sm text-red-900 truncate">{{ $t('shipping_ad.title') }}</p>
-                <p class="text-xs text-red-600 truncate">{{ $t('shipping_ad.badge_text_short') }}</p>
-                <p class="text-sm font-bold text-red-800 mt-0.5">076 448 08 49</p>
-              </div>
-              <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
-                 target="_blank"
-                 class="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200">
-                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                </svg>
-                WhatsApp
-              </a>
-            </div>
-          </div>
         </div>
 
-        <!-- Right Column - Price & Contact -->
+        <!-- Right Column - Price & Contact (Shipping Ad is here, at the very bottom) -->
         <div class="space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
           <!-- AUCTION LISTING -->
           <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
-            <!-- ... auction content ... -->
             <div class="text-center mb-6">
               <div class="flex items-center justify-center mb-2">
                 <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold mr-2">
@@ -297,7 +269,6 @@
                 </span>
               </div>
               
-              <!-- Reserve Price Indicator -->
               <div v-if="car.reservePrice" class="mb-4">
                 <div class="inline-flex items-center px-3 py-1 rounded-full text-sm"
                   :class="isReserveMet ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
@@ -308,14 +279,11 @@
                 </div>
               </div>
               
-              <!-- Bid Count -->
               <div class="text-gray-600 text-sm mb-6">
                 {{ car.bidCount || 0 }} {{ $t('auction.bids_count', car.bidCount || 0) }}
               </div>
               
-              <!-- Bidding Form -->
               <div v-if="auth.user.value && car.sellerId !== auth.user.value.id" class="space-y-4">
-                <!-- Check if user can bid -->
                 <div v-if="!bidEligibility.canBid" class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div class="flex items-start">
                     <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -341,7 +309,6 @@
                   </div>
                 </div>
                 
-                <!-- Show bid form only if user is eligible -->
                 <div v-else>
                   <div class="relative">
                     <input 
@@ -355,7 +322,6 @@
                     <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">{{ $t('currency.chf') }}</span>
                   </div>
                   
-                  <!-- User funds info -->
                   <div v-if="bidEligibility.user" class="flex items-center justify-between text-sm text-gray-600 bg-gray-50 p-2 rounded">
                     <span>{{ $t('auction.your_wallet') }}:</span>
                     <span class="font-semibold text-green-600">{{ $t('currency.chf') }} {{ formatNumber(bidEligibility.user.funds) }}</span>
@@ -384,7 +350,6 @@
                 </div>
               </div>
               
-              <!-- Seller View -->
               <div v-if="auth.user.value && car.sellerId === auth.user.value.id" class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 class="font-semibold text-blue-900 mb-2">{{ $t('auction.your_auction_dashboard') }}</h4>
                 <p class="text-blue-700 text-sm mb-3">{{ $t('auction.watching_auction', { count: car.bidCount || 0 }) }}</p>
@@ -401,7 +366,6 @@
                 </div>
               </div>
               
-              <!-- Authentication Required Notice -->
               <div v-if="!auth.user.value" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p class="text-yellow-800 text-sm text-center">
                   {{ $t('auction.login_to_bid_pre') }} <NuxtLink to="/login" class="font-semibold underline hover:text-yellow-900">{{ $t('auction.login_to_bid_link') }}</NuxtLink> {{ $t('auction.login_to_bid_post') }}
@@ -421,7 +385,6 @@
               </div>
             </div>
 
-            <!-- Key Specs -->
             <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
               <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
                 <p class="text-sm text-red-700">{{ $t('car_details.year') }}</p>
@@ -461,7 +424,6 @@
               </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="space-y-3">
               <button 
                 @click="showContactForm = true" 
@@ -473,7 +435,6 @@
                 {{ $t('car_details.contact_seller') }}
               </button>
               
-              <!-- Chat Button -->
               <button 
                 @click="startChatWithSeller"
                 :disabled="isCreatingChat"
@@ -536,9 +497,7 @@
               </div>
             </div>
 
-            <!-- Contact Info - Hidden behind button -->
             <div class="space-y-3 text-sm">
-              <!-- Street Address (still visible) -->
               <div v-if="car.streetAddress" class="flex items-center text-red-700 bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
                 <svg class="w-4 h-4 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -547,7 +506,6 @@
                 <span class="font-medium">{{ car.streetAddress }}, {{ car.zipCode }} {{ car.city }}</span>
               </div>
               
-              <!-- Reveal Contact Info Button -->
               <div v-if="car.sellerPhone || car.sellerEmail" class="pt-2">
                 <button 
                   v-if="!contactInfoRevealed"
@@ -560,9 +518,7 @@
                   {{ $t('car_details.reveal_contact_info') }}
                 </button>
                 
-                <!-- Revealed Contact Info -->
                 <div v-if="contactInfoRevealed" class="space-y-3 animate-fade-in">
-                  <!-- Security Warning -->
                   <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-2">
                     <div class="flex items-start">
                       <svg class="w-5 h-5 text-yellow-600 mr-2 mt=0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -575,7 +531,6 @@
                     </div>
                   </div>
                   
-                  <!-- Phone Number -->
                   <div v-if="car.sellerPhone" class="flex items-center text-red-700 bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
                     <svg class="w-4 h-4 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
@@ -589,7 +544,6 @@
                     </button>
                   </div>
                   
-                  <!-- Email -->
                   <div v-if="car.sellerEmail" class="flex items-center text-red-700 bg-red-50 rounded-lg p-3 hover:bg-red-100 transition-colors">
                     <svg class="w-4 h-4 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -647,6 +601,32 @@
                   {{ $t('car_details.benefit_increased_visibility') }}
                 </li>
               </ul>
+            </div>
+          </div>
+
+          <!-- SINGLE SHIPPING AD - Sidebar Version (kept, at the bottom of right column) -->
+          <div class="glass rounded-2xl p-4 border border-red-200 shadow-lg">
+            <div class="flex flex-col items-center">
+              <div class="w-14 h-14 rounded-lg overflow-hidden border border-red-200 mb-2 bg-white">
+                <img 
+                  src="/assets/images/car-transport.jpeg" 
+                  :alt="$t('shipping_ad.alt_text')"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <h4 class="font-bold text-red-900 text-center text-sm">{{ $t('shipping_ad.title') }}</h4>
+              <p class="text-red-700 text-xs font-medium text-center">{{ $t('shipping_ad.badge_text_short') }}</p>
+              <p class="text-red-600 text-xs text-center mt-1">{{ $t('shipping_ad.description') }}</p>
+              <p class="text-lg font-bold text-red-900 mt-2">076 448 08 49</p>
+              <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
+                 target="_blank"
+                 class="mt-2 inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200">
+                <svg class="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                </svg>
+                {{ $t('shipping_ad.sidebar_button') }}
+              </a>
             </div>
           </div>
 

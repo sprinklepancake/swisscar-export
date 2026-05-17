@@ -1,7 +1,8 @@
+<!-- layouts/default.vue - FIXED for Safari mobile header visibility -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
-    <!-- Navigation Header -->
-    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm">
+    <!-- Navigation Header - FIXED for Safari -->
+    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm" style="position: relative; background-color: white; -webkit-transform: translateZ(0); transform: translateZ(0); will-change: transform;">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 

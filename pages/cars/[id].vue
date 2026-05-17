@@ -1,4 +1,4 @@
-<!-- pages/cars/[id].vue - UPDATED: Shipping ad moved below tabs -->
+<!-- pages/cars/[id].vue - FINAL: Single shipping ad below tabs, removed duplicate sidebar ad -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white py-4 sm:py-8 overflow-x-hidden">
     <!-- Error State -->
@@ -91,8 +91,6 @@
               </button>
             </div>
           </div>
-
-          <!-- ===== SHIPPING AD REMOVED FROM HERE AND MOVED BELOW TABS ===== -->
 
           <!-- Car Details Tabs -->
           <div class="glass rounded-2xl border border-red-200 shadow-lg overflow-hidden min-w-0">
@@ -249,7 +247,7 @@
             </div>
           </div>
 
-          <!-- ===== SHIPPING AD MOVED HERE (BELOW TABS) ===== -->
+          <!-- ===== SINGLE SHIPPING AD (MOVED BELOW TABS) ===== -->
           <div class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg mt-3 sm:mt-6">
             <div class="flex items-center gap-3 overflow-hidden">
               <div class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-red-300 bg-white">
@@ -277,7 +275,7 @@
           </div>
         </div>
 
-        <!-- Right Column - Price & Contact (unchanged) -->
+        <!-- Right Column - Price & Contact -->
         <div class="space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
           <!-- AUCTION LISTING -->
           <div v-if="car.listingType === 'auction' && car.status === 'active'" class="glass rounded-2xl p-3 sm:p-6 border border-red-200 shadow-lg">
@@ -652,32 +650,6 @@
             </div>
           </div>
 
-          <!-- Shipping Ad Sidebar Version - simplified (kept as is) -->
-          <div class="glass rounded-2xl p-4 border border-red-200 shadow-lg">
-            <div class="flex flex-col items-center">
-              <div class="w-14 h-14 rounded-lg overflow-hidden border border-red-200 mb-2 bg-white">
-                <img 
-                  src="/assets/images/car-transport.jpeg" 
-                  :alt="$t('shipping_ad.alt_text')"
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <h4 class="font-bold text-red-900 text-center text-sm">{{ $t('shipping_ad.title') }}</h4>
-              <p class="text-red-700 text-xs font-medium text-center">{{ $t('shipping_ad.badge_text_short') }}</p>
-              <p class="text-red-600 text-xs text-center mt-1">{{ $t('shipping_ad.description') }}</p>
-              <p class="text-lg font-bold text-red-900 mt-2">076 448 08 49</p>
-              <a :href="`https://wa.me/41764480849?text=${encodeURIComponent($t('shipping_ad.whatsapp_message', { make: car.make, model: car.model, year: car.year }))}`" 
-                 target="_blank"
-                 class="mt-2 inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold transition-all duration-200">
-                <svg class="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                </svg>
-                {{ $t('shipping_ad.sidebar_button') }}
-              </a>
-            </div>
-          </div>
-
           <!-- Additional Info -->
           <div v-if="car.vin || car.firstRegistration || car.cylinders || getCylinderCount" class="glass rounded-2xl p-6 border border-red-200 shadow-lg">
             <h3 class="text-lg font-bold text-red-900 mb-4 flex items-center">
@@ -765,7 +737,7 @@
       @close="closeChatModal"
     />
 
-    <!-- LIGHTBOX MODAL – new feature -->
+    <!-- LIGHTBOX MODAL -->
     <div v-if="lightboxImage" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" @click="closeLightbox">
       <div class="relative max-w-5xl max-h-full" @click.stop>
         <img :src="lightboxImage" :alt="`${car.make} ${car.model}`" class="max-w-full max-h-screen object-contain">

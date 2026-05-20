@@ -2,7 +2,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
     <!-- Navigation Header - FIXED for Safari -->
-    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm" style="position: relative; background-color: white; -webkit-transform: translateZ(0); transform: translateZ(0); will-change: transform;">
+    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm [transform:translateZ(0)]">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 

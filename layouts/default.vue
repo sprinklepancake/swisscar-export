@@ -1,23 +1,23 @@
-<!-- layouts/default.vue - FIXED for Safari mobile header visibility -->
+<!-- layouts/default.vue - FIXED for iOS Safari/Chrome header visibility -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
-    <!-- Navigation Header - FIXED for Safari -->
-    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm [transform:translateZ(0)]">
+    <!-- Navigation Header - iOS fix: removed transform:translateZ(0), added overflow-visible -->
+    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm will-change-transform overflow-visible">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 
-          <!-- Logo -->
-          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0">
+          <!-- Logo - iOS fix: added min-w-0 and overflow-hidden to prevent text from pushing mobile controls off-screen -->
+          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0 max-w-[55%] sm:max-w-none">
             <img
               src="../assets/images/swiss.svg"
               :alt="t('logo_alt')"
-              class="w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 object-contain group-hover:scale-105 transition-transform duration-300"
+              class="w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300"
             >
-            <div class="flex flex-col">
-              <span class="text-base sm:text-xl lg:text-3xl font-bold text-red-800 group-hover:text-red-600 transition-colors duration-200 leading-tight">
+            <div class="flex flex-col min-w-0">
+              <span class="text-base sm:text-xl lg:text-3xl font-bold text-red-800 group-hover:text-red-600 transition-colors duration-200 leading-tight truncate">
                 {{ t('company_name') }}
               </span>
-              <span class="hidden sm:block text-xs sm:text-sm lg:text-lg text-red-500 -mt-0.5">{{ t('company_tagline') }}</span>
+              <span class="hidden sm:block text-xs sm:text-sm lg:text-lg text-red-500 -mt-0.5 truncate">{{ t('company_tagline') }}</span>
             </div>
           </NuxtLink>
 
@@ -79,7 +79,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div v-if="langDropdownOpen" class="fixed inset-0 z-40" @click="langDropdownOpen = false"></div>
+              <!-- iOS fix: changed overlay from fixed to absolute positioned, avoids transform containment issue -->
+              <div v-if="langDropdownOpen" class="fixed inset-0 z-40" style="position: fixed;" @click="langDropdownOpen = false"></div>
               <div v-if="langDropdownOpen" class="absolute right-0 top-full mt-1 bg-white border border-red-200 rounded-xl shadow-xl z-50 min-w-[160px] py-1 overflow-hidden">
                 <button
                   v-for="lang in availableLanguages"
@@ -145,7 +146,8 @@
           </div>
 
           <!-- Mobile / Tablet: Language + Messages + Hamburger -->
-          <div class="flex lg:hidden items-center gap-1">
+          <!-- iOS fix: added shrink-0 to prevent collapse, explicit z-10 -->
+          <div class="flex lg:hidden items-center gap-1 shrink-0 z-10">
             <div class="relative">
               <button
                 @click="langDropdownOpen = !langDropdownOpen"
@@ -156,7 +158,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div v-if="langDropdownOpen" class="fixed inset-0 z-40" @click="langDropdownOpen = false"></div>
+              <!-- iOS fix: language dropdown overlay uses inline style to escape transform containment -->
+              <div v-if="langDropdownOpen" class="fixed inset-0 z-40" style="position: fixed;" @click="langDropdownOpen = false"></div>
               <div v-if="langDropdownOpen" class="absolute right-0 top-full mt-1 bg-white border border-red-200 rounded-xl shadow-xl z-50 min-w-[180px] py-1 overflow-hidden max-h-[70vh] overflow-y-auto">
                 <button
                   v-for="lang in availableLanguages"

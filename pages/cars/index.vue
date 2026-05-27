@@ -443,6 +443,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '#app'
 import { useRoute } from 'vue-router'
+import { carMakes, makeModels } from '~/constants/carData'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -452,476 +453,7 @@ useHead({
   meta: [{ name: 'description', content: t('cars_page.description') || 'Browse quality Swiss vehicles at affordable export prices' }]
 })
 
-// ─── Static data ─────────────────────────────────────────────────────────────
-
-const carMakes = [
-  // German
-  'Volkswagen', 'Audi', 'Mercedes-Benz', 'BMW', 'Opel', 'Porsche', 'Smart', 'Maybach',
-  // Japanese
-  'Toyota', 'Honda', 'Nissan', 'Mazda', 'Mitsubishi', 'Subaru', 'Suzuki', 'Lexus', 'Infiniti', 'Acura', 'Daihatsu', 'Isuzu',
-  // American
-  'Ford', 'Chevrolet', 'Cadillac', 'Jeep', 'Dodge', 'Chrysler', 'Tesla', 'Buick', 'Lincoln', 'GMC', 'Ram',
-  // Korean
-  'Hyundai', 'Kia', 'Genesis', 'SsangYong',
-  // French
-  'Renault', 'Peugeot', 'Citroën', 'DS Automobiles',
-  // Italian
-  'Fiat', 'Alfa Romeo', 'Lancia', 'Ferrari', 'Lamborghini', 'Maserati', 'Pagani',
-  // British
-  'Land Rover', 'Jaguar', 'Mini', 'Bentley', 'Rolls-Royce', 'Aston Martin', 'McLaren', 'Lotus', 'MG', 'Caterham',
-  // Swedish
-  'Volvo', 'Polestar', 'Koenigsegg',
-  // Czech
-  'Skoda',
-  // Spanish
-  'Seat', 'Cupra',
-  // Chinese
-  'BYD', 'Geely', 'Nio', 'XPeng', 'Li Auto', 'Hongqi', 'Chery', 'Great Wall', 'MG', 'Lynk & Co',
-  // Other European
-  'Dacia', 'Renault Samsung', 'Lada', 'Tatra',
-  // Motorcycle brands
-  'AB', 'Kawasaki', 'Yamaha', 'KTM', 'Ducati', 'Harley-Davidson', 'BMW Motorrad', 'Triumph',
-  'Aprilia', 'Moto Guzzi', 'Husqvarna', 'Royal Enfield', 'Benelli', 'MV Agusta',
-  // ATV/UTV/Snowmobile brands
-  'Polaris', 'Can-Am', 'Sea-Doo', 'Ski-Doo', 'Arctic Cat', 'Honda Power Sports', 'Yamaha Motor',
-  // Commercial vehicles
-  'MAN', 'Scania', 'Volvo Trucks', 'Iveco', 'Mercedes-Benz Trucks', 'DAF', 'Renault Trucks',
-  // Other manufacturers
-  'Caterpillar', 'John Deere', 'Kubota',
-  // Generic fallback
-  'Other'
-]
-
-const makeModels: Record<string, string[]> = {
-  'Volkswagen': [
-    'Golf', 'Golf GTI', 'Golf R', 'Golf Variant', 'Passat', 'Passat Variant', 'Passat Alltrack',
-    'Tiguan', 'Tiguan Allspace', 'Polo', 'T-Roc', 'T-Roc Cabriolet', 'T-Cross', 'Touareg',
-    'Arteon', 'Arteon Shooting Brake', 'Touran', 'Sharan', 'Caddy', 'Caddy Maxi',
-    'Transporter', 'Caravelle', 'California', 'Multivan', 'Crafter',
-    'ID.3', 'ID.4', 'ID.5', 'ID.7', 'ID.Buzz',
-    'Amarok', 'Scirocco', 'Beetle', 'Up', 'Fox', 'Lupo', 'Vento', 'Derby',
-    'Phaeton', 'Eos', 'CC', 'Other'
-  ],
-  'Audi': [
-    'A1', 'A1 Sportback', 'A2', 'A3', 'A3 Sportback', 'A3 Limousine', 'A3 Cabriolet',
-    'A4', 'A4 Avant', 'A4 Allroad', 'A4 Cabriolet',
-    'A5', 'A5 Sportback', 'A5 Cabriolet', 'A5 Coupé',
-    'A6', 'A6 Avant', 'A6 Allroad', 'A7', 'A7 Sportback', 'A8', 'A8 L',
-    'Q2', 'Q3', 'Q3 Sportback', 'Q4 e-tron', 'Q4 Sportback e-tron',
-    'Q5', 'Q5 Sportback', 'Q7', 'Q8', 'Q8 e-tron',
-    'TT', 'TT Coupé', 'TT Roadster', 'TTS', 'TT RS', 'R8', 'R8 Spyder',
-    'e-tron', 'e-tron GT', 'e-tron Sportback',
-    'RS3', 'RS4', 'RS4 Avant', 'RS5', 'RS5 Sportback', 'RS6 Avant', 'RS7',
-    'RS Q3', 'RS Q3 Sportback', 'RS Q8',
-    'S3', 'S4', 'S4 Avant', 'S5', 'S5 Sportback', 'S6', 'S7', 'S8',
-    'SQ2', 'SQ5', 'SQ7', 'SQ8', 'Allroad', 'Other'
-  ],
-  'Mercedes-Benz': [
-    'A 160', 'A 180', 'A 200', 'A 220', 'A 250', 'A 35 AMG', 'A 45 AMG', 'A-Class',
-    'B 160', 'B 180', 'B 200', 'B 220', 'B-Class',
-    'C 180', 'C 200', 'C 220', 'C 250', 'C 300', 'C 350', 'C 43 AMG', 'C 63 AMG', 'C-Class',
-    'CLA 180', 'CLA 200', 'CLA 220', 'CLA 250', 'CLA 35 AMG', 'CLA 45 AMG', 'CLA',
-    'CLS 300', 'CLS 350', 'CLS 400', 'CLS 450', 'CLS 53 AMG', 'CLS',
-    'E 200', 'E 220', 'E 250', 'E 300', 'E 350', 'E 400', 'E 43 AMG', 'E 53 AMG', 'E 63 AMG', 'E-Class',
-    'S 300', 'S 350', 'S 400', 'S 450', 'S 500', 'S 560', 'S 580', 'S 63 AMG', 'S 65 AMG', 'S-Class',
-    'GLA 180', 'GLA 200', 'GLA 220', 'GLA 250', 'GLA 35 AMG', 'GLA 45 AMG', 'GLA',
-    'GLB 180', 'GLB 200', 'GLB 220', 'GLB 250', 'GLB 35 AMG', 'GLB',
-    'GLC 200', 'GLC 220', 'GLC 250', 'GLC 300', 'GLC 350', 'GLC 43 AMG', 'GLC 63 AMG', 'GLC', 'GLC Coupé',
-    'GLE 300', 'GLE 350', 'GLE 400', 'GLE 450', 'GLE 53 AMG', 'GLE 63 AMG', 'GLE', 'GLE Coupé',
-    'GLS 350', 'GLS 400', 'GLS 450', 'GLS 580', 'GLS 63 AMG', 'GLS',
-    'G 350', 'G 400', 'G 500', 'G 63 AMG', 'G 65 AMG', 'G-Class',
-    'AMG GT', 'AMG GT C', 'AMG GT R', 'AMG GT S', 'AMG GT 4-Door',
-    'SL 350', 'SL 400', 'SL 500', 'SL 55 AMG', 'SL 63 AMG', 'SL',
-    'SLC 180', 'SLC 200', 'SLC 250', 'SLC 300', 'SLC 43 AMG', 'SLC',
-    'EQA', 'EQB', 'EQC', 'EQE', 'EQE SUV', 'EQS', 'EQS SUV',
-    'Sprinter', 'Vito', 'V-Class', 'Citan', 'Marco Polo', 'Other'
-  ],
-  'BMW': [
-    '116i', '118i', '120i', '120d', '125i', '128ti', '1 Series',
-    '218i', '220i', '225i', '228i', '230i', 'M235i', 'M240i', '2 Series',
-    '2 Series Active Tourer', '2 Series Gran Coupé', '2 Series Gran Tourer',
-    '316i', '318i', '320i', '320d', '325i', '328i', '330i', '330d', '335i', '340i',
-    'M3', 'M3 Competition', '3 Series',
-    '418i', '420i', '420d', '425d', '428i', '430i', '440i', 'M4', 'M4 Competition', '4 Series',
-    '520i', '520d', '525i', '530i', '530d', '535i', '540i', '545i', '550i',
-    'M5', 'M5 Competition', '5 Series',
-    '620i', '630i', '640i', '650i', 'M6', '6 Series',
-    '730i', '730d', '740i', '740d', '745i', '750i', '760i', 'M760i', '7 Series',
-    '840i', '840d', '850i', 'M8', '8 Series',
-    'X1 sDrive', 'X1 xDrive', 'X1',
-    'X2 sDrive', 'X2 xDrive', 'X2',
-    'X3 sDrive', 'X3 xDrive', 'X3 M', 'X3 M40i', 'X3',
-    'X4 M', 'X4 M40i', 'X4',
-    'X5 sDrive', 'X5 xDrive', 'X5 M', 'X5 M50i', 'X5',
-    'X6 M', 'X6 M50i', 'X6',
-    'X7 xDrive', 'X7 M60i', 'X7', 'XM',
-    'Z3', 'Z4 sDrive', 'Z4',
-    'i3', 'i3s', 'i4', 'i5', 'i7', 'iX', 'iX1', 'iX3', 'Other'
-  ],
-  'Opel': [
-    'Astra', 'Astra Sports Tourer', 'Corsa', 'Corsa-e', 'Insignia', 'Insignia Sports Tourer',
-    'Mokka', 'Mokka-e', 'Crossland', 'Crossland X', 'Grandland', 'Grandland X',
-    'Zafira', 'Zafira Life', 'Zafira Tourer',
-    'Vectra', 'Vectra Caravan', 'Omega', 'Omega Caravan',
-    'Agila', 'Meriva', 'Antara', 'Cascada', 'Adam',
-    'Combo', 'Combo Life', 'Vivaro', 'Movano', 'Other'
-  ],
-  'Porsche': [
-    '911 Carrera', '911 Carrera S', '911 Carrera 4', '911 Carrera 4S',
-    '911 Targa 4', '911 Targa 4S', '911 Turbo', '911 Turbo S',
-    '911 GT3', '911 GT3 RS', '911 GT3 Touring', '911 R', '911 Sport Classic',
-    '718 Boxster', '718 Boxster S', '718 Boxster GTS', '718 Boxster Spyder',
-    '718 Cayman', '718 Cayman S', '718 Cayman GTS', '718 Cayman GT4', '718 Cayman GT4 RS',
-    'Cayenne', 'Cayenne S', 'Cayenne GTS', 'Cayenne Turbo', 'Cayenne Coupe', 'Cayenne E-Hybrid',
-    'Macan', 'Macan S', 'Macan GTS', 'Macan Turbo', 'Macan Electric',
-    'Panamera', 'Panamera 4', 'Panamera S', 'Panamera GTS', 'Panamera Turbo', 'Panamera Sport Turismo',
-    'Taycan', 'Taycan 4S', 'Taycan GTS', 'Taycan Turbo', 'Taycan Turbo S', 'Taycan Cross Turismo', 'Taycan Sport Turismo',
-    'Other'
-  ],
-  'Smart': ['ForTwo', 'ForTwo Cabrio', 'ForFour', '#1', '#3', 'EQ ForTwo', 'Other'],
-  'Toyota': [
-    'Yaris', 'Yaris Cross', 'Yaris GR',
-    'Corolla', 'Corolla Cross', 'Corolla Touring Sports',
-    'Camry', 'Prius', 'Prius+', 'Prius Plug-in',
-    'RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in',
-    'C-HR', 'C-HR Hybrid',
-    'Aygo', 'Aygo X',
-    'Auris', 'Avensis', 'Avensis Touring Sports',
-    'Land Cruiser', 'Land Cruiser 150', 'Land Cruiser 200', 'Land Cruiser 300',
-    'Land Cruiser Prado', 'Hilux', 'Supra', 'GR86', 'GR Yaris', 'GR Corolla',
-    'bZ4X', 'Proace', 'Proace City', 'Verso', 'Venza',
-    'Highlander', 'Sequoia', 'Tundra', '4Runner', 'Tacoma', 'Other'
-  ],
-  'Honda': [
-    'Civic', 'Civic Type R', 'Accord', 'Accord Tourer',
-    'CR-V', 'HR-V', 'ZR-V', 'Jazz', 'Jazz Crosstar', 'e:Ny1', 'e:',
-    'FR-V', 'Legend', 'NSX', 'CR-Z', 'Insight',
-    'Pilot', 'Ridgeline', 'Passport', 'Element',
-    'Fit', 'Stream', 'Odyssey', 'Other'
-  ],
-  'Nissan': [
-    'Micra', 'Note', 'Juke', 'Juke NISMO',
-    'Qashqai', 'Qashqai+2', 'X-Trail', 'Murano', 'Pathfinder',
-    'Navara', 'Leaf', 'Leaf e+', 'Ariya',
-    '370Z', '350Z', 'GT-R', 'Skyline',
-    'Almera', 'Primera', 'Pulsar', 'Tiida', 'Maxima',
-    'NV200', 'NV300', 'Primastar', 'Other'
-  ],
-  'Mazda': [
-    'Mazda2', 'Mazda3', 'Mazda3 Fastback', 'Mazda6', 'Mazda6 Wagon',
-    'CX-3', 'CX-30', 'CX-5', 'CX-60', 'CX-80', 'CX-90',
-    'MX-5', 'MX-5 RF', 'MX-30', 'RX-8', 'Other'
-  ],
-  'Mitsubishi': [
-    'Colt', 'Lancer', 'Lancer Evo', 'Eclipse Cross', 'ASX', 'Outlander', 'Outlander PHEV',
-    'L200', 'Pajero', 'Pajero Sport',
-    'Space Star', 'Galant', 'Sigma', 'Other'
-  ],
-  'Subaru': [
-    'Impreza', 'Impreza WRX', 'Impreza WRX STI',
-    'Legacy', 'Legacy Touring Wagon', 'Outback', 'Forester',
-    'XV', 'Crosstrek', 'BRZ', 'WRX', 'WRX STI', 'Levorg', 'Solterra', 'Other'
-  ],
-  'Suzuki': [
-    'Swift', 'Swift Sport', 'Celerio', 'Ignis', 'Baleno',
-    'SX4', 'SX4 S-Cross', 'Vitara', 'Vitara ALLGRIP', 'Across',
-    'Jimny', 'Grand Vitara', 'Alto', 'Splash', 'Kizashi', 'Other'
-  ],
-  'Lexus': [
-    'IS 200', 'IS 250', 'IS 300', 'IS 350', 'IS 300h', 'IS 500', 'IS F', 'IS',
-    'ES 250', 'ES 300', 'ES 300h', 'ES 350', 'ES',
-    'GS 250', 'GS 300', 'GS 350', 'GS 300h', 'GS 450h', 'GS F', 'GS',
-    'LS 400', 'LS 430', 'LS 460', 'LS 500', 'LS 500h', 'LS 600h', 'LS',
-    'CT 200h', 'CT',
-    'NX 200t', 'NX 250', 'NX 300', 'NX 300h', 'NX 350', 'NX 350h', 'NX 450h+', 'NX',
-    'RX 200t', 'RX 300', 'RX 350', 'RX 300h', 'RX 350h', 'RX 400h', 'RX 450h', 'RX 450h+', 'RX 500h', 'RX',
-    'GX 460', 'GX 470', 'GX 550', 'GX',
-    'LX 450', 'LX 570', 'LX 600', 'LX',
-    'UX 200', 'UX 250h', 'UX 300e', 'UX',
-    'RZ 300e', 'RZ 450e', 'RZ', 'LC 500', 'LC 500h', 'LC',
-    'RC 200t', 'RC 300', 'RC 300h', 'RC 350', 'RC 350h', 'RC F', 'RC',
-    'Other'
-  ],
-  'Ford': [
-    'Fiesta', 'Fiesta ST', 'Fiesta Active',
-    'Focus', 'Focus ST', 'Focus RS', 'Focus Active',
-    'Mondeo', 'Mondeo Turnier', 'Mondeo Hybrid',
-    'Puma', 'Kuga', 'Kuga Hybrid', 'Kuga PHEV', 'EcoSport', 'Edge', 'Explorer',
-    'Mustang', 'Mustang Mach-E',
-    'Ranger', 'Ranger Raptor', 'Ranger Wildtrak',
-    'Transit', 'Transit Custom', 'Transit Connect', 'Transit Courier',
-    'Galaxy', 'S-Max', 'C-Max', 'Grand C-Max', 'B-Max', 'Ka', 'Ka+',
-    'Fusion', 'Flex', 'Expedition', 'F-150', 'Bronco', 'Other'
-  ],
-  'Chevrolet': [
-    'Spark', 'Aveo', 'Cruze', 'Cruze Station Wagon',
-    'Malibu', 'Impala', 'Camaro', 'Corvette', 'Corvette Stingray', 'Corvette Z06',
-    'Trax', 'Equinox', 'Blazer', 'Trailblazer', 'Traverse',
-    'Tahoe', 'Suburban', 'Silverado',
-    'Orlando', 'Captiva', 'Volt', 'Bolt EV', 'Other'
-  ],
-  'Cadillac': [
-    'ATS', 'CTS', 'CT4', 'CT5', 'CT6', 'ELR',
-    'SRX', 'XT4', 'XT5', 'XT6', 'Escalade',
-    'Lyriq', 'Celestiq', 'Other'
-  ],
-  'Jeep': [
-    'Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Grand Cherokee L',
-    'Wrangler', 'Wrangler Unlimited', 'Gladiator',
-    'Commander', 'Avenger', 'Patriot', 'Liberty', 'Other'
-  ],
-  'Dodge': [
-    'Viper', 'Challenger', 'Charger', 'Durango',
-    'Journey', 'Grand Caravan', 'Ram', 'Other'
-  ],
-  'Chrysler': ['300', '300C', 'Pacifica', 'Voyager', 'Sebring', 'PT Cruiser', 'Other'],
-  'Tesla': ['Model 3', 'Model Y', 'Model S', 'Model S Plaid', 'Model X', 'Model X Plaid', 'Cybertruck', 'Roadster', 'Other'],
-  'Hyundai': [
-    'i10', 'i20', 'i20 N', 'i30', 'i30 N', 'i30 Fastback', 'i30 Wagon', 'i40', 'i40 CW',
-    'IONIQ', 'IONIQ 5', 'IONIQ 5 N', 'IONIQ 6',
-    'Kona', 'Kona Electric', 'Kona N',
-    'Tucson', 'Tucson Hybrid', 'Tucson PHEV',
-    'Santa Fe', 'Santa Fe Hybrid', 'Staria',
-    'Veloster', 'Veloster N', 'Accent', 'Elantra', 'Elantra N', 'Sonata',
-    'Nexo', 'Other'
-  ],
-  'Kia': [
-    'Picanto', 'Rio', 'Ceed', 'Ceed SW', 'ProCeed', 'XCeed',
-    'Stinger', 'EV6', 'EV6 GT', 'EV9',
-    'Stonic', 'Niro', 'Niro EV', 'Niro PHEV',
-    'Sportage', 'Sportage Hybrid', 'Sportage PHEV',
-    'Sorento', 'Sorento Hybrid', 'Sorento PHEV',
-    'Telluride', 'Carnival', 'Soul', 'Soul EV', 'Other'
-  ],
-  'Genesis': ['G70', 'G80', 'G90', 'GV70', 'GV80', 'GV60', 'Electrified G80', 'Other'],
-  'SsangYong': ['Tivoli', 'Korando', 'Rexton', 'Musso', 'XLV', 'Rodius', 'Other'],
-  'Renault': [
-    'Twingo', 'Twingo Electric', 'Clio', 'Clio E-Tech', 'Captur', 'Captur E-Tech',
-    'Mégane', 'Mégane E-Tech', 'Mégane RS', 'Talisman', 'Talisman Grandtour', 'Laguna', 'Laguna Coupé',
-    'Kadjar', 'Koleos', 'Espace', 'Scenic', 'Scenic E-Tech', 'Grand Scenic',
-    'Zoe', 'Austral', 'Austral E-Tech', 'Arkana', 'Kangoo', 'Kangoo E-Tech',
-    'Trafic', 'Master', 'Dokker', 'Lodgy', 'Other'
-  ],
-  'Peugeot': [
-    '107', '108', '208', '208 GT', 'e-208',
-    '308', '308 SW', '308 GT', 'e-308',
-    '408', '508', '508 SW', '508 Hybrid',
-    '2008', 'e-2008', '3008', '3008 Hybrid', '4008', '5008', '5008 Hybrid',
-    'Partner', 'Rifter', 'Traveller', 'Expert', 'Boxer', 'Bipper', 'Other'
-  ],
-  'Citroën': [
-    'C1', 'C2', 'C3', 'C3 Aircross', 'ë-C3',
-    'C4', 'C4 Cactus', 'ë-C4',
-    'C5', 'C5 Aircross', 'C5 Aircross Hybrid', 'C5 X', 'C5 X Hybrid',
-    'C6', 'C8', 'Berlingo', 'ë-Berlingo',
-    'Jumpy', 'Dispatch', 'SpaceTourer', 'Jumper', 'Nemo', 'Other'
-  ],
-  'DS Automobiles': ['DS 3', 'DS 3 Crossback', 'DS 4', 'DS 5', 'DS 7', 'DS 7 Crossback', 'DS 9', 'Other'],
-  'Fiat': [
-    '500', '500C', '500X', '500L', '500e', 'Panda', 'Panda 4x4', 'Panda Cross',
-    'Punto', 'Grande Punto', 'Bravo', 'Tipo', 'Tipo Wagon',
-    'Doblo', 'Fiorino', 'Qubo', 'Ducato', 'Scudo', 'Fullback',
-    '124 Spider', 'Other'
-  ],
-  'Alfa Romeo': [
-    'MiTo', 'Giulietta', 'Giulietta Veloce',
-    'Giulia', 'Giulia Quadrifoglio',
-    'Stelvio', 'Stelvio Quadrifoglio',
-    'Tonale', 'Tonale PHEV', '4C', '4C Spider', '8C',
-    '147', '156', '156 Sportwagon', '159', '159 Sportwagon', '166', 'Brera', 'Spider', 'GTV',
-    'Other'
-  ],
-  'Lancia': ['Ypsilon', 'Delta', 'Thema', 'Flavia', 'Other'],
-  'Ferrari': [
-    'Roma', 'Roma Spider', 'Portofino', 'Portofino M',
-    'F8 Tributo', 'F8 Spider', 'SF90 Stradale', 'SF90 Spider',
-    '296 GTB', '296 GTS', '812 Superfast', '812 GTS', '812 Competizione',
-    'GTC4Lusso', 'GTC4Lusso T', 'Purosangue',
-    'California', 'California T', 'F430', '458 Italia', '488 GTB', '488 Pista',
-    'LaFerrari', '599', '612', 'Other'
-  ],
-  'Lamborghini': [
-    'Huracán', 'Huracán EVO', 'Huracán STO', 'Huracán Tecnica',
-    'Urus', 'Urus S', 'Urus Performante',
-    'Aventador', 'Aventador S', 'Aventador SVJ', 'Aventador LP 700-4',
-    'Revuelto', 'Gallardo', 'Murcielago', 'Other'
-  ],
-  'Maserati': [
-    'Ghibli', 'Ghibli Hybrid', 'Ghibli Trofeo',
-    'Quattroporte', 'Quattroporte Trofeo',
-    'Levante', 'Levante Trofeo', 'Levante Hybrid',
-    'Grecale', 'Grecale Trofeo', 'Grecale Folgore',
-    'GranTurismo', 'GranTurismo Folgore', 'GranCabrio', 'MC20', 'MC20 Cielo', 'Other'
-  ],
-  'Land Rover': [
-    'Defender 90', 'Defender 110', 'Defender 130',
-    'Discovery', 'Discovery 3', 'Discovery 4', 'Discovery 5',
-    'Discovery Sport',
-    'Freelander', 'Freelander 2',
-    'Range Rover', 'Range Rover Sport', 'Range Rover Sport SVR',
-    'Range Rover Velar', 'Range Rover Evoque', 'Range Rover Evoque Cabriolet',
-    'Other'
-  ],
-  'Jaguar': [
-    'E-Pace', 'F-Pace', 'F-Pace SVR', 'I-Pace',
-    'XE', 'XE R-Dynamic', 'XF', 'XF Sportbrake', 'XJ',
-    'F-Type', 'F-Type Convertible', 'F-Type R', 'F-Type SVR',
-    'XK', 'XKR', 'S-Type', 'X-Type', 'Other'
-  ],
-  'Mini': [
-    'Mini Hatch', 'Mini Hatch 3-door', 'Mini Hatch 5-door',
-    'Mini Clubman', 'Mini Convertible', 'Mini Countryman',
-    'Mini Paceman', 'Mini Coupe', 'Mini Roadster',
-    'Mini Cabrio', 'Mini Electric', 'Mini Aceman',
-    'Cooper', 'Cooper S', 'Cooper SE', 'JCW', 'JCW GP', 'One', 'Other'
-  ],
-  'Bentley': [
-    'Continental GT', 'Continental GT V8', 'Continental GT Speed', 'Continental GT Convertible',
-    'Flying Spur', 'Flying Spur V8', 'Flying Spur Speed',
-    'Bentayga', 'Bentayga V8', 'Bentayga EWB', 'Bentayga Hybrid',
-    'Mulsanne', 'Mulsanne Speed', 'Azure', 'Arnage', 'Other'
-  ],
-  'Rolls-Royce': [
-    'Ghost', 'Ghost Extended', 'Ghost Black Badge',
-    'Phantom', 'Phantom Extended', 'Phantom Drophead Coupé',
-    'Wraith', 'Wraith Black Badge', 'Dawn', 'Dawn Black Badge',
-    'Cullinan', 'Cullinan Black Badge', 'Spectre', 'Silver Shadow', 'Silver Spur', 'Other'
-  ],
-  'Aston Martin': [
-    'DB11', 'DB11 V8', 'DB11 AMR', 'DB11 Volante',
-    'DB12', 'DB12 Volante',
-    'Vantage', 'Vantage F1 Edition', 'Vantage Roadster',
-    'DBS', 'DBS Superleggera', 'DBS Volante',
-    'DBX', 'DBX707',
-    'Valkyrie', 'Valour', 'Vanquish', 'Rapide', 'Other'
-  ],
-  'McLaren': [
-    '540C', '570S', '570S Spider', '570GT',
-    '600LT', '600LT Spider', '620R',
-    '720S', '720S Spider', '750S', '750S Spider',
-    'Artura', 'GT', 'Senna', 'Senna GTR', 'P1', 'Other'
-  ],
-  'Lotus': ['Emira', 'Eletre', 'Elise', 'Exige', 'Evora', 'Evija', 'Other'],
-  'MG': ['MG3', 'MG4', 'MG5', 'MG6', 'ZS', 'HS', 'RX5', 'GS', 'Other'],
-  'Volvo': [
-    'C30', 'C40', 'C40 Recharge',
-    'S40', 'S60', 'S60 Recharge', 'S80', 'S90', 'S90 Recharge',
-    'V40', 'V40 Cross Country', 'V50', 'V60', 'V60 Recharge', 'V60 Cross Country',
-    'V70', 'V90', 'V90 Recharge', 'V90 Cross Country',
-    'XC40', 'XC40 Recharge', 'XC60', 'XC60 Recharge',
-    'XC70', 'XC90', 'XC90 Recharge',
-    'EX30', 'EX40', 'EX90', 'Other'
-  ],
-  'Polestar': ['Polestar 1', 'Polestar 2', 'Polestar 3', 'Polestar 4', 'Other'],
-  'Skoda': [
-    'Fabia', 'Fabia Monte Carlo', 'Fabia RS',
-    'Rapid', 'Rapid Spaceback',
-    'Octavia', 'Octavia Combi', 'Octavia RS', 'Octavia RS 245',
-    'Superb', 'Superb Combi', 'Scala',
-    'Enyaq iV', 'Enyaq Coupé iV',
-    'Kamiq', 'Karoq', 'Kodiaq', 'Kodiaq RS',
-    'Roomster', 'Yeti', 'Citigo', 'Citigo-e iV', 'Other'
-  ],
-  'Seat': [
-    'Ibiza', 'Ibiza FR', 'Ibiza Cupra', 'Ibiza SC',
-    'Leon', 'Leon ST', 'Leon SC', 'Leon FR', 'Leon Cupra',
-    'Arona', 'Arona FR', 'Ateca', 'Ateca FR', 'Ateca Cupra',
-    'Tarraco', 'Tarraco FR', 'Alhambra',
-    'Mii', 'Mii Electric', 'Toledo', 'Exeo', 'Exeo ST', 'Other'
-  ],
-  'Cupra': ['Formentor', 'Formentor e-HYBRID', 'Born', 'Born e-BOOST', 'Ateca', 'Leon', 'Leon Sportstourer', 'Terramar', 'Other'],
-  'Dacia': [
-    'Sandero', 'Sandero Stepway', 'Logan', 'Logan MCV', 'Logan Stepway',
-    'Duster', 'Duster 4x4', 'Jogger', 'Jogger Hybrid',
-    'Spring', 'Spring Electric', 'Lodgy', 'Dokker', 'Other'
-  ],
-  'Renault Samsung': ['SM3', 'SM5', 'SM6', 'SM7', 'QM3', 'QM5', 'QM6', 'XM3', 'Other'],
-  'Lada': ['Granta', 'Vesta', 'XRAY', 'Largus', 'Niva', '4x4', 'Other'],
-  'BYD': ['Atto 3', 'Han', 'Tang', 'Song Plus', 'Seal', 'Dolphin', 'Seal U', 'Sea Lion', 'Other'],
-  'Geely': ['Emgrand', 'Atlas', 'Boyue', 'Tugella', 'Xingyue', 'Other'],
-  'Nio': ['ET5', 'ET5T', 'ET7', 'ES6', 'ES7', 'ES8', 'EC6', 'EC7', 'EL6', 'EL7', 'EL8', 'Other'],
-  'XPeng': ['P5', 'P7', 'G3', 'G6', 'G9', 'X9', 'Other'],
-  'Li Auto': ['L6', 'L7', 'L8', 'L9', 'MEGA', 'Other'],
-  'Kawasaki': [
-    'Ninja 400', 'Ninja 650', 'Ninja 1000', 'Ninja H2', 'Ninja H2R', 'Ninja ZX-6R', 'Ninja ZX-10R',
-    'Z400', 'Z650', 'Z900', 'Z900RS', 'Z1000', 'Z1000SX',
-    'Versys 650', 'Versys 1000', 'Vulcan S', 'Vulcan 900', 'Eliminator', 'W800',
-    'KLX 300', 'KX 450', 'Other'
-  ],
-  'Yamaha': [
-    'MT-07', 'MT-09', 'MT-09 SP', 'MT-10', 'MT-10 SP', 'MT-125',
-    'R1', 'R1M', 'R6', 'R7', 'R3', 'R125',
-    'Tracer 7', 'Tracer 9', 'Tracer 9 GT',
-    'TMAX 530', 'TMAX 560', 'XMAX 250', 'XMAX 300', 'NMAX 125',
-    'Ténéré 700', 'Super Ténéré 1200',
-    'FJR 1300', 'XSR 700', 'XSR 900', 'XJR 1300', 'Other'
-  ],
-  'KTM': [
-    'Duke 125', 'Duke 200', 'Duke 390', 'Duke 690', 'Duke 790', 'Duke 890', 'Duke 990',
-    'RC 125', 'RC 200', 'RC 390', 'RC 8',
-    'Adventure 390', 'Adventure 790', 'Adventure 890', 'Adventure 1090', 'Adventure 1190', 'Adventure 1290',
-    'SMC 690', 'Super Duke 1290', 'Super Duke R', '690 Enduro', 'Freeride', 'Other'
-  ],
-  'Ducati': [
-    'Monster', 'Monster 821', 'Monster 937', 'Monster 1200',
-    'Panigale V2', 'Panigale V4', 'Panigale V4R', 'Panigale V4S',
-    'Scrambler', 'Scrambler Icon', 'Scrambler Desert Sled', 'Scrambler Nightshift',
-    'Multistrada V2', 'Multistrada V4', 'Multistrada V4S', 'Multistrada V4 Rally',
-    'Hypermotard 698', 'Hypermotard 939', 'Hypermotard 950',
-    'Streetfighter V2', 'Streetfighter V4',
-    'SuperSport', 'Diavel', 'XDiavel', 'Other'
-  ],
-  'Harley-Davidson': [
-    'Sportster S', 'Iron 883', 'Iron 1200', 'Forty-Eight', 'Nightster',
-    'Softail', 'Fat Boy', 'Fat Bob', 'Breakout', 'Street Bob', 'Low Rider',
-    'Road Glide', 'Road King', 'Street Glide', 'Electra Glide',
-    'Pan America 1250', 'Pan America Special', 'Bronx',
-    'LiveWire', 'Other'
-  ],
-  'BMW Motorrad': [
-    'S 1000 RR', 'S 1000 R', 'S 1000 XR', 'S 1000 XR Competition',
-    'M 1000 RR', 'M 1000 R', 'M 1000 XR',
-    'R 1250 GS', 'R 1250 GS Adventure', 'R 1250 RT', 'R 1250 R', 'R 1250 RS',
-    'R 1200 GS', 'R 1200 GS Adventure', 'R 1200 RT',
-    'F 900 R', 'F 900 XR', 'F 850 GS', 'F 850 GS Adventure',
-    'G 310 R', 'G 310 GS', 'G 310 RR',
-    'K 1600 GT', 'K 1600 GTL', 'K 1600 Grand America',
-    'C 400 X', 'C 400 GT', 'CE 04', 'Other'
-  ],
-  'Triumph': [
-    'Street Triple', 'Street Triple R', 'Street Triple RS',
-    'Speed Triple', 'Speed Triple RS', 'Speed Twin',
-    'Tiger 660', 'Tiger 850 Sport', 'Tiger 900', 'Tiger 1200',
-    'Bonneville T100', 'Bonneville T120', 'Thruxton', 'Thruxton RS',
-    'Scrambler 400X', 'Scrambler 1200', 'Scrambler 1200 XE',
-    'Rocket 3', 'Rocket 3 R', 'Rocket 3 GT',
-    'Daytona Moto2', 'Trident 660', 'Other'
-  ],
-  'Aprilia': [
-    'RSV4', 'RSV4 Factory', 'RSV4 1100',
-    'Tuono V4', 'Tuono V4 Factory',
-    'RS 660', 'Tuono 660',
-    'Shiver 900', 'Dorsoduro 900',
-    'SR GT 125', 'SR GT 200', 'Other'
-  ],
-  'Honda Power Sports': [
-    'CB500F', 'CB500X', 'CB650F', 'CB650R', 'CB1000R', 'CB1000R Black Edition',
-    'CBR500R', 'CBR650R', 'CBR1000RR', 'CBR1000RR-R Fireblade',
-    'Africa Twin 1000', 'Africa Twin 1100', 'CRF 300 Rally', 'CRF 1100 L',
-    'NC750X', 'NC750S', 'NT1100',
-    'Forza 125', 'Forza 350', 'Forza 750', 'PCX 125', 'ADV 350', 'Other'
-  ],
-  'Polaris': ['RZR', 'Ranger', 'General', 'Sportsman', 'Scrambler', 'ACE', 'Other'],
-  'Can-Am': ['Maverick X3', 'Commander', 'Defender', 'Outlander', 'Renegade', 'Spyder', 'Ryker', 'Other'],
-  'Sea-Doo': ['GTX', 'GTI', 'RXT', 'RXP', 'WAKE', 'SPARK', 'Fish Pro', 'Other'],
-  'Ski-Doo': ['Summit', 'Freeride', 'MXZ', 'Renegade', 'Expedition', 'Skandic', 'Other'],
-  'Arctic Cat': ['Blast', 'ZR', 'XF', 'M', 'Wildcat XX', 'Prowler Pro', 'Alterra', 'Other'],
-  'MAN': ['TGE', 'TGL', 'TGM', 'TGS', 'TGX', 'Other'],
-  'Scania': ['P Series', 'G Series', 'R Series', 'S Series', 'Other'],
-  'Iveco': ['Daily', 'Eurocargo', 'Stralis', 'S-Way', 'Other'],
-  'DAF': ['LF', 'CF', 'XF', 'XG', 'Other'],
-  'Other': ['Custom', 'Unknown', 'Vintage', 'Classic', 'Modified', 'Kit Car', 'Other']
-}
+// ─── Static data (other arrays remain) ─────────────────────────────────────────────
 
 const fuelTypes = [
   { value: 'petrol', label: 'Petrol' },
@@ -1066,7 +598,6 @@ const cantons = [
 ]
 
 // ─── Reactive state ──────────────────────────────────────────────────────────
-
 const cars = ref<any[]>([])
 const viewMode = ref('grid')
 const showAdvancedFilters = ref(false)
@@ -1104,7 +635,6 @@ watch(sortBy, () => {
 })
 
 // ─── Computed ────────────────────────────────────────────────────────────────
-
 const filteredModels = computed(() => {
   if (!filters.value.make) return []
   return makeModels[filters.value.make] || []
@@ -1183,7 +713,6 @@ const activeFilters = computed(() => {
 })
 
 // ─── Methods ──────────────────────────────────────────────────────────────────
-
 const onMakeChange = () => { filters.value.model = '' }
 const applyFilters = () => { currentPage.value = 1 }
 const applySorting = () => { currentPage.value = 1; cars.value = [...cars.value] }
@@ -1208,7 +737,6 @@ const removeFilter = (key: string) => {
 }
 
 // ─── Count helpers ────────────────────────────────────────────────────────────
-
 const getFuelTypeCount = (v: string) => cars.value.filter(c => c.fuelType === v).length
 const getBodyTypeCount = (v: string) => cars.value.filter(c => c.bodyType === v).length
 const getTransmissionCount = (v: string) => cars.value.filter(c => c.transmission === v).length
@@ -1222,7 +750,6 @@ const getInspectionCount = (v: boolean) => cars.value.filter(c => c.validInspect
 const getEquipmentLabel = (v: string) => equipmentFeatures.find(f => f.value === v)?.label || v
 
 // ─── Format helpers ───────────────────────────────────────────────────────────
-
 const formatNumber = (n: number) => n?.toLocaleString() || '0'
 const formatFuelType = (v: string) => ({ petrol: 'Petrol', diesel: 'Diesel', electric: 'Electric', hybrid: 'Hybrid', lpg: 'LPG', cng: 'CNG' }[v] || v)
 const formatTransmission = (v: string) => ({ manual: 'Manual', automatic: 'Automatic', semi_automatic: 'Semi-Automatic' }[v] || v)
@@ -1242,9 +769,8 @@ const getStatusClass = (status: string) => {
 }
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
-
 onMounted(async () => {
-  // ✅ Read URL params FIRST so computed filteredCars is correct when data arrives
+  // Read URL params first
   const q = route.query
   if (q.make) filters.value.make = q.make as string
   if (q.model) filters.value.model = q.model as string
@@ -1273,7 +799,7 @@ onMounted(async () => {
   if (q.equipment) { const e = q.equipment; filters.value.equipment = Array.isArray(e) ? e as string[] : [e as string] }
   if (q.sort) sortBy.value = q.sort as string
 
-  // THEN fetch cars
+  // Then fetch cars
   try {
     const response = await $fetch('/api/cars')
     cars.value = response as any[]

@@ -366,78 +366,15 @@ import { useI18n } from 'vue-i18n'
 import { useHead } from '#app'
 import { useLocalePath } from '#i18n'
 import { navigateTo } from '#app'
+import { carMakes as staticMakes, makeModels as staticMakeModels } from '~/constants/carData'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-// SEO Meta
 useHead({
   title: t('seo.home.title') || 'Export Swiss - Premium Car Marketplace',
-  meta: [
-    { 
-      name: 'description', 
-      content: t('seo.home.description') || 'Discover premium Swiss cars at unbeatable prices. Export quality vehicles with Swiss precision and reliability.' 
-    }
-  ]
+  meta: [{ name: 'description', content: t('seo.home.description') || 'Discover premium Swiss cars at unbeatable prices. Export quality vehicles with Swiss precision and reliability.' }]
 })
-
-// ─── Static fallback make/model data ─────────────────────────────────────────
-const staticMakeModels: Record<string, string[]> = {
-  'Volkswagen': ['Golf', 'Passat', 'Tiguan', 'Polo', 'T-Roc', 'Touareg', 'Arteon', 'ID.3', 'ID.4', 'Touran', 'Sharan', 'Caddy', 'Transporter'],
-  'Audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q5', 'Q7', 'Q8', 'TT', 'R8', 'e-tron', 'e-tron GT'],
-  'Mercedes-Benz': ['A-Class', 'B-Class', 'C-Class', 'E-Class', 'S-Class', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'AMG GT', 'CLA', 'CLS', 'EQC', 'EQS', 'Vito', 'Sprinter'],
-  'BMW': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'iX', 'M3', 'M5'],
-  'Opel': ['Astra', 'Corsa', 'Insignia', 'Crossland', 'Grandland', 'Mokka', 'Zafira', 'Combo', 'Vivaro'],
-  'Porsche': ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan', 'Boxster', 'Cayman'],
-  'Smart': ['Fortwo', 'Forfour', '#1', '#3'],
-  'Toyota': ['Yaris', 'Corolla', 'Camry', 'RAV4', 'Highlander', 'Land Cruiser', 'Prius', 'C-HR', 'Hilux', 'GR86', 'GR Yaris', 'Supra', 'Avensis'],
-  'Honda': ['Civic', 'Accord', 'HR-V', 'CR-V', 'Jazz', 'e', 'NSX', 'Type R'],
-  'Nissan': ['Micra', 'Juke', 'Qashqai', 'X-Trail', 'Leaf', 'Ariya', 'GT-R', '370Z', 'Navara'],
-  'Mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-30', 'CX-5', 'CX-60', 'MX-5'],
-  'Mitsubishi': ['Colt', 'Lancer', 'Outlander', 'Eclipse Cross', 'L200', 'ASX'],
-  'Subaru': ['Impreza', 'Legacy', 'Outback', 'Forester', 'XV', 'BRZ', 'WRX'],
-  'Suzuki': ['Swift', 'Vitara', 'S-Cross', 'Jimny', 'Ignis', 'Baleno'],
-  'Lexus': ['IS', 'ES', 'GS', 'LS', 'UX', 'NX', 'RX', 'LX', 'LC', 'LM'],
-  'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Puma', 'Explorer', 'Mustang', 'F-150', 'Ranger', 'Transit'],
-  'Chevrolet': ['Spark', 'Malibu', 'Camaro', 'Corvette', 'Equinox', 'Traverse', 'Silverado'],
-  'Cadillac': ['CT4', 'CT5', 'Escalade', 'XT4', 'XT5', 'XT6'],
-  'Jeep': ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler', 'Avenger'],
-  'Dodge': ['Challenger', 'Charger', 'Durango', 'Journey'],
-  'Chrysler': ['300', 'Pacifica', 'Voyager'],
-  'Tesla': ['Model 3', 'Model S', 'Model X', 'Model Y', 'Cybertruck'],
-  'Hyundai': ['i10', 'i20', 'i30', 'Tucson', 'Santa Fe', 'Ioniq 5', 'Ioniq 6', 'Kona', 'Nexo'],
-  'Kia': ['Picanto', 'Rio', 'Ceed', 'Sportage', 'Sorento', 'EV6', 'Niro', 'Stinger'],
-  'Genesis': ['G70', 'G80', 'G90', 'GV70', 'GV80'],
-  'Renault': ['Clio', 'Megane', 'Captur', 'Kadjar', 'Koleos', 'Zoe', 'Arkana', 'Austral'],
-  'Peugeot': ['108', '208', '308', '508', '2008', '3008', '5008', 'e-208', 'e-2008'],
-  'Citroën': ['C1', 'C3', 'C4', 'C5', 'Berlingo', 'SpaceTourer'],
-  'DS Automobiles': ['DS3', 'DS4', 'DS7', 'DS9'],
-  'Fiat': ['500', 'Punto', 'Tipo', 'Panda', '500X', '500L', 'Ducato'],
-  'Alfa Romeo': ['Giulia', 'Stelvio', 'Tonale', 'Giulietta', '4C'],
-  'Lancia': ['Ypsilon'],
-  'Ferrari': ['Roma', 'Portofino', 'SF90', '296 GTB', 'F8 Tributo'],
-  'Lamborghini': ['Huracan', 'Urus', 'Revuelto'],
-  'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'Grecale', 'MC20'],
-  'Land Rover': ['Defender', 'Discovery', 'Discovery Sport', 'Range Rover', 'Range Rover Sport', 'Range Rover Evoque', 'Range Rover Velar'],
-  'Jaguar': ['E-Pace', 'F-Pace', 'I-Pace', 'F-Type', 'XE', 'XF', 'XJ'],
-  'Mini': ['Cooper', 'Clubman', 'Countryman', 'Paceman', 'Roadster', 'Convertible'],
-  'Bentley': ['Continental GT', 'Flying Spur', 'Bentayga', 'Mulsanne'],
-  'Rolls-Royce': ['Ghost', 'Phantom', 'Wraith', 'Dawn', 'Cullinan', 'Spectre'],
-  'Aston Martin': ['Vantage', 'DB11', 'DBS', 'DBX'],
-  'Volvo': ['S60', 'S90', 'V60', 'V90', 'XC40', 'XC60', 'XC90', 'C40'],
-  'Polestar': ['Polestar 2', 'Polestar 3', 'Polestar 4'],
-  'Skoda': ['Fabia', 'Octavia', 'Superb', 'Kamiq', 'Karoq', 'Kodiaq', 'Enyaq'],
-  'Seat': ['Ibiza', 'Leon', 'Ateca', 'Arona', 'Tarraco'],
-  'Cupra': ['Formentor', 'Born', 'Ateca'],
-  'Dacia': ['Sandero', 'Duster', 'Logan', 'Spring'],
-  'BYD': ['Atto 3', 'Han', 'Tang', 'Seal', 'Dolphin', 'Seagull'],
-  'MG': ['MG3', 'MG ZS', 'MG HS', 'MG5', 'MG4', 'Cyberster'],
-  'Geely': ['Emgrand', 'Atlas', 'Coolray'],
-  'Nio': ['ET5', 'ET7', 'ES6', 'ES8', 'EC7'],
-  'XPeng': ['P7', 'P5', 'G3', 'G9'],
-}
-
-const staticMakes = Object.keys(staticMakeModels)
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const email = ref('')
@@ -497,9 +434,7 @@ const filters = ref({
 const currentYear = new Date().getFullYear()
 const yearOptions = computed(() => {
   const years = []
-  for (let year = currentYear; year >= currentYear - 30; year--) {
-    years.push(year)
-  }
+  for (let year = currentYear; year >= currentYear - 30; year--) years.push(year)
   return years
 })
 
@@ -528,7 +463,6 @@ const fetchFeaturedCars = async () => {
   loadingFeaturedCars.value = true
   try {
     let data = null
-    
     try {
       data = await $fetch('/api/cars/featured', { params: { limit: 20 } })
     } catch (error1) {
@@ -537,15 +471,12 @@ const fetchFeaturedCars = async () => {
       })
       data = response?.cars || response || []
     }
-    
     let cars = []
     if (data && Array.isArray(data)) cars = data
     else if (data && data.featuredCars) cars = data.featuredCars
     else if (data && data.cars) cars = data.cars
     else cars = []
-    
     featuredCars.value = cars
-    
   } catch (error) {
     console.error('❌ Error fetching featured cars:', error)
     featuredCars.value = []
@@ -559,19 +490,15 @@ const fetchFilterOptions = async () => {
   loadingFilters.value = true
   try {
     let data = null
-    
     try {
       data = await $fetch('/api/cars/filters')
     } catch (error1) {
       data = await $fetch('/api/cars/meta/filters')
     }
-    
     if (data) {
-      // Use API makeModels only if non-empty, otherwise keep static fallback
       const apiMakeModels = data.makeModels && Object.keys(data.makeModels).length > 0
         ? data.makeModels
         : staticMakeModels
-
       filterOptions.value = {
         makes: data.makes?.length > 0 ? data.makes : staticMakes,
         makeModels: apiMakeModels,
@@ -596,7 +523,6 @@ const fetchFilterOptions = async () => {
     }
   } catch (error) {
     console.error('Error fetching filter options, using static fallback:', error)
-    // Full static fallback — makes & models always available
     filterOptions.value = {
       makes: staticMakes,
       makeModels: staticMakeModels,
@@ -633,7 +559,6 @@ const fetchStats = async () => {
   loadingStats.value = true
   try {
     let data = null
-    
     try {
       data = await $fetch('/api/stats')
     } catch (error1) {
@@ -647,7 +572,6 @@ const fetchStats = async () => {
         }
       }
     }
-    
     if (data) {
       stats.value = {
         totalCars: data.totalCars || data.carsCount || data.totalCarsCount || 0,
@@ -676,7 +600,6 @@ const loadMoreFeatured = async () => {
 // Enhanced search function
 const searchCars = () => {
   const queryParams: Record<string, any> = {}
-  
   const filterMappings: Record<string, string> = {
     make: 'make', model: 'model',
     priceMin: 'priceMin', priceMax: 'priceMax',
@@ -684,13 +607,11 @@ const searchCars = () => {
     fuelType: 'fuelType', transmission: 'transmission',
     bodyType: 'bodyType', condition: 'condition', driveType: 'driveType'
   }
-  
   Object.entries(filterMappings).forEach(([key, param]) => {
     if (filters.value[key as keyof typeof filters.value]) {
       queryParams[param] = filters.value[key as keyof typeof filters.value]
     }
   })
-  
   navigateTo({ path: localePath('/cars'), query: queryParams })
 }
 
@@ -736,12 +657,10 @@ const formatPrice = (price: number) => {
   if (!price) return '0'
   return price.toLocaleString('de-CH')
 }
-
 const formatMileage = (mileage: number) => {
   if (!mileage) return '0 km'
   return mileage.toLocaleString('de-CH') + ' km'
 }
-
 const formatFuelType = (fuelType: string) => {
   if (!fuelType) return ''
   const types: Record<string, string> = {
@@ -754,7 +673,6 @@ const formatFuelType = (fuelType: string) => {
   }
   return types[fuelType.toLowerCase()] || fuelType.charAt(0).toUpperCase() + fuelType.slice(1)
 }
-
 const formatTransmission = (transmission: string) => {
   if (!transmission) return ''
   const types: Record<string, string> = {
@@ -764,11 +682,11 @@ const formatTransmission = (transmission: string) => {
   }
   return types[transmission.toLowerCase()] || transmission.charAt(0).toUpperCase() + transmission.slice(1)
 }
-
 const getFeatureIcon = (_iconName: string) => {
   return 'div'
 }
 </script>
+
 
 <style scoped>
 .search-button {

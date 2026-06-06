@@ -276,6 +276,19 @@
                         >
                           Funds
                         </button>
+                        <!-- Mobile: Show View History and View Listings inline -->
+                        <button
+                          @click="viewUserTransactions(user)"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 whitespace-nowrap md:hidden"
+                        >
+                          History
+                        </button>
+                        <button
+                          @click="viewUserListings(user)"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 whitespace-nowrap md:hidden"
+                        >
+                          Listings
+                        </button>
                       </div>
                     </td>
                     <td class="px-3 py-3 md:px-4 md:py-4 hidden md:table-cell">

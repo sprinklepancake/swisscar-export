@@ -882,12 +882,7 @@ const revealContactInfo = async () => {
 
 // Function to reveal only phone number
 const revealPhoneNumber = async () => {
-  if (!auth.user.value) {
-    alert(t('car_details.login_to_view_contact'))
-    await router.push('/login')
-    return
-  }
-  
+  // No login required - anyone can see the phone number
   try {
     await $fetch('/api/contact/reveal', {
       method: 'POST',

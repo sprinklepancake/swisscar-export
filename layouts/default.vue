@@ -6,15 +6,15 @@
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 
-          <!-- Logo - iOS fix: added min-w-0 and overflow-hidden to prevent text from pushing mobile controls off-screen -->
-          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0 max-w-[55%] sm:max-w-none">
+          <!-- Logo - iOS fix: added min-w-0, overflow-hidden, and safe-area padding to prevent overlap with menu button -->
+          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0 max-w-[35%] sm:max-w-none pl-[env(safe-area-inset-left,8px)]">
             <img
               src="../assets/images/swiss.svg"
               :alt="t('logo_alt')"
-              class="w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300"
+              class="w-7 h-7 sm:w-14 sm:h-14 lg:w-20 lg:h-20 object-contain shrink-0 group-hover:scale-105 transition-transform duration-300"
             >
-            <div class="flex flex-col min-w-0">
-              <span class="text-base sm:text-xl lg:text-3xl font-bold text-red-800 group-hover:text-red-600 transition-colors duration-200 leading-tight truncate">
+            <div class="flex flex-col min-w-0 overflow-hidden">
+              <span class="text-xs sm:text-xl lg:text-3xl font-bold text-red-800 group-hover:text-red-600 transition-colors duration-200 leading-tight truncate">
                 {{ t('company_name') }}
               </span>
               <span class="hidden sm:block text-xs sm:text-sm lg:text-lg text-red-500 -mt-0.5 truncate">{{ t('company_tagline') }}</span>

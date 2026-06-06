@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: cars, error } = await supabase
       .from('cars')
-      .select('id, title, description, make, model, year, price, status, listing_type, is_featured, created_at')
+      .select('id, make, model, year, price, status, listing_type, is_featured, created_at, description')
       .eq('seller_id', userId)
       .order('created_at', { ascending: false })
 
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       success: true,
       listings: (cars || []).map((c: any) => ({
         id: c.id,
-        title: c.title,
+        title: `${c.make} ${c.model} (${c.year})`,
         description: c.description,
         make: c.make,
         model: c.model,
@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
       })),
     }
   } catch (error: any) {
+    console.error('Failed to fetch user listings:', error)
     throw createError({ statusCode: 500, statusMessage: 'Failed to fetch user listings' })
   }
 })

@@ -181,114 +181,114 @@
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Funds</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID Doc</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transactions</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Transactions</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                   <tr v-for="user in filteredUsers" :key="user.id" class="hover:bg-gray-50">
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3 md:px-4 md:py-4">
                       <div class="flex items-center">
-                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-bold mr-2 md:mr-3 flex-shrink-0">
                           {{ user.name?.charAt(0) || 'U' }}
                         </div>
-                        <div>
-                          <div class="font-medium text-gray-900">{{ user.name }}</div>
-                          <div class="text-sm text-gray-500">{{ user.email }}</div>
-                          <div class="text-xs text-gray-400 mt-1">
+                        <div class="min-w-0">
+                          <div class="font-medium text-gray-900 text-sm md:text-base truncate">{{ user.name }}</div>
+                          <div class="text-xs md:text-sm text-gray-500 truncate">{{ user.email }}</div>
+                          <div class="text-xs text-gray-400 mt-0.5 hidden sm:block">
                             Joined {{ formatDate(user.createdAt) }}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td class="px-4 py-4">
-                      <span class="px-3 py-1 text-xs font-semibold rounded-full" :class="roleClasses(user.role)">
+                    <td class="px-3 py-3 md:px-4 md:py-4">
+                      <span class="px-2 py-0.5 md:px-3 md:py-1 text-xs font-semibold rounded-full whitespace-nowrap" :class="roleClasses(user.role)">
                         {{ user.role }}
                       </span>
-                      <span v-if="user.role === 'buyer' && user.buyerType === 'auction'" class="ml-1 px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700">
+                      <span v-if="user.role === 'buyer' && user.buyerType === 'auction'" class="ml-1 px-1 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700 whitespace-nowrap inline-block">
                         auction
                       </span>
                     </td>
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3 md:px-4 md:py-4">
                       <div class="space-y-1">
-                        <span class="px-2 py-1 text-xs rounded-full block w-fit" 
+                        <span class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap" 
                           :class="user.banned ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'">
                           {{ user.banned ? 'Banned' : 'Active' }}
                         </span>
-                        <span class="px-2 py-1 text-xs rounded-full block w-fit"
+                        <span class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap"
                           :class="user.verified ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'">
                           {{ user.verified ? 'Verified' : 'Unverified' }}
                         </span>
                       </div>
                     </td>
-                    <td class="px-4 py-4">
-                      <span class="font-bold text-gray-900">{{ user.funds || 0 }} CHF</span>
+                    <td class="px-3 py-3 md:px-4 md:py-4">
+                      <span class="font-bold text-gray-900 text-sm md:text-base whitespace-nowrap">{{ user.funds || 0 }} CHF</span>
                     </td>
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3 md:px-4 md:py-4">
                       <div v-if="user.idDocumentUrl">
                         <a
                           :href="user.idDocumentUrl"
                           target="_blank"
                           rel="noopener noreferrer"
-                          class="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-800 text-xs rounded hover:bg-indigo-200 font-medium"
+                          class="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1 bg-indigo-100 text-indigo-800 text-xs rounded hover:bg-indigo-200 font-medium whitespace-nowrap"
                         >
                           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
-                          View ID
+                          <span class="hidden sm:inline">View ID</span>
                         </a>
-                        <p class="text-xs text-gray-400 mt-1">{{ user.buyerType === 'auction' ? 'Auction buyer' : user.role }}</p>
+                        <p class="text-xs text-gray-400 mt-1 hidden md:block">{{ user.buyerType === 'auction' ? 'Auction buyer' : user.role }}</p>
                       </div>
-                      <span v-else class="text-xs text-gray-400">No ID uploaded</span>
+                      <span v-else class="text-xs text-gray-400">No ID</span>
                     </td>
-                    <td class="px-4 py-4">
-                      <div class="flex flex-wrap gap-2">
+                    <td class="px-3 py-3 md:px-4 md:py-4">
+                      <div class="flex flex-wrap gap-1 md:gap-2">
                         <button
                           v-if="!user.verified"
                           @click="verifyUser(user.id)"
-                          class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 whitespace-nowrap"
                         >
                           Verify
                         </button>
                         <button
                           v-if="user.verified"
                           @click="unverifyUser(user.id)"
-                          class="px-3 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 whitespace-nowrap"
                         >
                           Unverify
                         </button>
                         <button
                           v-if="!user.banned && user.id !== adminData?.id"
                           @click="banUser(user.id)"
-                          class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 whitespace-nowrap"
                         >
                           Ban
                         </button>
                         <button
                           v-if="user.banned"
                           @click="unbanUser(user.id)"
-                          class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 whitespace-nowrap"
                         >
                           Unban
                         </button>
                         <button
                           @click="editUserFunds(user)"
-                          class="px-3 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 whitespace-nowrap"
                         >
                           Funds
                         </button>
                       </div>
                     </td>
-                    <td class="px-4 py-4">
-                      <div class="flex flex-col gap-2">
+                    <td class="px-3 py-3 md:px-4 md:py-4 hidden md:table-cell">
+                      <div class="flex flex-col gap-1 md:gap-2">
                         <button
                           @click="viewUserTransactions(user)"
-                          class="px-3 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 whitespace-nowrap"
                         >
                           View History
                         </button>
                         <button
                           @click="viewUserListings(user)"
-                          class="px-3 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 whitespace-nowrap"
                         >
                           View Listings
                         </button>
@@ -302,18 +302,18 @@
           
           <!-- Listings Tab -->
           <div v-else-if="activeTab === 'listings'">
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-              <h2 class="text-xl font-bold text-gray-900">Listing Management</h2>
-              <div class="flex space-x-2 mt-2 md:mt-0">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900">Listing Management</h2>
+              <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <input
                   v-model="listingSearch"
                   type="text"
                   placeholder="Search listings..."
-                  class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 w-full md:w-auto"
+                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 w-full"
                 />
                 <select
                   v-model="listingFilter"
-                  class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 w-full sm:w-auto"
                 >
                   <option value="all">All Listings</option>
                   <option value="active">Active</option>
@@ -326,47 +326,48 @@
             </div>
             
             <div v-if="listings.length === 0" class="text-center py-8">
-              <div class="text-gray-400 text-6xl mb-4">🚗</div>
+              <div class="text-gray-400 text-5xl sm:text-6xl mb-4">🚗</div>
               <p class="text-gray-500">No listings found</p>
             </div>
             
-            <div v-else class="space-y-4">
+            <div v-else class="space-y-3 sm:space-y-4">
               <div v-for="listing in filteredListings" :key="listing.id" 
-                   class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
-                <div class="flex flex-col md:flex-row md:items-center justify-between">
-                  <div class="mb-4 md:mb-0 md:flex-1">
-                    <h3 class="font-semibold text-lg">{{ listing.title || 'No Title' }}</h3>
-                    <p class="text-gray-600 text-sm">{{ listing.description?.substring(0, 100) }}...</p>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                      <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                   class="border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-50">
+                <div class="flex flex-col gap-3">
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-base sm:text-lg">{{ listing.title || 'No Title' }}</h3>
+                    <p class="text-gray-600 text-sm">{{ (listing.description || '').substring(0, 80) }}{{ (listing.description || '').length > 80 ? '...' : '' }}</p>
+                    <div class="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
+                      <span class="px-2 py-0.5 sm:px-2 sm:py-1 text-xs bg-blue-100 text-blue-800 rounded-full whitespace-nowrap">
                         {{ listing.type || 'normal' }}
                       </span>
-                      <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
+                      <span class="px-2 py-0.5 sm:px-2 sm:py-1 text-xs bg-gray-100 text-gray-800 rounded-full whitespace-nowrap">
                         {{ listing.status || 'active' }}
                       </span>
-                      <span class="px-2 py-1 text-xs font-bold">
-                        {{ listing.price || 0 }} CHF
+                      <span class="px-2 py-0.5 sm:px-2 sm:py-1 text-xs font-bold whitespace-nowrap">
+                        {{ formatPrice(listing.price) }} CHF
                       </span>
-                      <span v-if="listing.auction" class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
+                      <span v-if="listing.auction" class="px-2 py-0.5 sm:px-2 sm:py-1 text-xs bg-purple-100 text-purple-800 rounded-full whitespace-nowrap">
                         Auction
                       </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-2">
-                      Posted by: {{ listing.sellerName || 'Unknown' }} • 
-                      {{ formatDate(listing.createdAt) }}
+                      <span class="block sm:inline">Posted by: {{ listing.sellerName || 'Unknown' }}</span>
+                      <span class="hidden sm:inline"> • </span>
+                      <span class="block sm:inline">{{ formatDate(listing.createdAt) }}</span>
                     </p>
                   </div>
                   <div class="flex gap-2">
                     <button
                       v-if="listing.status !== 'sold'"
                       @click="markAsSold(listing.id)"
-                      class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 whitespace-nowrap"
+                      class="px-3 py-1.5 bg-green-600 text-white text-xs rounded hover:bg-green-700 whitespace-nowrap flex-shrink-0"
                     >
                       Mark Sold
                     </button>
                     <button
                       @click="removeListing(listing.id)"
-                      class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 whitespace-nowrap"
+                      class="px-3 py-1.5 bg-red-600 text-white text-xs rounded hover:bg-red-700 whitespace-nowrap flex-shrink-0"
                     >
                       Remove
                     </button>
@@ -1112,10 +1113,10 @@
               <tr v-for="listing in userListings" :key="listing.id" class="hover:bg-gray-50">
                 <td class="px-4 py-3">
                   <div class="font-medium text-gray-900">{{ listing.title || 'No Title' }}</div>
-                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ listing.description || 'No description' }}</div>
+                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ (listing.description || 'No description').substring(0, 50) }}{{ (listing.description || '').length > 50 ? '...' : '' }}</div>
                 </td>
                 <td class="px-4 py-3">
-                  <span class="font-semibold text-red-600">{{ formatPrice(listing.price) }}</span>
+                  <span class="font-semibold text-red-600">{{ formatPrice(listing.price) }} CHF</span>
                 </td>
                 <td class="px-4 py-3">
                   <span :class="{
@@ -1901,8 +1902,9 @@ const formatDate = (dateString: string) => {
 }
 
 const formatPrice = (price: number | string) => {
-  if (!price) return '0'
+  if (!price && price !== 0) return '0'
   const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  if (isNaN(numPrice)) return '0'
   return numPrice.toLocaleString('de-CH')
 }
 

@@ -427,7 +427,7 @@
               <label class="swiss-form-label">{{ $t('car_listing_form.year') }} *</label>
               <select v-model="form.year" required class="swiss-form-input p-3 text-sm sm:text-base">
                 <option value="">{{ $t('car_listing_form.select_year') }}</option>
-                <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                <option v-for="year in allYears" :key="year" :value="year">{{ year }}</option>
               </select>
             </div>
             <div v-if="form.listingType === 'auction'" class="form-group">
@@ -490,15 +490,15 @@
             <h3 class="text-lg sm:text-xl font-bold text-swiss-dark">{{ $t('car_listing_form.technical_details') }}</h3>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.power_ps') }} *</label><input v-model="form.power" type="number" required class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.enter_power')" min="0"></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.cylinders') }}</label><select v-model="form.cylinders" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_cylinders') }}</option><option value="1">{{ $t('car_listing_form.cylinder_single') }}</option><option value="2">{{ $t('car_listing_form.cylinders', { count: 2 }) }}</option><option value="3">{{ $t('car_listing_form.cylinders', { count: 3 }) }}</option><option value="4">{{ $t('car_listing_form.cylinders', { count: 4 }) }}</option><option value="5">{{ $t('car_listing_form.cylinders', { count: 5 }) }}</option><option value="6">{{ $t('car_listing_form.cylinders', { count: 6 }) }}</option><option value="8">{{ $t('car_listing_form.cylinders', { count: 8 }) }}</option><option value="10">{{ $t('car_listing_form.cylinders', { count: 10 }) }}</option><option value="12">{{ $t('car_listing_form.cylinders', { count: 12 }) }}</option><option value="16">{{ $t('car_listing_form.cylinders', { count: 16 }) }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.drive_type') }} *</label><select v-model="form.driveType" required class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_drive_type') }}</option><option v-for="type in driveTypes" :key="type.value" :value="type.value">{{ $t(`car_listing_form.drive_types.${type.value}`) || type.label }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.engine_size') }}</label><input v-model="form.engineSize" type="text" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.engine_size_placeholder')"></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.exterior_color') }} *</label><select v-model="form.colorExterior" required class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_color') }}</option><option v-for="color in exteriorColors" :key="color.value" :value="color.value">{{ $t(`colors.${color.value}`) || color.label }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.interior_color') }}</label><select v-model="form.colorInterior" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_color') }}</option><option v-for="color in interiorColors" :key="color.value" :value="color.value">{{ $t(`colors.${color.value}`) || color.label }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.condition') }} *</label><select v-model="form.condition" required class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_condition') }}</option><option v-for="condition in conditions" :key="condition.value" :value="condition.value">{{ $t(`condition_${condition.value}`) || condition.label }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.number_of_doors') }}</label><select v-model="form.doors" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_doors') }}</option><option v-for="door in doorOptions" :key="door" :value="door">{{ door }} {{ $t('car_listing_form.doors') }}</option></select></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.number_of_seats') }}</label><select v-model="form.seats" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_seats') }}</option><option v-for="seat in seatOptions" :key="seat" :value="seat">{{ seat }} {{ $t('car_listing_form.seats') }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.power_ps') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><input v-model="form.power" type="number" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.enter_power')" min="0"></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.cylinders') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.cylinders" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_cylinders') }}</option><option value="1">{{ $t('car_listing_form.cylinder_single') }}</option><option value="2">{{ $t('car_listing_form.cylinders', { count: 2 }) }}</option><option value="3">{{ $t('car_listing_form.cylinders', { count: 3 }) }}</option><option value="4">{{ $t('car_listing_form.cylinders', { count: 4 }) }}</option><option value="5">{{ $t('car_listing_form.cylinders', { count: 5 }) }}</option><option value="6">{{ $t('car_listing_form.cylinders', { count: 6 }) }}</option><option value="8">{{ $t('car_listing_form.cylinders', { count: 8 }) }}</option><option value="10">{{ $t('car_listing_form.cylinders', { count: 10 }) }}</option><option value="12">{{ $t('car_listing_form.cylinders', { count: 12 }) }}</option><option value="16">{{ $t('car_listing_form.cylinders', { count: 16 }) }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.drive_type') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.driveType" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_drive_type') }}</option><option v-for="type in driveTypes" :key="type.value" :value="type.value">{{ $t(`car_listing_form.drive_types.${type.value}`) || type.label }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.engine_size') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><input v-model="form.engineSize" type="text" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.engine_size_placeholder')"></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.exterior_color') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.colorExterior" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_color') }}</option><option v-for="color in exteriorColors" :key="color.value" :value="color.value">{{ $t(`colors.${color.value}`) || color.label }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.interior_color') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.colorInterior" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_color') }}</option><option v-for="color in interiorColors" :key="color.value" :value="color.value">{{ $t(`colors.${color.value}`) || color.label }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.condition') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.condition" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_condition') }}</option><option v-for="condition in conditions" :key="condition.value" :value="condition.value">{{ $t(`condition_${condition.value}`) || condition.label }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.number_of_doors') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.doors" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_doors') }}</option><option v-for="door in doorOptions" :key="door" :value="door">{{ door }} {{ $t('car_listing_form.doors') }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.number_of_seats') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.seats" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_seats') }}</option><option v-for="seat in seatOptions" :key="seat" :value="seat">{{ seat }} {{ $t('car_listing_form.seats') }}</option></select></div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
             <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.vin') }}</label><input v-model="form.vin" type="text" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.enter_vin')" maxlength="17"></div>
@@ -695,7 +695,12 @@ const filteredModels = computed(() => {
 
 const years = computed(() => {
   const currentYear = new Date().getFullYear()
-  return Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
+  return Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i)
+})
+
+const allYears = computed(() => {
+  const currentYear = new Date().getFullYear()
+  return Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i)
 })
 
 const userJoinedDays = computed(() => {
@@ -815,8 +820,8 @@ const canProceedBasicInfo = computed(() => {
 })
 
 const canProceedTechnical = computed(() => {
-  return !!(form.value.power && form.value.driveType && form.value.colorExterior && 
-           form.value.condition)
+  // All technical fields are now optional - users can proceed without filling them
+  return true
 })
 
 const canProceedLocation = computed(() => {

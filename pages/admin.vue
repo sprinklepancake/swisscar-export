@@ -279,12 +279,20 @@
                       </div>
                     </td>
                     <td class="px-4 py-4">
-                      <button
-                        @click="viewUserTransactions(user)"
-                        class="px-3 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
-                      >
-                        View History
-                      </button>
+                      <div class="flex flex-col gap-2">
+                        <button
+                          @click="viewUserTransactions(user)"
+                          class="px-3 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
+                        >
+                          View History
+                        </button>
+                        <button
+                          @click="viewUserListings(user)"
+                          class="px-3 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
+                        >
+                          View Listings
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -1053,6 +1061,89 @@
         </div>
       </div>
     </div>
+
+    <!-- User Listings Modal -->
+    <div v-if="showUserListingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-xl p-6 max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">User's Listings</h3>
+            <p class="text-sm text-gray-600">
+              {{ viewingUser?.name }} ({{ viewingUser?.email }}) • 
+              Role: {{ viewingUser?.role }}
+            </p>
+          </div>
+          <button @click="closeUserListingsModal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Loading -->
+        <div v-if="loadingUserListings" class="flex-1 flex items-center justify-center">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+            <p class="mt-2 text-gray-600">Loading listings...</p>
+          </div>
+        </div>
+        
+        <!-- Empty state -->
+        <div v-else-if="userListings.length === 0" class="flex-1 flex items-center justify-center">
+          <div class="text-center">
+            <div class="text-gray-400 text-4xl mb-4">🚗</div>
+            <p class="text-gray-500">No listings found for this user</p>
+          </div>
+        </div>
+        
+        <!-- Listings Table -->
+        <div v-else class="flex-1 overflow-y-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 sticky top-0">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="listing in userListings" :key="listing.id" class="hover:bg-gray-50">
+                <td class="px-4 py-3">
+                  <div class="font-medium text-gray-900">{{ listing.title || 'No Title' }}</div>
+                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ listing.description || 'No description' }}</div>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="font-semibold text-red-600">{{ formatPrice(listing.price) }}</span>
+                </td>
+                <td class="px-4 py-3">
+                  <span :class="{
+                    'bg-green-100 text-green-800': listing.status === 'active',
+                    'bg-yellow-100 text-yellow-800': listing.status === 'pending',
+                    'bg-blue-100 text-blue-800': listing.status === 'sold',
+                    'bg-red-100 text-red-800': listing.status === 'deleted'
+                  }" class="px-2 py-1 rounded text-xs font-medium">
+                    {{ listing.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">
+                  {{ new Date(listing.created_at).toLocaleDateString() }}
+                </td>
+                <td class="px-4 py-3">
+                  <button
+                    @click="deleteUserListing(listing.id)"
+                    class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1161,10 +1252,13 @@ const updatingSettings = ref(false)
 // Transaction viewing state
 const showUserTransactionsModal = ref(false)
 const showTransactionDetailsModal = ref(false)
+const showUserListingsModal = ref(false)
 const viewingUser = ref<any>(null)
 const selectedTransaction = ref<any>(null)
 const userTransactions = ref([])
+const userListings = ref([])
 const loadingUserTransactions = ref(false)
+const loadingUserListings = ref(false)
 const userTransactionSummary = ref(null)
 
 // Transaction filters
@@ -1289,6 +1383,46 @@ const loadUserTransactions = async () => {
     console.error('Failed to load user transactions:', error)
   } finally {
     loadingUserTransactions.value = false
+  }
+}
+
+// User Listings Functions
+const viewUserListings = async (user: any) => {
+  viewingUser.value = user
+  showUserListingsModal.value = true
+  await loadUserListings()
+}
+
+const closeUserListingsModal = () => {
+  showUserListingsModal.value = false
+  viewingUser.value = null
+  userListings.value = []
+}
+
+const loadUserListings = async () => {
+  if (!viewingUser.value) return
+  loadingUserListings.value = true
+  try {
+    const data: any = await adminFetch(`/api/admin/users/${viewingUser.value.id}/listings`)
+    if (data?.success) {
+      userListings.value = data.listings
+    }
+  } catch (error) {
+    console.error('Failed to load user listings:', error)
+  } finally {
+    loadingUserListings.value = false
+  }
+}
+
+const deleteUserListing = async (listingId: number) => {
+  if (!confirm('Are you sure you want to delete this listing?')) return
+  try {
+    await adminFetch(`/api/admin/listings/${listingId}`, { method: 'DELETE' })
+    userListings.value = userListings.value.filter((l: any) => l.id !== listingId)
+    alert('Listing deleted successfully')
+  } catch (error) {
+    console.error('Failed to delete listing:', error)
+    alert('Failed to delete listing')
   }
 }
 
@@ -1764,6 +1898,12 @@ const formatDate = (dateString: string) => {
     month: 'short',
     year: 'numeric'
   })
+}
+
+const formatPrice = (price: number | string) => {
+  if (!price) return '0'
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return numPrice.toLocaleString('de-CH')
 }
 
 const goToHome = () => {

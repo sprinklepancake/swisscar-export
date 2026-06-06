@@ -507,6 +507,18 @@
               </div>
               
               <div v-if="car.sellerPhone || car.sellerEmail" class="pt-2">
+                <!-- Reveal Phone Number Button -->
+                <button 
+                  v-if="!contactInfoRevealed && car.sellerPhone"
+                  @click="revealPhoneNumber"
+                  class="w-full mb-3 py-3 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg font-semibold hover:from-green-700 hover:to-green-900 transition-all duration-200 flex items-center justify-center text-lg"
+                >
+                  <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  {{ $t('car_details.reveal_phone_number') || 'Show Phone Number' }}
+                </button>
+                
                 <button 
                   v-if="!contactInfoRevealed"
                   @click="revealContactInfo"
@@ -847,6 +859,29 @@ const closeLightbox = () => {
 
 // Function to reveal contact information
 const revealContactInfo = async () => {
+  if (!auth.user.value) {
+    alert(t('car_details.login_to_view_contact'))
+    await router.push('/login')
+    return
+  }
+  
+  try {
+    await $fetch('/api/contact/reveal', {
+      method: 'POST',
+      body: {
+        carId: car.value.id,
+        sellerId: car.value.sellerId
+      }
+    })
+    contactInfoRevealed.value = true
+  } catch (error) {
+    console.error('Error logging contact view:', error)
+    contactInfoRevealed.value = true
+  }
+}
+
+// Function to reveal only phone number
+const revealPhoneNumber = async () => {
   if (!auth.user.value) {
     alert(t('car_details.login_to_view_contact'))
     await router.push('/login')

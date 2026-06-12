@@ -348,7 +348,7 @@
                    class="border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-50">
                 <div class="flex flex-col gap-3">
                   <div class="flex-1">
-                    <h3 class="font-semibold text-base sm:text-lg">{{ listing.title || 'No Title' }}</h3>
+                    <h3 class="font-semibold text-base sm:text-lg">{{ listing.title || $t('common.no_title') }}</h3>
                     <p class="text-gray-600 text-sm">{{ (listing.description || '').substring(0, 80) }}{{ (listing.description || '').length > 80 ? '...' : '' }}</p>
                     <div class="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
                       <span class="px-2 py-0.5 sm:px-2 sm:py-1 text-xs bg-blue-100 text-blue-800 rounded-full whitespace-nowrap">
@@ -365,7 +365,7 @@
                       </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-2">
-                      <span class="block sm:inline">Posted by: {{ listing.sellerName || 'Unknown' }}</span>
+                      <span class="block sm:inline">{{ $t('admin.posted_by') }}: {{ listing.sellerName || $t('common.unknown_seller') }}</span>
                       <span class="hidden sm:inline"> • </span>
                       <span class="block sm:inline">{{ formatDate(listing.createdAt) }}</span>
                     </p>
@@ -995,7 +995,7 @@
             </div>
             <div>
               <p class="text-sm text-gray-600">Reference</p>
-              <p class="font-medium text-gray-900">{{ selectedTransaction.referenceId || 'N/A' }}</p>
+              <p class="font-medium text-gray-900">{{ selectedTransaction.referenceId || $t('common.not_available') }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">Date & Time</p>
@@ -1125,8 +1125,8 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="listing in userListings" :key="listing.id" class="hover:bg-gray-50">
                 <td class="px-4 py-3">
-                  <div class="font-medium text-gray-900">{{ listing.title || 'No Title' }}</div>
-                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ (listing.description || 'No description').substring(0, 50) }}{{ (listing.description || '').length > 50 ? '...' : '' }}</div>
+                  <div class="font-medium text-gray-900">{{ listing.title || $t('common.no_title') }}</div>
+                  <div class="text-sm text-gray-500 truncate max-w-xs">{{ (listing.description || $t('common.no_description')).substring(0, 50) }}{{ (listing.description || '').length > 50 ? '...' : '' }}</div>
                 </td>
                 <td class="px-4 py-3">
                   <span class="font-semibold text-red-600">{{ formatPrice(listing.price) }} CHF</span>

@@ -403,7 +403,7 @@ const filterOptions = ref({
   cylinderOptions: [],
   equipmentFeatures: [],
   cantons: [],
-  minYear: 2000,
+  minYear: 1900,
   maxYear: new Date().getFullYear(),
   minPrice: 0,
   maxPrice: 100000
@@ -430,11 +430,11 @@ const filters = ref({
   driveType: ''
 })
 
-// Generate year options (last 30 years)
+// Generate year options (1900 to current year)
 const currentYear = new Date().getFullYear()
 const yearOptions = computed(() => {
   const years = []
-  for (let year = currentYear; year >= currentYear - 30; year--) years.push(year)
+  for (let year = currentYear; year >= 1900; year--) years.push(year)
   return years
 })
 
@@ -515,7 +515,7 @@ const fetchFilterOptions = async () => {
         cylinderOptions: data.cylinderOptions || [],
         equipmentFeatures: data.equipmentFeatures || [],
         cantons: data.cantons || [],
-        minYear: data.minYear || 2000,
+        minYear: data.minYear || 1900,
         maxYear: data.maxYear || currentYear,
         minPrice: data.minPrice || 0,
         maxPrice: data.maxPrice || 100000
@@ -544,7 +544,7 @@ const fetchFilterOptions = async () => {
         'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen',
         'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura'
       ],
-      minYear: 2000,
+      minYear: 1900,
       maxYear: currentYear,
       minPrice: 0,
       maxPrice: 100000

@@ -216,6 +216,8 @@
                 :src="car.images && car.images[0] ? car.images[0] : '/placeholder-car.jpg'" 
                 :alt="`${car.make} ${car.model}`"
                 class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               >
               <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               <div v-if="car.isFeatured" class="absolute top-2 left-2 bg-red-700 text-white px-2 py-0.5 rounded text-xs font-semibold">⭐ {{ t('featured') || 'Featured' }}</div>

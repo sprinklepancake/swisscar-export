@@ -345,6 +345,8 @@
                 :src="car.images[0]"
                 :alt="`${car.make} ${car.model}`"
                 class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
               <div v-else class="w-full h-full flex items-center justify-center">
                 <svg class="w-16 h-16 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

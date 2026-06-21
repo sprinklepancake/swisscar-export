@@ -323,7 +323,13 @@
           >
             <!-- Car Image -->
             <div :class="['car-image', viewMode === 'list' && 'w-1/3']">
-              <img :src="car.images[0] || '/placeholder-car.jpg'" :alt="`${car.make} ${car.model}`" class="w-full h-full object-cover">
+              <img 
+                :src="car.images[0] || '/placeholder-car.jpg'" 
+                :alt="`${car.make} ${car.model}`" 
+                class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              >
               <div class="absolute inset-0 bg-gradient-to-t from-red-900/60 via-transparent to-transparent"></div>
               <div class="car-status" :class="getStatusClass(car.status)">
                 {{ $t(`status_${car.status}`) }}

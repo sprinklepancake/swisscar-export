@@ -29,6 +29,8 @@
                     :src="carInfo.images?.[0] || '/placeholder-car.jpg'" 
                     :alt="carInfo.make + ' ' + carInfo.model"
                     class="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   >
                 </div>
                 <div class="flex-1">

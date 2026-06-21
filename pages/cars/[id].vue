@@ -52,6 +52,8 @@
                 :src="currentImage || car.images?.[0] || '/placeholder-car.jpg'" 
                 :alt="`${car.make} ${car.model}`" 
                 class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               >
               <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100%-1rem)]">
                 <div v-if="car.isFeatured" class="bg-red-700 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
@@ -87,7 +89,13 @@
                 class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all"
                 :class="{'border-red-600': currentImage === img, 'border-transparent': currentImage !== img}"
               >
-                <img :src="img" :alt="`${$t('car_details.thumbnail')} ${index + 1}`" class="w-full h-full object-cover">
+                <img 
+                  :src="img" 
+                  :alt="`${$t('car_details.thumbnail')} ${index + 1}`" 
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                >
               </button>
             </div>
           </div>
@@ -732,7 +740,13 @@
     <!-- LIGHTBOX MODAL -->
     <div v-if="lightboxImage" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" @click="closeLightbox">
       <div class="relative max-w-5xl max-h-full" @click.stop>
-        <img :src="lightboxImage" :alt="`${car.make} ${car.model}`" class="max-w-full max-h-screen object-contain">
+        <img 
+          :src="lightboxImage" 
+          :alt="`${car.make} ${car.model}`" 
+          class="max-w-full max-h-screen object-contain"
+          loading="eager"
+          decoding="async"
+        >
         <button @click="closeLightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

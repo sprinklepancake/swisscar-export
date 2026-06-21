@@ -111,6 +111,8 @@
                     :src="car.images && car.images.length > 0 ? car.images[0] : '/placeholder-car.jpg'" 
                     :alt="`${car.make} ${car.model}`"
                     class="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <!-- Featured Badge -->
                   <div v-if="car.isFeatured && car.featuredUntil && new Date(car.featuredUntil) > new Date()" class="absolute top-2 left-2">

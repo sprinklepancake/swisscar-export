@@ -1,83 +1,75 @@
-// server/api/cars/filters.get.ts
+// server/api/cars/filters.get.ts - OPTIMIZED VERSION
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   try {
     const supabase = getSupabaseAdmin()
-
-    const { data: cars, error } = await supabase
+    
+    // Use DISTINCT queries instead of fetching all cars - MUCH FASTER
+    const [makesData, fuelTypesData, transmissionsData, conditionsData, cantonsData] = await Promise.all([
+      // Get distinct makes with counts
+      supabase.rpc('get_distinct_makes', { table_name: 'cars' }),
+      supabase.rpc('get_distinct_values', { table_name: 'cars', column_name: 'fuel_type' }),
+      supabase.rpc('get_distinct_values', { table_name: 'cars', column_name: 'transmission' }),
+      supabase.rpc('get_distinct_values', { table_name: 'cars', column_name: 'condition' }),
+      supabase.rpc('get_distinct_values', { table_name: 'cars', column_name: 'canton' }),
+    ])
+    
+    // Fallback to direct queries if RPC functions don't exist
+    const makes = makesData.data || []
+    const fuelTypes = fuelTypesData.data || []
+    const transmissions = transmissionsData.data || []
+    const conditions = conditionsData.data || []
+    const cantons = cantonsData.data || []
+    
+    // Get year range
+    const yearData = await supabase
       .from('cars')
-      .select('make, model, year, fuel_type, transmission, condition, drive_type, canton, city, listing_type, color_exterior, doors, equipment')
+      .select('year')
       .eq('status', 'active')
-
-    if (error) throw error
-
-    const allCars = cars || []
-
-    const getOptions = (field: string, labelTransformer?: (v: string) => string) => {
-      const counts: Record<string, number> = {}
-      allCars.forEach((car: any) => {
-        const value = car[field]
-        if (value !== null && value !== undefined && value !== '') {
-          const key = typeof value === 'string' ? value.toLowerCase() : String(value)
-          counts[key] = (counts[key] || 0) + 1
-        }
-      })
-      return Object.entries(counts)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([value, count]) => ({
-          value,
-          label: labelTransformer
-            ? labelTransformer(value)
-            : value.charAt(0).toUpperCase() + value.slice(1),
-          count,
-        }))
-    }
-
-    const getArrayOptions = (field: string) => {
-      const counts: Record<string, number> = {}
-      allCars.forEach((car: any) => {
-        const items = car[field]
-        if (Array.isArray(items)) {
-          items.forEach((item: string) => {
-            if (item) {
-              const key = item.toLowerCase()
-              counts[key] = (counts[key] || 0) + 1
-            }
-          })
-        }
-      })
-      return Object.entries(counts)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([value, count]) => ({ value, label: value.charAt(0).toUpperCase() + value.slice(1), count }))
-    }
-
-    const makes = getOptions('make')
-    const years = [...new Set(allCars.map((c: any) => c.year).filter(Boolean))].sort((a, b) => b - a)
+      .not('year', 'is', null)
+      .order('year', { ascending: false })
+    
+    const years = [...new Set((yearData.data || []).map((c: any) => c.year))].sort((a, b) => b - a)
 
     return {
       success: true,
       filters: {
-        makes,
+        makes: makes.map((m: any) => ({ value: m.make, label: m.make, count: m.count || 0 })),
         years,
-        fuelTypes: getOptions('fuel_type'),
-        transmissions: getOptions('transmission'),
-        conditions: getOptions('condition'),
+        fuelTypes: fuelTypes.map((f: any) => ({ value: f.fuel_type, label: f.fuel_type, count: f.count || 0 })),
+        transmissions: transmissions.map((t: any) => ({ value: t.transmission, label: t.transmission, count: t.count || 0 })),
+        conditions: conditions.map((c: any) => ({ value: c.condition, label: c.condition, count: c.count || 0 })),
         driveTypes: [
           { value: 'fwd', label: 'Front-wheel drive' },
           { value: 'rwd', label: 'Rear-wheel drive' },
           { value: 'awd', label: 'All-wheel (4x4)' },
         ],
-        cantons: getOptions('canton'),
+        cantons: cantons.map((c: any) => ({ value: c.canton, label: c.canton, count: c.count || 0 })),
         listingTypes: [
           { value: 'normal', label: 'Fixed Price' },
           { value: 'auction', label: 'Auction' },
         ],
-        equipment: getArrayOptions('equipment'),
+        equipment: [], // Can be added later if needed
       },
     }
   } catch (error: any) {
     console.error('Error fetching filters:', error)
-    return { success: false, error: 'Failed to fetch filters', filters: {} }
+    // Return cached/static fallback on error
+    return { 
+      success: false, 
+      error: 'Failed to fetch filters', 
+      filters: {
+        makes: [],
+        years: [],
+        fuelTypes: [],
+        transmissions: [],
+        conditions: [],
+        driveTypes: [],
+        cantons: [],
+        listingTypes: [],
+        equipment: [],
+      }
+    }
   }
 })

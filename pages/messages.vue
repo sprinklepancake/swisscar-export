@@ -147,6 +147,8 @@
                     :src="activeChatInfo.car.images?.[0] || '/placeholder-car.jpg'" 
                     :alt="activeChatInfo.carInfo"
                     class="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   >
                 </div>
                 <div class="flex-1">

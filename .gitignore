@@ -1,55 +1,39 @@
-```gitignore
-# Nuxt.js build outputs
-.output/
-.dist/
-.nuxt/
-.cache/
+```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+dist/
+build/
+target/
 
-# Node dependencies
+# Dependencies
+.venv/
+venv/
 node_modules/
+.mypy_cache/
+.pytest_cache/
+.gradle/
 
-# Environment variables
-.env
-.env.local
-*.env.*
-
-# Logs
+# Logs and temp files
 *.log
-
-# Temporary files
 *.tmp
 *.swp
 *.swo
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
+*.env.*
 
-# IDE specific
+# Editors
 .vscode/
 .idea/
 
-# Python (if present)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-venv/
-.venv/
-.env
-
-# Build artifacts
-dist/
-build/
-target/
-*.exe
-*.dll
-*.so
-*.a
-*.o
-*.obj
-*.out
+# System files
+.DS_Store
+Thumbs.db
 
 # Coverage
 coverage/

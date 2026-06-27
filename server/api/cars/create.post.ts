@@ -25,6 +25,12 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event)
 
+  console.log('[create] Received body:', body)
+
+  if (!body) {
+    throw createError({ statusCode: 400, statusMessage: 'Request body is missing or invalid. Ensure Content-Type is application/json.' })
+  }
+
   if (!body.canton || !body.city || !body.zipCode) {
     throw createError({ statusCode: 400, statusMessage: 'Location fields (canton, city, ZIP) are required' })
   }

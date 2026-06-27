@@ -1548,10 +1548,7 @@ const submitListing = async () => {
 
     const { data, error } = await useFetch('/api/cars/create', {
       method: 'POST',
-      body: submissionData,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      body: JSON.stringify(submissionData)
     })
 
     if (error.value) {

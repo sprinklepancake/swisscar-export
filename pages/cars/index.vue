@@ -35,17 +35,21 @@
           <div class="flex flex-col md:flex-row gap-4 mb-6">
             <div class="flex-1">
               <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('make_label') }}</label>
-              <select v-model="filters.make" @change="onMakeChange" class="search-input">
-                <option value="">{{ $t('any_make') }}</option>
-                <option v-for="make in carMakes" :key="make" :value="make">{{ make }}</option>
-              </select>
+              <TypeaheadSelect
+                v-model="filters.make"
+                :options="carMakes"
+                :placeholder="$t('any_make')"
+                @change="onMakeChange"
+              />
             </div>
             <div class="flex-1">
               <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('model_label') }}</label>
-              <select v-model="filters.model" class="search-input" :disabled="!filters.make">
-                <option value="">{{ $t('any_model') }}</option>
-                <option v-for="model in filteredModels" :key="model" :value="model">{{ model }}</option>
-              </select>
+              <TypeaheadSelect
+                v-model="filters.model"
+                :options="filteredModels"
+                :placeholder="$t('any_model')"
+                :disabled="!filters.make"
+              />
             </div>
             <div class="flex-1">
               <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('price_range_label') }}</label>

@@ -29,19 +29,24 @@
             <!-- Make Filter -->
             <div class="flex-1">
               <label class="block text-sm font-medium text-red-800 mb-2">{{ t('make_label') }}</label>
-              <select v-model="filters.make" @change="onMakeChange" class="search-input" :disabled="loadingFilters">
-                <option value="">{{ t('any_make') }}</option>
-                <option v-for="make in filterOptions.makes" :key="make" :value="make">{{ make }}</option>
-              </select>
+              <TypeaheadSelect
+                v-model="filters.make"
+                :options="filterOptions.makes"
+                :placeholder="t('any_make')"
+                :disabled="loadingFilters"
+                @change="onMakeChange"
+              />
             </div>
             
             <!-- Model Filter (dependent on make) -->
             <div class="flex-1">
               <label class="block text-sm font-medium text-red-800 mb-2">{{ t('model_label') }}</label>
-              <select v-model="filters.model" :disabled="!filters.make || loadingFilters" class="search-input">
-                <option value="">{{ t('any_model') }}</option>
-                <option v-for="model in filteredModels" :key="model" :value="model">{{ model }}</option>
-              </select>
+              <TypeaheadSelect
+                v-model="filters.model"
+                :options="filteredModels"
+                :placeholder="t('any_model')"
+                :disabled="!filters.make || loadingFilters"
+              />
             </div>
             
             <!-- Price Range -->
@@ -688,7 +693,6 @@ const getFeatureIcon = (_iconName: string) => {
   return 'div'
 }
 </script>
-
 
 <style scoped>
 .search-button {

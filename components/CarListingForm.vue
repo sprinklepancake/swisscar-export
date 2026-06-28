@@ -583,9 +583,8 @@
             <div v-if="form.images.length > 0" class="mt-4"><div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4"><div v-for="(image, index) in form.images" :key="index" class="relative group"><img :src="image.url" :alt="`Car image ${index + 1}`" class="w-full h-20 sm:h-24 object-cover rounded-lg" :class="{ 'opacity-50': image.uploading }" loading="lazy" decoding="async"><div v-if="image.uploading" class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div></div><div v-if="image.error" class="absolute inset-0 flex items-center justify-center bg-red-500/60 rounded-lg"><span class="text-white text-xs font-bold">Failed</span></div><button @click="removeImage(index)" class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors">×</button></div></div><p class="text-gray-600 text-xs sm:text-sm mt-2">{{ form.images.filter(img => !img.error && !img.uploading).length }} / {{ form.images.length }} photos uploaded</p></div>
           </div>
           <div>
-            <label class="swiss-form-label">{{ $t('car_listing_form.description') }} *</label>
-            <textarea v-model="form.description" :placeholder="$t('car_listing_form.description_placeholder')" class="swiss-form-input p-3 h-32 sm:h-40 resize-none text-sm sm:text-base" rows="6" required @input="validateDescription"></textarea>
-            <p class="text-gray-500 text-xs mt-1" :class="{ 'text-red-500': form.description.length < 50 }">{{ $t('car_listing_form.minimum_characters', { current: form.description.length, required: 50 }) }}</p>
+            <label class="swiss-form-label">{{ $t('car_listing_form.description') }}</label>
+            <textarea v-model="form.description" :placeholder="$t('car_listing_form.description_placeholder')" class="swiss-form-input p-3 h-32 sm:h-40 resize-none text-sm sm:text-base" rows="6"></textarea>
           </div>
           <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
             <label class="flex items-start"><input type="checkbox" v-model="form.acceptedTerms" class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 mt-1"><span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm">{{ $t('car_listing_form.accept_terms') }} <a href="/terms" class="text-red-600 hover:underline">{{ $t('car_listing_form.terms_and_conditions') }}</a> {{ $t('car_listing_form.confirm_accuracy') }}</span></label>
@@ -780,9 +779,8 @@ const formProgress = computed(() => {
       currentStepProgress = (getCompletedFields(['canton', 'city', 'zipCode', 'sellerType', 'sellerName', 'sellerPhone', 'sellerEmail']) / 7) * 20
       break
     case 5:
-      const descriptionComplete = form.value.description.length >= 50 ? 1 : 0
       const termsComplete = form.value.acceptedTerms ? 1 : 0
-      currentStepProgress = ((descriptionComplete + termsComplete) / 2) * 20
+      currentStepProgress = (termsComplete / 2) * 20
       break
   }
   
@@ -1424,8 +1422,6 @@ const removeImage = (index: number) => {
   form.value.images.splice(index, 1)
 }
 
-const validateDescription = () => {}
-
 const getStepClass = (stepId: number) => {
   const mainStep = currentMainStep.value
   if (stepId < mainStep) {
@@ -1449,8 +1445,8 @@ const getStepTextClass = (stepId: number) => {
 const submitListing = async () => {
   console.log('🚀 Starting submission process...')
   
-  if (!isFinalStepValid.value) {
-    alert(t('car_listing_form.complete_required_fields') || 'Please complete all required fields: write a description (50+ characters) and accept the terms and conditions.')
+  if (!form.value.acceptedTerms) {
+    alert(t('car_listing_form.accept_terms_required') || 'Please accept the terms and conditions.')
     return
   }
 
@@ -1548,7 +1544,7 @@ const submitListing = async () => {
 
     const { data, error } = await useFetch('/api/cars/create', {
       method: 'POST',
-      body: JSON.stringify(submissionData)
+      body: submissionData
     })
 
     if (error.value) {

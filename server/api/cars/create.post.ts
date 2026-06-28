@@ -23,19 +23,21 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const body = await readBody(event)
-
-  console.log('[create] Received body:', body)
-
-  if (!body) {
-    throw createError({ statusCode: 400, statusMessage: 'Request body is missing or invalid. Ensure Content-Type is application/json.' })
-  }
-
-  if (!body.canton || !body.city || !body.zipCode) {
-    throw createError({ statusCode: 400, statusMessage: 'Location fields (canton, city, ZIP) are required' })
-  }
-
   try {
+    const body = await readBody(event)
+    
+    console.log('[create] Received body:', body)
+    console.log('[create] Body type:', typeof body)
+    console.log('[create] Body keys:', body ? Object.keys(body) : 'N/A')
+
+    if (!body || typeof body !== 'object') {
+      throw createError({ statusCode: 400, statusMessage: 'Request body is missing or invalid. Ensure Content-Type is application/json.' })
+    }
+
+    if (!body.canton || !body.city || !body.zipCode) {
+      throw createError({ statusCode: 400, statusMessage: 'Location fields (canton, city, ZIP) are required' })
+    }
+
     const supabase = getSupabaseAdmin()
 
     // Check if seller is in their free period (first 6 months)

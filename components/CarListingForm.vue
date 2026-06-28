@@ -1232,7 +1232,6 @@ const submitListing = async () => {
     const data = await $fetch('/api/cars/create', {
       method: 'POST',
       body: submissionData
-      body: submissionData
     })
 
     if (data) {

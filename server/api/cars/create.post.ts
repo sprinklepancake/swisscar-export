@@ -26,11 +26,22 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const body = await readBody(event)
+    let body: any = await readBody(event)
+
+    // Some clients/proxies deliver the JSON body as a raw string. Parse it
+    // instead of rejecting, and log what actually arrived if it's unusable.
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body) } catch { /* leave as-is; handled below */ }
+    }
 
     if (!body || typeof body !== 'object') {
+      console.error('[cars/create] Unusable body. typeof:', typeof body,
+        '| preview:', typeof body === 'string' ? body.slice(0, 300) : JSON.stringify(body))
       throw createError({ statusCode: 400, statusMessage: 'Request body is missing or invalid. Ensure Content-Type is application/json.' })
     }
+
+    console.log('[cars/create] body received. keys:', Object.keys(body).length,
+      '| make/model:', body.make, body.model, '| typenschein:', !!body.typenscheinData)
 
     // ── Validate NOT NULL columns up front, name the culprit clearly ────
     const missing = REQUIRED.filter((k) => {

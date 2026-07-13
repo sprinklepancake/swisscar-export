@@ -2,12 +2,12 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
     <!-- Navigation Header - iOS fix: removed transform:translateZ(0), added overflow-visible -->
-    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm will-change-transform overflow-visible">
+    <header class="relative z-50 bg-white border-b border-red-200 shadow-sm overflow-visible">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 
           <!-- Logo - iOS fix: added min-w-0, overflow-hidden, and safe-area padding to prevent overlap with menu button -->
-          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0 max-w-[35%] sm:max-w-none pl-[env(safe-area-inset-left,8px)]">
+          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0">
             <img
               src="../assets/images/swiss.svg"
               :alt="t('logo_alt')"
@@ -322,6 +322,9 @@
               <li><NuxtLink :to="localePath('/cars')" class="footer-link">{{ t('cars') }}</NuxtLink></li>
               <li><NuxtLink :to="localePath('/shipping')" class="footer-link">{{ t('shipping') }}</NuxtLink></li>
               <li><NuxtLink :to="localePath('/contact')" class="footer-link">{{ t('contact') }}</NuxtLink></li>
+              <li><NuxtLink :to="localePath('/terms')" class="footer-link">Terms of Service</NuxtLink></li>
+              <li><NuxtLink :to="localePath('/privacy')" class="footer-link">Privacy Policy</NuxtLink></li>
+              <li><NuxtLink :to="localePath('/impressum')" class="footer-link">Legal Notice</NuxtLink></li>
             </ul>
           </div>
           <div>

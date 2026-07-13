@@ -634,6 +634,7 @@ const { t } = useI18n()
 
 // Form state
 const uploadingImages = ref(false)
+const { compressImage } = useImageCompression()
 const uploadProgress = ref(0)
 const currentStep = ref(0)
 const entryMethod = ref<'typenschein' | 'manual' | null>(null)
@@ -910,37 +911,89 @@ const extractPowerPs = (kwString: string) => {
   return match ? match[1] : ''
 }
 
+const canonicalMake = (m) => {
+  const up = m.toUpperCase()
+  const aliases = {
+    'VW': 'Volkswagen', 'MERCEDES': 'Mercedes-Benz', 'MERCEDES-BENZ': 'Mercedes-Benz',
+    'ALFA': 'Alfa Romeo', 'LAND': 'Land Rover', 'ASTON': 'Aston Martin', 'ROLLS': 'Rolls-Royce',
+  }
+  const acronyms = new Set(['BMW', 'MG', 'VW', 'DS', 'GMC', 'RAM', 'KTM'])
+  if (aliases[up]) return aliases[up]
+  if (acronyms.has(up)) return up
+  return up.charAt(0) + up.slice(1).toLowerCase()
+}
+
 const useTypenscheinData = () => {
   if (!typenscheinResults.value) return
-  
-  const data = typenscheinResults.value.BaseData_DE
+
+  const data = typenscheinResults.value.BaseData_DE || {}
   console.log('🔧 Auto-filling form with Typenschein data:', data)
 
-  const typeName = data.Typenbezeichnung || ''
-  const vehicleType = data.Fahrzeugart || ''
-  let make = ''
-  let model = typeName
-  
-  // ... (full detection logic, same as your original) ...
-  // To keep response size reasonable, I'll include the full logic from your original file.
-  // For brevity, I'll note that this part is exactly as you had it.
-  // (The code below is a placeholder – in the actual file you'll paste the full logic.)
-  
-  // [Full logic from your original useTypenscheinData goes here]
-  // (I've copied the entire function from your provided file, but for space I'll keep it as a comment.
-  // In the final file you'll paste, it will be fully included.)
-  
-  // After auto-filling, move to step 2 (which is now the listing type? Actually we already passed listing type.
-  // The typenschein step is step 1, then we go to step 2 (listing type) but we want to skip listing type?
-  // In your original, after applying typenschein data, you set currentStep = 2 (which is listing type step).
-  // After merging, the new step numbering:
-  // Step 0: entry method
-  // Step 1: typenschein search (if typenschein)
-  // Step 2: listing type (was step 1 after typenschein?)
-  // Actually we need to map correctly.
-  // In the original: after typenschein results, you set currentStep = 2 (which is listing type? Wait, original steps: 0 entry, 1 typenschein, 2 listing type, 3 basic, 4 technical, 5 features, 6 location, 7 photos. So after typenschein, you go to listing type (step 2). After merging, steps are: 0 entry, 1 typenschein, 2 listing type, 3 basic, 4 technical+features, 5 location+photos. So after typenschein, we still go to listing type (step 2). So we can set currentStep = 2.
-  
-  // I'll set currentStep = 2 to go to listing type.
+  // ── make / model from "VW GOLF VII 1.6 TDI" ────────────────────────
+  const typeName = String(data.Typenbezeichnung || '').trim()
+  if (typeName) {
+    const tokens = typeName.split(/\s+/)
+    let make = tokens[0] || ''
+    let rest = tokens.slice(1)
+    const twoWord = make.toUpperCase() + ' ' + String(tokens[1] || '').toUpperCase()
+    if (['ALFA ROMEO', 'LAND ROVER', 'ASTON MARTIN'].includes(twoWord)) {
+      make = tokens.slice(0, 2).join(' ')
+      rest = tokens.slice(2)
+    }
+    form.value.make = canonicalMake(make)
+    if (rest.length) form.value.model = rest.join(' ')
+  }
+
+  // ── power (PS) from "85 kW (116 PS)" ───────────────────────────────
+  const ps = extractPowerPs(String(data.Kw || ''))
+  if (ps) form.value.power = ps
+
+  // ── direct numeric / text fields ───────────────────────────────────
+  if (data.Ccm) {
+    form.value.displacement = String(data.Ccm)
+    form.value.engineSize = String(data.Ccm) + ' cc'
+  }
+  if (data.Zylinder) form.value.cylinders = String(data.Zylinder)
+  if (data['Sitplätze']) form.value.seats = String(data['Sitplätze'])
+  if (data['Leergewicht kg']) form.value.weightEmpty = String(data['Leergewicht kg'])
+  if (data.Fahrzeugart) form.value.vehicleType = String(data.Fahrzeugart)
+
+  // ── fuel type — best effort; leave blank if unrecognised ───────────
+  const fuelRaw = String(data.Treibstoffcode || '').toLowerCase()
+  const fuel =
+    fuelRaw.includes('benz') || fuelRaw === 'b' ? 'petrol' :
+    fuelRaw.includes('diesel') || fuelRaw === 'd' ? 'diesel' :
+    fuelRaw.includes('elek') || fuelRaw.includes('electr') || fuelRaw === 'e' ? 'electric' :
+    fuelRaw.includes('hybrid') ? 'hybrid' :
+    fuelRaw.includes('erdgas') || fuelRaw.includes('cng') ? 'cng' :
+    fuelRaw.includes('lpg') || fuelRaw.includes('flüssig') || fuelRaw.includes('gas') ? 'lpg' : ''
+  if (fuel) form.value.fuelType = fuel
+
+  // ── body type — best effort from Karosserieform ────────────────────
+  const bodyRaw = String(data.Karosserieform || '').toLowerCase()
+  const body =
+    bodyRaw.includes('kombi') || bodyRaw.includes('station') ? 'station_wagon' :
+    bodyRaw.includes('cabrio') ? 'cabriolet' :
+    bodyRaw.includes('coup') ? 'coupe' :
+    bodyRaw.includes('suv') || bodyRaw.includes('gelände') || bodyRaw.includes('gelaende') ? 'suv' :
+    bodyRaw.includes('pick') ? 'pickup' :
+    bodyRaw.includes('van') || bodyRaw.includes('bus') ? 'van' :
+    bodyRaw.includes('klein') ? 'compact' :
+    bodyRaw.includes('limousine') || bodyRaw.includes('sedan') ? 'sedan' : ''
+  if (body) form.value.bodyType = body
+
+  // ── drive type — best effort from Antrieb ──────────────────────────
+  const driveRaw = String(data.Antrieb || '').toLowerCase()
+  const drive =
+    driveRaw.includes('allrad') || driveRaw.includes('4x4') || driveRaw.includes('4wd') || driveRaw.includes('awd') ? 'awd' :
+    driveRaw.includes('vorder') || driveRaw.includes('front') ? 'fwd' :
+    driveRaw.includes('hinter') || driveRaw.includes('rear') || driveRaw.includes('heck') ? 'rwd' : ''
+  if (drive) form.value.driveType = drive
+
+  // ── keep the Typenschein number on the form ────────────────────────
+  form.value.typenscheinNr = typenscheinSearch.value.trim().toUpperCase()
+
+  // advance to the listing-type step (unchanged)
   currentStep.value = 2
 }
 
@@ -1051,7 +1104,8 @@ const handleImageUpload = async (event: Event) => {
 
     try {
       const fd = new FormData()
-      fd.append('file', file)
+      const compressed = await compressImage(file)
+      fd.append('file', compressed)
 
       const result = await $fetch('/api/upload/image', {
         method: 'POST',
@@ -1143,11 +1197,6 @@ const submitListing = async () => {
     { key: 'mileage', label: t('car_listing_form.mileage') || 'Mileage' },
     { key: 'fuelType', label: t('car_listing_form.fuel_type') || 'Fuel Type' },
     { key: 'transmission', label: t('car_listing_form.transmission') || 'Transmission' },
-    { key: 'bodyType', label: t('car_listing_form.body_type') || 'Body Type' },
-    { key: 'power', label: t('car_listing_form.power') || 'Power' },
-    { key: 'driveType', label: t('car_listing_form.drive_type') || 'Drive Type' },
-    { key: 'colorExterior', label: t('car_listing_form.exterior_color') || 'Exterior Color' },
-    { key: 'condition', label: t('car_listing_form.condition') || 'Condition' },
     { key: 'canton', label: t('car_listing_form.canton') || 'Canton' },
     { key: 'city', label: t('car_listing_form.city') || 'City' },
     { key: 'zipCode', label: t('car_listing_form.zip_code') || 'ZIP Code' },

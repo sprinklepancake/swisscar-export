@@ -221,6 +221,21 @@
             />
             <p class="text-red-600 text-xs mt-1">{{ t('register.id_upload_help') }}</p>
             <div v-if="idFile" class="mt-2 text-sm text-green-700">{{ idFileName }}</div>
+            <div class="flex items-start mt-3">
+              <div class="flex items-center h-5">
+                <input
+                  id="idConsent"
+                  v-model="form.idConsent"
+                  type="checkbox"
+                  required
+                  class="w-4 h-4 rounded bg-white border-red-300 text-red-600 focus:ring-red-500"
+                />
+              </div>
+              <label for="idConsent" class="ms-2 text-sm text-red-700">
+                I explicitly consent to SwissCarExport processing my identity document for the sole purpose of verifying my identity, as described in the
+                <a href="/privacy" class="text-red-800 hover:underline">Privacy Policy</a>. *
+              </label>
+            </div>
           </div>
 
           <!-- Passwords -->
@@ -316,7 +331,7 @@
           <!-- Submit Button -->
           <button
             type="submit"
-            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || (form.role === 'buyer' && form.buyerType === 'auction' && !idFile)"
+            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || (form.role === 'buyer' && form.buyerType === 'auction' && (!idFile || !form.idConsent))"
             class="w-full py-3 px-4 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200 disabled:opacity-50 mt-4"
           >
             <span v-if="loading">{{ t('register.creating_account') || 'Creating account...' }}</span>
@@ -409,7 +424,8 @@ const form = ref({
   streetAddress: '',
   termsAccepted: false,
   privacyAccepted: false,
-  marketingAccepted: false
+  marketingAccepted: false,
+  idConsent: false
 })
 
 const loading = ref(false)

@@ -1,21 +1,23 @@
 // server/api/cars/create.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
+// Columns that are NOT NULL in the DB. If any is missing the insert 500s with
+// a cryptic error, so we check them here and return a clear message instead.
+const REQUIRED = ['make', 'model', 'year', 'mileage', 'fuelType', 'transmission', 'canton', 'city', 'zipCode'] as const
+const CONDITIONS = ['excellent', 'good', 'fair', 'poor']
+
 export default defineEventHandler(async (event) => {
   const user = event.context.user
 
   if (!user) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized. Please log in.' })
   }
-
   if (user.role !== 'seller' && user.role !== 'admin') {
     throw createError({ statusCode: 403, statusMessage: 'Only sellers can create listings.' })
   }
-
   if (user.banned) {
     throw createError({ statusCode: 403, statusMessage: 'Your account has been banned.' })
   }
-
   if (!user.verified) {
     throw createError({
       statusCode: 403,
@@ -25,22 +27,26 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event)
-    
-    console.log('[create] Received body:', body)
-    console.log('[create] Body type:', typeof body)
-    console.log('[create] Body keys:', body ? Object.keys(body) : 'N/A')
 
     if (!body || typeof body !== 'object') {
       throw createError({ statusCode: 400, statusMessage: 'Request body is missing or invalid. Ensure Content-Type is application/json.' })
     }
 
-    if (!body.canton || !body.city || !body.zipCode) {
-      throw createError({ statusCode: 400, statusMessage: 'Location fields (canton, city, ZIP) are required' })
+    // ── Validate NOT NULL columns up front, name the culprit clearly ────
+    const missing = REQUIRED.filter((k) => {
+      const v = (body as any)[k]
+      return v === undefined || v === null || v === ''
+    })
+    if (missing.length > 0) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Missing required field(s): ${missing.join(', ')}. Please complete the form before publishing.`,
+      })
     }
 
     const supabase = getSupabaseAdmin()
 
-    // Check if seller is in their free period (first 6 months)
+    // ── Free-period check (first 6 months) ─────────────────────────────
     const { data: sellerProfile } = await supabase
       .from('users')
       .select('funds, created_at, free_feature_credits')
@@ -55,7 +61,6 @@ export default defineEventHandler(async (event) => {
     const listingType = body.listingType || 'normal'
     const listingFee = listingType === 'auction' ? 10 : 7.5
 
-    // Check balance if not in free period
     if (!isFirstSixMonths) {
       const currentFunds = parseFloat(sellerProfile?.funds || 0)
       if (currentFunds < listingFee) {
@@ -66,38 +71,43 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Calculate auction end if applicable
+    // ── Auction end ────────────────────────────────────────────────────
     let auctionEndDate: string | null = null
     if (listingType === 'auction') {
       const durationDays = body.auctionDurationDays || 7
-      const durationHours = durationDays * 24
       const endDate = new Date()
-      endDate.setHours(endDate.getHours() + durationHours)
+      endDate.setHours(endDate.getHours() + durationDays * 24)
       auctionEndDate = endDate.toISOString()
     }
 
-    // Build the car record (snake_case for Supabase)
+    // ── Normalise power; write to every power column the app reads ──────
+    const powerPs = body.power ? parseInt(body.power) : null
+    const powerKw = powerPs ? Math.round(powerPs / 1.36) : null
+
+    // ── Keep condition inside the DB CHECK constraint ──────────────────
+    const condition = CONDITIONS.includes(body.condition) ? body.condition : 'good'
+
     const carData = {
       seller_id: user.id,
       make: body.make,
       model: body.model,
-      year: body.year ? parseInt(body.year) : null,
+      year: parseInt(body.year),
       price: body.price ? parseFloat(body.price) : null,
       starting_price: body.startingPrice ? parseFloat(body.startingPrice) : null,
       reserve_price: body.reservePrice ? parseFloat(body.reservePrice) : null,
-      mileage: body.mileage ? parseInt(body.mileage) : null,
-      fuel_type: body.fuelType || null,
-      transmission: body.transmission || null,
+      mileage: parseInt(body.mileage),
+      fuel_type: body.fuelType,
+      transmission: body.transmission,
       engine_size: body.engineSize || null,
-      power: body.power ? parseInt(body.power) : null,
+      power: powerPs,
+      power_ps: powerPs,
+      power_kw: powerKw,
       drive_type: body.driveType || null,
-      // ✅ FIXED: was missing entirely
       body_type: body.bodyType || null,
-      condition: body.condition || null,
+      condition,
       color: body.colorExterior || body.color || null,
       color_exterior: body.colorExterior || null,
       color_interior: body.colorInterior || null,
-      // ✅ FIXED: were missing entirely
       doors: body.doors ? parseInt(body.doors) : null,
       seats: body.seats ? parseInt(body.seats) : null,
       cylinders: body.cylinders ? parseInt(body.cylinders) : null,
@@ -106,12 +116,12 @@ export default defineEventHandler(async (event) => {
       canton: body.canton,
       city: body.city,
       zip_code: body.zipCode,
-      // ✅ FIXED: was missing
       street_address: body.streetAddress || null,
-      // ✅ FIXED: was missing
       seller_type: body.sellerType || null,
+      seller_name: body.sellerName || user.name,
+      seller_email: body.sellerEmail || user.email,
+      seller_phone: body.sellerPhone || null,
       description: body.description || '',
-      // These are jsonb/array columns — [] is correct
       images: Array.isArray(body.images) ? body.images : [],
       equipment: Array.isArray(body.equipment) ? body.equipment : [],
       vin: body.vin || null,
@@ -120,21 +130,18 @@ export default defineEventHandler(async (event) => {
       typenschein_nr: body.typenscheinNr || null,
       typenschein_data: body.typenscheinData || null,
       vehicle_type: body.vehicleType || null,
-      // ✅ FIXED: all 4 boolean columns — were getting [] or missing entirely
       export_documents: !!body.exportDocuments,
       with_warranty: !!body.withWarranty,
       valid_inspection: !!body.validInspection,
       has_accident: !!body.hasAccident,
       listing_type: listingType,
-      status: 'active',
+      status: listingType === 'auction' ? 'auction' : 'active',
       is_featured: false,
       auction_end: auctionEndDate,
       current_bid: null,
       bid_count: 0,
       views: 0,
       listing_fee_paid: isFirstSixMonths ? 0 : listingFee,
-      seller_name: user.name,
-      seller_email: user.email,
     }
 
     const { data: newCar, error: carError } = await supabase
@@ -143,19 +150,24 @@ export default defineEventHandler(async (event) => {
       .select()
       .single()
 
-    if (carError) throw carError
+    if (carError) {
+      // Surface the REAL Postgres reason — this is what was missing before.
+      console.error('[cars/create] Supabase insert failed:', {
+        message: carError.message,
+        details: carError.details,
+        hint: carError.hint,
+        code: carError.code,
+      })
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Could not save listing: ${carError.message}${carError.details ? ' — ' + carError.details : ''}`,
+      })
+    }
 
-    // Deduct listing fee if not free period
     if (!isFirstSixMonths) {
       const currentFunds = parseFloat(sellerProfile?.funds || 0)
       const newBalance = currentFunds - listingFee
-
-      await supabase
-        .from('users')
-        .update({ funds: newBalance })
-        .eq('id', user.id)
-
-      // Log transaction
+      await supabase.from('users').update({ funds: newBalance }).eq('id', user.id)
       await supabase.from('transaction_logs').insert({
         user_id: user.id,
         type: 'listing_fee',
@@ -175,7 +187,7 @@ export default defineEventHandler(async (event) => {
       listingFee: isFirstSixMonths ? 0 : listingFee,
     }
   } catch (error: any) {
-    console.error('Error creating car listing:', error)
+    console.error('[cars/create] Error creating car listing:', error?.message || error)
     if (error.statusCode) throw error
     throw createError({ statusCode: 500, statusMessage: error.message || 'Internal server error' })
   }

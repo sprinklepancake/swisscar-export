@@ -1,5 +1,9 @@
 // server/api/auth/register.post.ts
+// SECURITY FIX: ID documents uploaded at registration now go to the PRIVATE
+// 'user-documents' bucket and we store only the storage PATH (not a public URL).
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+
+const PRIVATE_BUCKET = 'user-documents'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -16,7 +20,6 @@ export default defineEventHandler(async (event) => {
   let authUserId: string | null = null
 
   try {
-    console.log('[register] Creating auth user for:', email)
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -24,7 +27,6 @@ export default defineEventHandler(async (event) => {
     })
 
     if (authError) {
-      console.error('[register] Auth error:', authError)
       const msg = authError.message.toLowerCase()
       if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('duplicate')) {
         throw createError({ statusCode: 400, statusMessage: 'Email already in use' })
@@ -34,10 +36,9 @@ export default defineEventHandler(async (event) => {
 
     if (!authData.user) throw createError({ statusCode: 500, statusMessage: 'Failed to create auth user' })
     authUserId = authData.user.id
-    console.log('[register] Auth user created:', authUserId)
 
-    // Upload ID document server-side using admin client (user is not yet authenticated client-side)
-    let resolvedIdDocumentUrl: string | null = idDocumentUrl || null
+    // Upload ID document to the PRIVATE bucket; store the PATH only.
+    let resolvedIdDocumentPath: string | null = idDocumentUrl || null
     if (idFileBase64 && idFileMimeType) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf']
       if (allowedTypes.includes(idFileMimeType)) {
@@ -47,11 +48,10 @@ export default defineEventHandler(async (event) => {
           const filePath = `id-documents/${fileName}`
           const fileBuffer = Buffer.from(idFileBase64, 'base64')
           const { error: uploadError } = await supabase.storage
-            .from('car-images')
+            .from(PRIVATE_BUCKET)
             .upload(filePath, fileBuffer, { contentType: idFileMimeType, upsert: false })
           if (!uploadError) {
-            const { data: { publicUrl } } = supabase.storage.from('car-images').getPublicUrl(filePath)
-            resolvedIdDocumentUrl = publicUrl
+            resolvedIdDocumentPath = filePath
           } else {
             console.warn('[register] ID upload failed (non-blocking):', uploadError.message)
           }
@@ -67,39 +67,13 @@ export default defineEventHandler(async (event) => {
       .eq('auth_uid', authUserId)
       .maybeSingle()
 
-    if (existing) {
-      console.log('[register] Profile already exists (trigger), updating:', existing.id)
-      const isSeller = (role || 'buyer') === 'seller'
-      await supabase.from('users').update({
-        name,
-        phone: phone || null,
-        role: role || 'buyer',
-        buyer_type: buyerType || 'direct',
-        id_document_url: resolvedIdDocumentUrl,
-        company_name: isSeller ? (companyName || null) : null,
-        business_type: isSeller ? (businessType || null) : null,
-        canton: canton || null,
-        city: city || null,
-        zip_code: zipCode || null,
-        country: country || 'Switzerland',
-        tax_id: isSeller ? (taxId || null) : null,
-        street_address: streetAddress || null,
-      }).eq('id', existing.id)
-
-      return { success: true, userId: existing.id }
-    }
-
     const isSeller = (role || 'buyer') === 'seller'
-    console.log('[register] Inserting profile row, isSeller:', isSeller, 'buyerType:', buyerType)
-
-    const { data: profile, error: profileError } = await supabase.from('users').insert({
-      auth_uid: authUserId,
-      email,
+    const profileFields = {
       name,
       phone: phone || null,
       role: role || 'buyer',
       buyer_type: buyerType || 'direct',
-      id_document_url: resolvedIdDocumentUrl,
+      id_document_url: resolvedIdDocumentPath,
       company_name: isSeller ? (companyName || null) : null,
       business_type: isSeller ? (businessType || null) : null,
       canton: canton || null,
@@ -108,6 +82,17 @@ export default defineEventHandler(async (event) => {
       country: country || 'Switzerland',
       tax_id: isSeller ? (taxId || null) : null,
       street_address: streetAddress || null,
+    }
+
+    if (existing) {
+      await supabase.from('users').update(profileFields).eq('id', existing.id)
+      return { success: true, userId: existing.id }
+    }
+
+    const { data: profile, error: profileError } = await supabase.from('users').insert({
+      auth_uid: authUserId,
+      email,
+      ...profileFields,
       funds: 0,
       verified: false,
       banned: false,
@@ -119,11 +104,9 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 500, statusMessage: 'Registration failed: ' + profileError.message })
     }
 
-    console.log('[register] Profile created:', profile.id)
     return { success: true, userId: profile.id }
-
   } catch (error: any) {
-    console.error('[register] Unhandled error:', error)
+    console.error('[register] Unhandled error:', error?.message || error)
     if (authUserId && !error.statusCode) {
       await supabase.auth.admin.deleteUser(authUserId).catch(() => {})
     }

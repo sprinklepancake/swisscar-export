@@ -148,7 +148,7 @@
           </div>
 
           <!-- Search Results -->
-          <div v-if="typenscheinResults" class="mt-4 sm:mt-6">
+          <div v-if="typenscheinResults && typenscheinResults.BaseData_DE" class="mt-4 sm:mt-6">
             <div class="bg-green-50 border border-green-200 rounded-lg p-4 sm:p-6">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
                 <div class="flex-1">
@@ -166,7 +166,7 @@
                     </div>
                     <div class="p-2 bg-white rounded border border-green-100">
                       <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.power') }}</span>
-                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE.Kw }} ({{ extractPowerPs(typenscheinResults.BaseData_DE.Kw) }} PS)</span>
+                      <span class="font-medium text-gray-900">{{ typenscheinResults.BaseData_DE?.Kw }} ({{ extractPowerPs(typenscheinResults.BaseData_DE?.Kw) }} PS)</span>
                     </div>
                     <div class="p-2 bg-white rounded border border-green-100">
                       <span class="text-gray-500 text-xs block">{{ $t('car_listing_form.fuel_type') }}</span>
@@ -906,8 +906,8 @@ const searchTypenschein = async () => {
   }
 }
 
-const extractPowerPs = (kwString: string) => {
-  const match = kwString.match(/\((\d+) PS\)/)
+const extractPowerPs = (kwString: any) => {
+  const match = String(kwString || '').match(/\((\d+) PS\)/)
   return match ? match[1] : ''
 }
 

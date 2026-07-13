@@ -758,9 +758,13 @@
 </template>
 
 <script setup lang="ts">
-import ChatSystem from '~/components/ChatSystem.vue'
-import FeatureButton from '~/components/FeatureButton.vue'
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
+
+// Both are heavy and only rendered conditionally (chat modal on interaction,
+// feature button for owners), so load them as separate chunks instead of
+// bundling them into the detail-page's initial JS.
+const ChatSystem = defineAsyncComponent(() => import('~/components/ChatSystem.vue'))
+const FeatureButton = defineAsyncComponent(() => import('~/components/FeatureButton.vue'))
 
 const route = useRoute()
 const { t } = useI18n()

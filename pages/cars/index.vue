@@ -770,13 +770,17 @@ const getEquipmentLabel = (v: string) => equipmentFeatures.find(f => f.value ===
 
 // ─── Format helpers ───────────────────────────────────────────────────────────
 const formatNumber = (n: number) => n?.toLocaleString() || '0'
-const formatFuelType = (v: string) => ({ petrol: 'Petrol', diesel: 'Diesel', electric: 'Electric', hybrid: 'Hybrid', lpg: 'LPG', cng: 'CNG' }[v] || v)
-const formatTransmission = (v: string) => ({ manual: 'Manual', automatic: 'Automatic', semi_automatic: 'Semi-Automatic' }[v] || v)
-const formatBodyType = (v: string) => bodyTypes.find(t => t.value === v)?.label || v
-const formatDriveType = (v: string) => ({ fwd: 'Front-wheel drive', rwd: 'Rear-wheel drive', awd: 'All-wheel drive' }[v] || v)
-const formatCondition = (v: string) => ({ excellent: 'Excellent', good: 'Good', fair: 'Fair', poor: 'Poor' }[v] || v)
-const formatColor = (v: string) => [...exteriorColors, ...interiorColors].find(c => c.value === v)?.label || v
-const formatSellerType = (v: string) => ({ private: 'Private Seller', dealer: 'Car Dealer', business: 'Business' }[v] || v)
+// Localized display helpers. `tr` returns the translation, or the English
+// fallback when the key is absent (vue-i18n echoes the key back on a miss),
+// so unusual values still render sensibly instead of showing a raw key.
+const tr = (key: string, fallback: string) => { const r = t(key); return r === key ? fallback : r }
+const formatFuelType = (v: string) => v ? tr(`fuel_${v}`, v) : v
+const formatTransmission = (v: string) => !v ? v : (v === 'semi_automatic' ? tr('car_listing_form.semi_automatic', 'Semi-Automatic') : tr(`transmission_${v}`, v))
+const formatBodyType = (v: string) => { const b = bodyTypes.find(bt => bt.value === v); return v ? tr(`body_types.${v}`, b?.label || v) : v }
+const formatDriveType = (v: string) => v ? tr(`drive_types.${v}`, v) : v
+const formatCondition = (v: string) => v ? tr(`condition_${v}`, v) : v
+const formatColor = (v: string) => { const c = [...exteriorColors, ...interiorColors].find(c => c.value === v); return v ? tr(`colors.${v}`, c?.label || v) : v }
+const formatSellerType = (v: string) => v ? tr(`car_listing_form.seller_types.${v}`, v) : v
 
 const getStatusClass = (status: string) => {
   switch (status?.toLowerCase()) {

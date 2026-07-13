@@ -32,11 +32,16 @@ export default defineNuxtConfig({
       brotli: true,
       gzip: true,
     },
-    // Add route rules for caching
+    // Add route rules for caching.
+    // IMPORTANT: only cache read-only GET endpoints. A blanket '/api/cars/**'
+    // rule also matches POST/DELETE routes (create, bid, feature, delete…),
+    // and Nitro's cached handler does NOT forward the request body — so
+    // readBody() returns undefined and every mutation 400s. Cache each safe
+    // GET path explicitly instead.
     routeRules: {
       '/': { prerender: true, cache: { maxAge: 300, swr: true } },
       '/en': { prerender: true, cache: { maxAge: 300, swr: true } },
-      '/api/cars/**': { cache: { maxAge: 60, swr: true } },
+      '/api/cars': { cache: { maxAge: 60, swr: true } },
       '/api/cars/featured': { cache: { maxAge: 120, swr: true } },
       '/api/cars/filters': { cache: { maxAge: 300, swr: true } },
       '/**': { cors: true },

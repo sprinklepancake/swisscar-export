@@ -644,6 +644,15 @@ watch(sortBy, () => {
   cars.value = [...cars.value]
 })
 
+// ─── Data (SSR + hydration) ───────────────────────────────────────────────────
+// Fetch the list during server render so the first paint already has cars —
+// no client-side fetch waterfall, no empty flash on mobile. Nuxt dedupes and
+// hydrates the payload, so the browser doesn't refetch on load.
+const { data: carsData } = useAsyncData('cars-list', () => $fetch('/api/cars'), {
+  default: () => [] as any[],
+})
+watch(carsData, (v) => { if (Array.isArray(v)) cars.value = v as any[] }, { immediate: true })
+
 // ─── Computed ────────────────────────────────────────────────────────────────
 const filteredModels = computed(() => {
   if (!filters.value.make) return []
@@ -809,14 +818,7 @@ onMounted(async () => {
   if (q.equipment) { const e = q.equipment; filters.value.equipment = Array.isArray(e) ? e as string[] : [e as string] }
   if (q.sort) sortBy.value = q.sort as string
 
-  // Then fetch cars
-  try {
-    const response = await $fetch('/api/cars')
-    cars.value = response as any[]
-  } catch (error) {
-    console.error('Failed to fetch cars:', error)
-  }
-
+  // Cars are already loaded via useAsyncData (SSR); no client refetch needed.
   if (Object.keys(q).length > 0) applyFilters()
 })
 

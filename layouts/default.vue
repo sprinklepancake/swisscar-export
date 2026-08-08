@@ -1,13 +1,13 @@
-<!-- layouts/default.vue - FIXED for iOS Safari/Chrome header visibility -->
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-red-50 to-white">
-    <!-- Navigation Header - iOS fix: removed transform:translateZ(0), added overflow-visible -->
+    <!-- Navigation Header -->
     <header class="relative z-50 bg-white border-b border-red-200 shadow-sm overflow-visible">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div class="flex justify-between items-center h-16 sm:h-20 lg:h-28">
 
-          <!-- Logo - iOS fix: added min-w-0, overflow-hidden, and safe-area padding to prevent overlap with menu button -->
-          <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 sm:space-x-3 group shrink-0 min-w-0">
+          <!-- Logo. Deliberately NOT shrink-0: it must yield space (and truncate)
+               so the mobile language + menu buttons are always reachable. -->
+          <NuxtLink :to="localePath('/')" class="site-logo flex items-center space-x-2 sm:space-x-3 group min-w-0">
             <img
               src="../assets/images/swiss.svg"
               :alt="t('logo_alt')"
@@ -145,8 +145,8 @@
             </template>
           </div>
 
-          <!-- Mobile / Tablet: Language + Messages + Hamburger -->
-          <!-- iOS fix: added shrink-0 to prevent collapse, explicit z-10 -->
+          <!-- Mobile / Tablet: Language + Messages + Hamburger.
+               shrink-0 keeps these at full size; the logo yields instead. -->
           <div class="flex lg:hidden items-center gap-1 shrink-0 z-10">
             <div class="relative">
               <button
@@ -309,7 +309,7 @@
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-10 lg:py-16">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-10 lg:mb-16">
           <div class="sm:col-span-2 lg:col-span-1">
-            <NuxtLink :to="localePath('/')" class="flex items-center space-x-2 mb-4 group">
+            <NuxtLink :to="localePath('/')" class="site-logo flex items-center space-x-2 mb-4 group">
               <img src="../assets/images/swiss.svg" alt="Swiss Car Export" class="w-10 h-10 object-contain">
               <span class="text-lg font-bold text-red-800 group-hover:text-red-600 transition-colors">{{ t('company_name') }}</span>
             </NuxtLink>
@@ -429,6 +429,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* The logo is chrome, not page content, and must never be re-flexed by the
+   page-level `.flex.space-x-2` overrides in assets/css/main.css. Those are
+   scoped to `main` now; this is the belt-and-braces guard so the header can't
+   silently break again. The `a.` prefix keeps this ahead of `.flex.space-x-2 > *`
+   on specificity. */
+a.site-logo {
+  flex-wrap: nowrap;
+  gap: 0;
+}
+a.site-logo > * {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: left;
+  justify-content: flex-start;
+}
+a.site-logo img {
+  flex: none;
+  max-width: 100%;
+}
+
 .nav-link {
   @apply flex items-center text-red-700 hover:text-red-900 font-medium transition-all duration-200 rounded-xl hover:bg-red-50 px-3 py-2 whitespace-nowrap text-sm lg:text-base;
 }

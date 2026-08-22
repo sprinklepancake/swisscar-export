@@ -37,7 +37,7 @@
               <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('make_label') }}</label>
               <TypeaheadSelect
                 v-model="filters.make"
-                :options="carMakes"
+                :options="availableMakes"
                 :placeholder="$t('any_make')"
                 @change="onMakeChange"
               />
@@ -655,9 +655,46 @@ const { data: carsData } = useAsyncData('cars-list', () => $fetch('/api/cars'), 
 watch(carsData, (v) => { if (Array.isArray(v)) cars.value = v as any[] }, { immediate: true })
 
 // ─── Computed ────────────────────────────────────────────────────────────────
+// The catalogue, plus any make actually present in the listings that the
+// catalogue does not know about (legacy rows, Typenschein autofill, a seller who
+// typed something new). Without this a car could be listed and then be
+// unfindable, because its make was not in the filter dropdown.
+const availableMakes = computed(() => {
+  const seen = new Set(carMakes.map(m => m.toLowerCase()))
+  const extras: string[] = []
+  for (const c of cars.value as any[]) {
+    const mk = (c?.make || '').trim()
+    if (!mk) continue
+    const k = mk.toLowerCase()
+    if (seen.has(k)) continue
+    seen.add(k)
+    extras.push(mk)
+  }
+  if (!extras.length) return carMakes
+  return [...carMakes, ...extras].sort((a, b) =>
+    a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b, 'en', { numeric: true })
+  )
+})
+
 const filteredModels = computed(() => {
-  if (!filters.value.make) return []
-  return makeModels[filters.value.make] || []
+  const make = filters.value.make
+  if (!make) return []
+  const known = makeModels[make] || []
+  // Same idea one level down: a model a seller typed by hand must still be
+  // selectable here, or their car cannot be filtered for.
+  const seen = new Set(known.map(m => m.toLowerCase()))
+  const extras: string[] = []
+  for (const c of cars.value as any[]) {
+    if ((c?.make || '').toLowerCase() !== make.toLowerCase()) continue
+    const mo = (c?.model || '').trim()
+    if (!mo) continue
+    const k = mo.toLowerCase()
+    if (seen.has(k)) continue
+    seen.add(k)
+    extras.push(mo)
+  }
+  if (!extras.length) return known
+  return [...known, ...extras].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 })
 
 const filteredCars = computed(() => {

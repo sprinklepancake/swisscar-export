@@ -492,6 +492,27 @@ const fetchFeaturedCars = async () => {
   }
 }
 
+// Accepts either payload shape ({makes} or {filters:{makes}}) and either entry
+// shape (a plain string or {value,label}), and returns the catalogue unioned
+// with whatever the database actually holds, sorted the same way the seller's
+// picker is sorted.
+const mergeMakes = (payload: any): string[] => {
+  const raw = payload?.filters?.makes ?? payload?.makes ?? []
+  const fromApi = (Array.isArray(raw) ? raw : [])
+    .map((m: any) => (typeof m === 'string' ? m : m?.value || m?.label || ''))
+    .filter(Boolean)
+  const seen = new Set(staticMakes.map(m => m.toLowerCase()))
+  const extras = fromApi.filter((m: string) => {
+    const k = m.toLowerCase()
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+  return [...staticMakes, ...extras].sort((a, b) =>
+    a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b, 'en', { numeric: true })
+  )
+}
+
 // Fetch filter options from API — merges with static fallback
 const fetchFilterOptions = async () => {
   loadingFilters.value = true
@@ -507,7 +528,13 @@ const fetchFilterOptions = async () => {
         ? data.makeModels
         : staticMakeModels
       filterOptions.value = {
-        makes: data.makes?.length > 0 ? data.makes : staticMakes,
+        // The full catalogue, plus anything actually present in the database
+        // that the catalogue does not know about (legacy rows, Typenschein
+        // autofill). Two bugs lived here: /api/cars/filters returns its payload
+        // under `filters`, not at the top level, so `data.makes` was always
+        // undefined; and its makes are objects, not strings, which would have
+        // rendered as [object Object] in the picker the moment that was fixed.
+        makes: mergeMakes(data),
         makeModels: apiMakeModels,
         fuelTypes: data.fuelTypes || [],
         transmissionTypes: data.transmissionTypes || [],

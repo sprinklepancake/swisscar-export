@@ -443,25 +443,35 @@
           </div>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Make and model use the SAME component and the SAME data as the
+                 buyer's browse filters (pages/cars/index.vue). This used to be a
+                 native <select> in region order, so sellers scrolling for Toyota
+                 found it in the middle of the list and reported brands missing. -->
             <div class="form-group">
               <label class="swiss-form-label">{{ $t('car_listing_form.make') }} *</label>
-              <div class="relative">
-                <select v-model="form.make" @change="onMakeChange" required class="swiss-form-input p-3 text-sm sm:text-base">
-                  <option value="">{{ $t('car_listing_form.select_make') }}</option>
-                  <option v-for="make in carMakes" :key="make" :value="make">{{ make }}</option>
-                </select>
-              </div>
+              <TypeaheadSelect
+                v-model="form.make"
+                :options="carMakes"
+                :placeholder="$t('car_listing_form.select_make')"
+                :required="true"
+                input-class="swiss-form-input p-3 text-sm sm:text-base"
+                @change="onMakeChange"
+              />
             </div>
             <div class="form-group">
               <label class="swiss-form-label">{{ $t('car_listing_form.model') }} *</label>
-              <div class="relative">
-                <select v-if="filteredModels.length > 0 && !form.model" v-model="form.model" required class="swiss-form-input p-3 text-sm sm:text-base">
-                  <option value="">{{ $t('car_listing_form.select_model') }}</option>
-                  <option v-for="model in filteredModels" :key="model" :value="model">{{ model }}</option>
-                </select>
-                <input v-else v-model="form.model" type="text" required class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="filteredModels.length > 0 ? $t('car_listing_form.type_custom_model') : $t('car_listing_form.enter_model')" @focus="showModelDropdown = false">
-              </div>
-              <p v-if="filteredModels.length > 0 && !form.model" class="text-gray-500 text-xs mt-1">{{ $t('car_listing_form.select_or_type') }}</p>
+              <!-- allow-custom: the list is long but never complete, so a model
+                   it has not heard of can still be typed. Picking one no longer
+                   destroys the dropdown, which it did before. -->
+              <TypeaheadSelect
+                v-model="form.model"
+                :options="filteredModels"
+                :placeholder="filteredModels.length > 0 ? $t('car_listing_form.type_custom_model') : $t('car_listing_form.enter_model')"
+                :required="true"
+                :allow-custom="true"
+                input-class="swiss-form-input p-3 text-sm sm:text-base"
+              />
+              <p v-if="filteredModels.length > 0" class="text-gray-500 text-xs mt-1">{{ $t('car_listing_form.select_or_type') }}</p>
             </div>
             <div class="form-group">
               <label class="swiss-form-label">{{ $t('car_listing_form.year') }} *</label>
@@ -727,7 +737,6 @@ const isSubmitting = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const userData = ref<any>(null)
 const userLoading = ref(true)
-const showModelDropdown = ref(true)
 const listingFeeCheckFailed = ref(false)
 
 // Typenschein search

@@ -1,9 +1,12 @@
 // server/api/chat/send.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireVerified } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
-  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  // This route was the hole in the messaging gate: /api/chat/[id]/send checked
+  // `verified` but this one only checked that you were logged in, so an
+  // unapproved account could keep talking in any chat it was part of.
+  const user = await requireVerified(event, 'send messages')
 
   const { chatId, content } = await readBody(event)
   if (!chatId || !content?.trim()) throw createError({ statusCode: 400, statusMessage: 'Chat ID and content are required' })
@@ -17,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   const { data: message, error } = await supabase
     .from('messages')
-    .insert({ chat_id: parseInt(chatId), sender_id: user.id, content: content.trim(), read: false })
+    .insert({ chat_id: parseInt(chatId), sender_id: user.id, content: content.trim().slice(0, 4000), read: false })
     .select('id, content, sender_id, read, created_at')
     .single()
 

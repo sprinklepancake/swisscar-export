@@ -68,7 +68,7 @@
             <div>
               <p class="text-green-700 font-medium">{{ success }}</p>
               <p class="text-green-600 text-sm mt-1">
-                You can now log in at <a href="/login" class="underline font-semibold">Login Page</a>
+                You can now log in at <NuxtLink :to="localePath('/login')" class="underline font-semibold">Login Page</NuxtLink>
               </p>
             </div>
           </div>
@@ -90,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+const localePath = useLocalePath()
 const email = ref('')
 const password = ref('')
 const name = ref('')
@@ -121,7 +122,7 @@ const createAdmin = async () => {
       
       // Auto-redirect to login after 3 seconds
       setTimeout(() => {
-        navigateTo('/login')
+        navigateTo(localePath('/login'))
       }, 3000)
     } else {
       error.value = response.message || 'Failed to create admin'

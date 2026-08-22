@@ -238,7 +238,7 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('status_label') }}</label>
+              <label class="block text-sm font-medium text-red-800 mb-2">{{ $t('cars_page.filter_status') }}</label>
               <select v-model="filters.status" class="search-input">
                 <option value="">{{ $t('any_status') }}</option>
                 <option value="active">{{ $t('status_active') }}</option>
@@ -322,7 +322,7 @@
           <NuxtLink
             v-for="car in paginatedCars"
             :key="car.id"
-            :to="`/cars/${car.id}`"
+            :to="localePath(`/cars/${car.id}`)"
             :class="['car-card group', viewMode === 'list' && 'flex']"
           >
             <!-- Car Image -->
@@ -449,6 +449,7 @@
 </template>
 
 <script setup lang="ts">
+const localePath = useLocalePath()
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '#app'

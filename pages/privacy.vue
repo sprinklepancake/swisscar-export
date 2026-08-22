@@ -117,11 +117,12 @@
         </section>
       </div>
 
-      <NuxtLink to="/" class="inline-block mt-10 text-red-700 hover:text-red-900 font-medium">← Back to home</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="inline-block mt-10 text-red-700 hover:text-red-900 font-medium">← Back to home</NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const localePath = useLocalePath()
 useHead({ title: 'Privacy Policy — SwissCarExport' })
 </script>

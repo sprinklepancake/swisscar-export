@@ -48,7 +48,7 @@
                       {{ carInfo.city }}, {{ carInfo.canton }}
                     </span>
                     <NuxtLink 
-                      :to="`/cars/${carInfo.id}`"
+                      :to="localePath(`/cars/${carInfo.id}`)"
                       class="text-xs text-red-600 hover:text-red-800 underline ml-2"
                       @click.stop
                     >
@@ -145,7 +145,17 @@
 
         <!-- Message Input -->
         <div class="p-4 border-t border-red-200 bg-white rounded-b-2xl">
-          <form @submit.prevent="sendMessage" class="flex space-x-3">
+          <!-- The server refuses messages from accounts an admin has not
+               approved. Say so here instead of letting the send silently 403. -->
+          <div v-if="!canSend" class="rounded-xl border border-amber-300 bg-amber-50 p-4 text-center">
+            <p class="text-sm font-semibold text-amber-900">{{ t('profile.status.pending_title') }}</p>
+            <p class="text-sm text-amber-800 mt-1">{{ t('chat.verification_required') }}</p>
+            <NuxtLink :to="localePath('/profile')" class="inline-block mt-3 text-sm font-semibold text-red-700 underline">
+              {{ t('profile.quick_actions.view_profile') }}
+            </NuxtLink>
+          </div>
+
+          <form v-else @submit.prevent="sendMessage" class="flex space-x-3">
             <input 
               v-model="newMessage"
               type="text"
@@ -166,8 +176,8 @@
               <span class="ml-2 hidden sm:inline">{{ t('chat.send_button') || 'Send' }}</span>
             </button>
           </form>
-          <p class="text-xs text-red-500 mt-2 text-center">
-            {{ t('chat.discussion_topics') || 'Discuss price, viewing arrangements, export documents, and transport details' }}
+          <p v-if="canSend" class="text-xs text-red-500 mt-2 text-center">
+            {{ t('chat.discussion_topics') }}
           </p>
         </div>
       </template>
@@ -177,6 +187,8 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const { apiFetch } = useApiFetch()
+const localePath = useLocalePath()
 
 const props = defineProps({
   isOpen: {
@@ -194,6 +206,10 @@ const emit = defineEmits(['update:isOpen', 'close'])
 const auth = useAuth()
 const messagesContainer = ref<HTMLElement | null>(null)
 const messages = ref<any[]>([])
+// Only admin-approved accounts may send. Mirrors the server-side rule in
+// server/api/chat/[id]/send.post.ts so the UI and the API agree.
+const canSend = computed(() => !!auth.user.value?.verified && !auth.user.value?.banned)
+
 const newMessage = ref('')
 const loading = ref(true)
 const sending = ref(false)
@@ -264,7 +280,7 @@ const loadChatData = async () => {
     console.log('📥 Loading chat data for ID:', props.chatId)
     console.log('👤 Current auth user:', auth.user.value)
     
-    const response = await $fetch(`/api/chat/${props.chatId}`)
+    const response: any = await apiFetch(`/api/chat/${props.chatId}`)
     
     console.log('✅ Chat API response:', {
       chat: response.chat,
@@ -288,7 +304,7 @@ const loadChatData = async () => {
     // Then, get car information separately if not included
     if (chatData.value.carId && !chatData.value.car) {
       try {
-        const carResponse = await $fetch(`/api/cars/${chatData.value.carId}`)
+        const carResponse: any = await apiFetch(`/api/cars/${chatData.value.carId}`)
         carInfo.value = carResponse
         console.log('✅ Car info loaded:', carInfo.value)
       } catch (carErr) {
@@ -338,7 +354,7 @@ const sendMessage = async () => {
     console.log('📤 Sending message:', messageContent)
     console.log('📤 To chat ID:', props.chatId)
     
-    const response = await $fetch(`/api/chat/${props.chatId}/send`, {
+    const response: any = await apiFetch(`/api/chat/${props.chatId}/send`, {
       method: 'POST',
       body: {
         content: messageContent
@@ -379,8 +395,10 @@ const sendMessage = async () => {
     
     // Restore message to input
     newMessage.value = messageContent
-    
-    alert(t('chat.send_failed') || 'Failed to send message. Please try again.')
+
+    // Show the server's actual reason (e.g. "your account is waiting for admin
+    // approval") instead of a generic "failed to send".
+    alert(err?.data?.statusMessage || err?.statusMessage || t('chat.send_failed'))
   } finally {
     sending.value = false
   }

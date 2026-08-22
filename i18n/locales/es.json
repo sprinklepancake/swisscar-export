@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Tu panel de subasta",
     "your_bid": "Tu puja",
     "your_max_bid": "Tu puja máxima",
-    "your_wallet": "Tu monedero"
+    "your_wallet": "Tu monedero",
+    "status_heading": "Estado de la subasta"
   },
   "auth": {
     "confirm_message": "Espera mientras verificamos tu dirección de correo electrónico...",
@@ -138,7 +139,22 @@
     "signup_button": "Registrarse",
     "signup_link": "Registrarse",
     "signup_success": "¡Revisa tu correo electrónico para confirmar tu cuenta!",
-    "signup_title": "Crear cuenta"
+    "signup_title": "Crear cuenta",
+    "forgot_password": "¿Has olvidado tu contraseña?",
+    "forgot_password_title": "Restablecer tu contraseña",
+    "forgot_password_intro": "Introduce la dirección de correo electrónico con la que te registraste y te enviaremos un enlace para crear una contraseña nueva.",
+    "forgot_password_sent": "Si existe una cuenta con esa dirección, el enlace para restablecer la contraseña ya está en camino. Revisa tu bandeja de entrada y también la carpeta de spam.",
+    "back_to_login": "Volver a iniciar sesión",
+    "sending": "Enviando...",
+    "send_reset_link": "Enviar enlace",
+    "reset_password_title": "Elige una contraseña nueva",
+    "reset_link_invalid": "Este enlace ya no es válido. Los enlaces para restablecer la contraseña caducan al poco tiempo y solo funcionan en el mismo navegador desde el que los abriste.",
+    "request_new_link": "Solicitar un enlace nuevo",
+    "password_changed": "Tu contraseña se ha cambiado.",
+    "password_change_failed": "No hemos podido cambiar tu contraseña. Inténtalo de nuevo.",
+    "new_password": "Nueva contraseña",
+    "set_new_password": "Guardar la nueva contraseña",
+    "logging_in": "Iniciando sesión..."
   },
   "body_type_label": "Tipo de Carrocería",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Año",
     "your_balance": "Saldo de tu cuenta",
     "zip_code": "Código Postal",
-    "zip_code_placeholder": "p. ej., 3032"
+    "zip_code_placeholder": "p. ej., 3032",
+    "upload_failed": "Error",
+    "upload_failed_generic": "No se han podido subir algunas fotos. Si llevas un rato en esta página, puede que tu sesión haya caducado: actualiza la página e inténtalo de nuevo.",
+    "try_again": "Volver a intentar la subida"
   },
   "cars_page": {
     "description": "Explora vehículos suizos de calidad a precios de exportación asequibles",
@@ -672,7 +691,8 @@
       "year_desc": "Año: Descendente"
     },
     "subtitle": "Encuentra tu coche ideal de Suiza",
-    "title": "Todos los Coches"
+    "title": "Todos los Coches",
+    "filter_status": "Estado"
   },
   "chat": {
     "buyer": "Comprador",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Eres el comprador",
     "you_are_buyer_label": "Eres el comprador",
     "you_are_seller": "Eres el vendedor",
-    "you_are_seller_label": "Eres el vendedor"
+    "you_are_seller_label": "Eres el vendedor",
+    "verification_required": "Un administrador todavía tiene que aprobar tu cuenta para que puedas enviar mensajes. Mientras tanto, puedes seguir leyendo esta conversación."
   },
   "city_label": "Ciudad",
   "city_placeholder": "Introduce la ciudad",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Contacta con el administrador para gestionar los fondos",
     "error": {
-      "login_to_view": "Inicia sesión para ver tu perfil"
+      "login_to_view": "Inicia sesión para ver tu perfil",
+      "load_failed": "No hemos podido cargar tu perfil. Actualiza la página."
     },
     "featured": "Destacado",
     "member_since": "Miembro desde",
@@ -991,7 +1013,8 @@
       "list_new_car": "Publicar coche nuevo",
       "request_verification": "Solicitar verificación",
       "title": "Acciones rápidas",
-      "view_dashboard": "Ver panel"
+      "view_dashboard": "Ver panel",
+      "view_profile": "Ir a mi perfil"
     },
     "recent_activity": {
       "empty": "No hay actividad reciente",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Comprador registrado",
-      "verified_seller": "Vendedor verificado"
+      "verified_seller": "Vendedor verificado",
+      "administrator": "Administrador",
+      "seller": "Vendedor",
+      "verified_buyer": "Comprador verificado"
     },
     "saving": "Guardando...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Total histórico",
       "listings": "Anuncios",
       "status": "Estado",
-      "total": "Total"
+      "total": "Total",
+      "buyer_type": "Tipo de comprador",
+      "saved_cars": "Coches guardados",
+      "watchlist": "Lista de seguimiento"
     },
     "transactions": {
       "change": "Cambio",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Puedes contactar con los vendedores y explorar los anuncios.",
       "verified_title": "Cuenta verificada"
     },
-    "verified": "Verificado"
+    "verified": "Verificado",
+    "status": {
+      "pending_title": "Pendiente de aprobación",
+      "pending_body": "Un administrador está revisando tu documento de identidad. Mientras tanto, puedes ver todos los anuncios. Publicar un coche, escribir a un vendedor y pujar se desbloquean en cuanto se aprueba tu cuenta.",
+      "verified_title": "Cuenta aprobada",
+      "verified_body_seller": "Puedes publicar anuncios, escribir a los compradores y usar todas las funciones del sitio.",
+      "verified_body_buyer": "Puedes escribir a los vendedores y realizar pujas.",
+      "banned_title": "Cuenta suspendida",
+      "banned_body": "Esta cuenta ha sido suspendida y no puede publicar, escribir mensajes ni pujar. Si crees que se trata de un error, contacta con el soporte.",
+      "missing_id": "Todavía no tenemos ningún documento de identidad de esta cuenta, así que no se puede aprobar. Sube uno aquí abajo.",
+      "upload_id": "Subir tu documento de identidad",
+      "replace_id": "Sustituir tu documento de identidad",
+      "id_uploaded": "Gracias. Hemos enviado tu documento a los administradores para que lo revisen.",
+      "id_upload_failed": "No hemos podido subir ese documento. Inténtalo de nuevo."
+    },
+    "password": {
+      "title": "Cambiar contraseña",
+      "current": "Contraseña actual",
+      "submit": "Cambiar contraseña",
+      "hint": "Tu nueva contraseña debe tener al menos 8 caracteres. Si has olvidado la actual, usa el enlace para restablecerla."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Proporcionar una identificación falsa o no completar una subasta ganada dará lugar a un bloqueo permanente.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Acepta los términos y la política de privacidad",
       "password_length": "La contraseña debe tener al menos 8 caracteres",
       "passwords_not_match": "Las contraseñas no coinciden",
-      "phone_too_short": "El número de teléfono es demasiado corto"
-    }
+      "phone_too_short": "El número de teléfono es demasiado corto",
+      "id_required": "Sube tu documento de identidad. Un administrador lo necesita para aprobar tu cuenta.",
+      "id_consent_required": "Confirma que das tu consentimiento para el tratamiento de tu documento de identidad.",
+      "id_file_type": "Sube un archivo JPG, PNG o PDF.",
+      "id_file_size": "Ese archivo es demasiado grande. Sube un documento de menos de 6 MB.",
+      "phone_required": "El número de teléfono es obligatorio."
+    },
+    "id_upload_required_note": "Todas las cuentas necesitan un documento de identidad. Un administrador lo revisa antes de que puedas publicar un coche, escribir a alguien o realizar una puja.",
+    "id_consent": "Doy mi consentimiento para que SwissCarExport trate mi documento de identidad con el único fin de verificar mi identidad, tal como se describe en la",
+    "approval_notice_title": "Antes hay que aprobar tu cuenta",
+    "approval_notice_body": "Puedes iniciar sesión y explorar todo el sitio desde el primer momento. Publicar un coche, escribir a un vendedor y pujar seguirán bloqueados hasta que un administrador revise tu documento de identidad.",
+    "buyer_type_auction_short": "Comprador de subasta",
+    "buyer_type_direct_short": "Comprador directo"
   },
   "reset_filters": "Restablecer filtros",
   "search_button": "Buscar Coches",
@@ -1260,5 +1320,70 @@
   "sell_car": "Vender coche",
   "stat_verified_sellers": "Vendedores suizos verificados",
   "stat_free_browse": "Explorar y contactar gratis",
-  "stat_free_months": "Meses gratis para vendedores"
+  "stat_free_months": "Meses gratis para vendedores",
+  "cars": "Coches",
+  "dashboard": "Panel",
+  "close": "Cerrar",
+  "sell_gate": {
+    "loading_title": "Comprobando tu cuenta...",
+    "loading_body": "Un momento.",
+    "anonymous_title": "Inicia sesión para publicar un coche",
+    "anonymous_body": "Necesitas una cuenta de vendedor para publicar un anuncio. Explorar los anuncios es gratis y no hace falta ninguna cuenta.",
+    "banned_title": "Cuenta suspendida",
+    "banned_body": "Esta cuenta ha sido suspendida y no puede publicar anuncios. Si crees que se trata de un error, contacta con el soporte.",
+    "buyer_title": "Esta es una cuenta de comprador",
+    "buyer_body": "Solo las cuentas de vendedor pueden publicar anuncios. Si quieres vender un coche para exportación, contacta con el soporte para que cambien tu cuenta.",
+    "unverified_title": "Pendiente de aprobación",
+    "unverified_body": "Un administrador todavía tiene que revisar tu documento de identidad antes de que puedas publicar anuncios. Podrás publicar en cuanto se apruebe tu cuenta; hasta entonces no se guardaría nada de lo que escribas aquí."
+  },
+  "contact_page": {
+    "title": "Contacto",
+    "intro": "Así puedes contactar con la persona adecuada, según lo que necesites.",
+    "about_a_car_title": "Una pregunta sobre un coche concreto",
+    "about_a_car_body": "Todos los anuncios muestran el número de teléfono del vendedor y tienen un botón para enviarle un mensaje. El vendedor conoce el coche, así que es la vía más rápida para resolver dudas sobre el estado, los documentos o el precio.",
+    "browse_cars": "Ver anuncios",
+    "account_title": "Tu cuenta o la verificación",
+    "account_body": "En tu página de perfil puedes ver si tu cuenta ya está aprobada y subir o sustituir tu documento de identidad.",
+    "support_title": "Cualquier otra cosa",
+    "support_body": "Para problemas con el sitio, con los pagos o para denunciar a otro usuario, contacta con nosotros directamente.",
+    "legal_notice": "Aviso legal"
+  },
+  "shipping_page": {
+    "title": "Exportación y envío",
+    "intro": "Todos los coches de este sitio se venden para exportarlos fuera de Suiza. Esto es lo que implica y quién se encarga de cada cosa.",
+    "step_one_title": "Acuerda la venta",
+    "step_one_body": "Escribe al vendedor o llámalo, acuerda un precio y organiza el pago y la entrega directamente con él. SwissCarExport es el marketplace, no una parte de la venta.",
+    "step_two_title": "Recoge el coche",
+    "step_two_body": "El anuncio indica el cantón suizo en el que está el coche. Ese es el punto de partida del transporte, tanto si lo recoges tú mismo como si contratas a un transportista.",
+    "step_three_title": "Expórtalo",
+    "step_three_body": "El coche sale de Suiza con los documentos de exportación. Pregunta al vendedor qué documentos puede facilitarte antes de cerrar la venta.",
+    "legs_title": "Dos tramos de transporte",
+    "legs_intro": "Llevar un coche desde la puerta de una casa suiza hasta tu país suele implicar dos trayectos distintos, y conviene calcular el precio de cada uno por separado.",
+    "leg_one_title": "Dentro de Suiza",
+    "leg_one_body": "Del cantón del vendedor a un punto de recogida, un puerto o la frontera. Es corto y suele ser la mitad más barata.",
+    "leg_two_title": "De Suiza a tu país",
+    "leg_two_body": "En camión, tren o barco, según el destino. El coste depende mucho más del destino que del coche.",
+    "documents_title": "Documentos que conviene pedir al vendedor",
+    "doc_typenschein": "Typenschein (certificado de tipo): la ficha técnica suiza del vehículo",
+    "doc_registration": "Permiso de circulación del vehículo (Fahrzeugausweis)",
+    "doc_invoice": "Una factura de venta o un contrato de compraventa por escrito",
+    "doc_customs": "Declaración de exportación de la aduana suiza",
+    "documents_note": "Los requisitos cambian según el país de destino. Comprueba qué pide tu propia aduana antes de pagar nada.",
+    "costs_title": "Sobre los costes",
+    "costs_body": "SwissCarExport no organiza el transporte ni fija su precio. El transporte, los aranceles y los impuestos de importación se acuerdan entre tú, el vendedor y el transportista que elijas. Pide un presupuesto por escrito antes de comprometerte.",
+    "browse_cars": "Ver coches para exportar"
+  },
+  "edit_listing": {
+    "title": "Editar anuncio",
+    "fixed_fields_note": "La marca, el modelo, el año y el tipo de anuncio no se pueden cambiar una vez publicado: son los datos que identifican el coche para quien ya te haya escrito o haya pujado. Si quieres vender otro coche, crea un anuncio nuevo.",
+    "price_section": "Precio",
+    "condition_section": "Estado y descripción",
+    "location_section": "Ubicación y contacto",
+    "starting_price_locked": "Esta subasta ya tiene pujas, así que el precio de salida está bloqueado.",
+    "no_photos": "Este anuncio todavía no tiene fotos. Los anuncios con fotos despiertan mucho más interés.",
+    "saved": "Guardado. Tu anuncio se ha actualizado.",
+    "save_failed": "No hemos podido guardar los cambios. Inténtalo de nuevo.",
+    "load_failed": "No hemos podido cargar este anuncio.",
+    "not_yours": "Este anuncio pertenece a otro vendedor."
+  }
 }

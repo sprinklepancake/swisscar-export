@@ -1,5 +1,7 @@
 // server/api/cars/create.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { getPlatformSettings } from '~/server/utils/settings'
+import { adjustFunds, InsufficientFundsError } from '~/server/utils/wallet'
 
 // Columns that are NOT NULL in the DB. If any is missing the insert 500s with
 // a cryptic error, so we check them here and return a clear message instead.
@@ -69,15 +71,31 @@ export default defineEventHandler(async (event) => {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
     const isFirstSixMonths = sellerCreatedAt > sixMonthsAgo
 
-    const listingType = body.listingType || 'normal'
-    const listingFee = listingType === 'auction' ? 10 : 7.5
+    const listingType = body.listingType === 'auction' ? 'auction' : 'normal'
 
-    if (!isFirstSixMonths) {
+    // The admin Settings tab lets these be changed; they used to be hardcoded
+    // here, so nothing an administrator set had any effect on what was charged.
+    const settings = await getPlatformSettings()
+    const listingFee = listingType === 'auction' ? settings.auctionListingFee : settings.normalListingFee
+    const feeApplies = !(settings.freeFirstSixMonths && isFirstSixMonths) && listingFee > 0
+
+    if (feeApplies) {
       const currentFunds = parseFloat(sellerProfile?.funds || 0)
       if (currentFunds < listingFee) {
         throw createError({
           statusCode: 402,
           statusMessage: `Insufficient funds. You need ${listingFee} CHF to post a listing. Current balance: ${currentFunds} CHF`,
+        })
+      }
+    }
+
+    // An auction with no starting price would accept a bid of any size.
+    if (listingType === 'auction') {
+      const startingPrice = parseFloat(body.startingPrice)
+      if (!Number.isFinite(startingPrice) || startingPrice <= 0) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'An auction needs a starting price above 0 CHF.',
         })
       }
     }
@@ -152,7 +170,7 @@ export default defineEventHandler(async (event) => {
       current_bid: null,
       bid_count: 0,
       views: 0,
-      listing_fee_paid: isFirstSixMonths ? 0 : listingFee,
+      listing_fee_paid: feeApplies ? listingFee : 0,
     }
 
     const { data: newCar, error: carError } = await supabase
@@ -175,18 +193,29 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    if (!isFirstSixMonths) {
-      const currentFunds = parseFloat(sellerProfile?.funds || 0)
-      const newBalance = currentFunds - listingFee
-      await supabase.from('users').update({ funds: newBalance }).eq('id', user.id)
-      await supabase.from('transaction_logs').insert({
-        user_id: user.id,
-        type: 'listing_fee',
-        amount: -listingFee,
-        description: `Listing fee for ${body.make} ${body.model}`,
-        car_id: newCar.id,
-        new_balance: newBalance,
-      })
+    if (feeApplies) {
+      try {
+        // adjustFunds writes previous_balance too. The old inline insert left it
+        // out, so it defaulted to 0 and every listing-fee row in the user's
+        // transaction history claimed their balance had gone from 0.
+        await adjustFunds(user.id, -listingFee, {
+          type: 'listing_fee',
+          description: `Listing fee for ${body.make} ${body.model}`,
+          carId: newCar.id,
+          referenceId: newCar.id,
+        })
+      } catch (chargeError: any) {
+        // The seller's balance moved between the check and the charge. Do not
+        // leave a published listing that was never paid for.
+        await supabase.from('cars').delete().eq('id', newCar.id)
+        if (chargeError instanceof InsufficientFundsError) {
+          throw createError({
+            statusCode: 402,
+            statusMessage: `Insufficient funds. You need ${listingFee} CHF to post a listing.`,
+          })
+        }
+        throw chargeError
+      }
     }
 
     return {
@@ -194,8 +223,8 @@ export default defineEventHandler(async (event) => {
       message: 'Car listing created successfully',
       car: newCar,
       listingType,
-      freeListing: isFirstSixMonths,
-      listingFee: isFirstSixMonths ? 0 : listingFee,
+      freeListing: !feeApplies,
+      listingFee: feeApplies ? listingFee : 0,
     }
   } catch (error: any) {
     console.error('[cars/create] Error creating car listing:', error?.message || error)

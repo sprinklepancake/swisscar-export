@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: profile } = await supabase
       .from('users')
-      .select('id, email, name, role, funds, verified, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits')
+      .select('id, email, name, role, funds, verified, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits, buyer_type, id_document_url')
       .eq('id', user.id)
       .single()
 
@@ -19,7 +19,9 @@ export default defineEventHandler(async (event) => {
     let stats = { carsSold: 0, activeListings: 0, totalListings: 0, watchlistCount: 0 }
     if (profile.role === 'seller') {
       const [{ count: active }, { count: sold }, { count: total }] = await Promise.all([
-        supabase.from('cars').select('*', { count: 'exact', head: true }).eq('seller_id', user.id).eq('status', 'active'),
+        // 'auction' is a live listing too — counting only 'active' told sellers
+        // they had fewer live listings than they actually did.
+        supabase.from('cars').select('*', { count: 'exact', head: true }).eq('seller_id', user.id).in('status', ['active', 'auction']),
         supabase.from('cars').select('*', { count: 'exact', head: true }).eq('seller_id', user.id).eq('status', 'sold'),
         supabase.from('cars').select('*', { count: 'exact', head: true }).eq('seller_id', user.id),
       ])
@@ -42,7 +44,7 @@ export default defineEventHandler(async (event) => {
     // Get user listings
     const { data: listings } = await supabase
       .from('cars')
-      .select('id, make, model, year, price, images, status, listing_type, is_featured, current_bid, created_at')
+      .select('id, make, model, year, price, mileage, city, canton, images, status, listing_type, is_featured, featured_until, current_bid, bid_count, created_at')
       .eq('seller_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -65,13 +67,18 @@ export default defineEventHandler(async (event) => {
         streetAddress: profile.street_address || '',
         profileImage: profile.profile_image || '',
         freeFeatureCredits: profile.free_feature_credits || 0,
+        buyerType: profile.buyer_type || 'direct',
+        // Only whether a document exists — never the storage path itself.
+        hasIdDocument: !!profile.id_document_url,
       },
       stats,
       activity,
       listings: (listings || []).map((c: any) => ({
         id: c.id, make: c.make, model: c.model, year: c.year, price: c.price,
+        mileage: c.mileage ?? 0, city: c.city || '', canton: c.canton || '',
         images: c.images || [], status: c.status, listingType: c.listing_type,
-        isFeatured: c.is_featured, currentBid: c.current_bid, createdAt: c.created_at,
+        isFeatured: c.is_featured, featuredUntil: c.featured_until,
+        currentBid: c.current_bid, bidCount: c.bid_count || 0, createdAt: c.created_at,
       })),
     }
   } catch (error: any) {

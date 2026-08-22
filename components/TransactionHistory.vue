@@ -171,6 +171,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const { apiFetch } = useApiFetch()
 
 interface Transaction {
   id: number
@@ -275,10 +276,10 @@ const loadTransactions = async (page = 1, append = false) => {
       ? `/api/admin/users/${props.userId}/transactions?page=${page}&limit=${props.limit}`
       : `/api/user/transactions?page=${page}&limit=${props.limit}`
     
-    const { data } = await useFetch(endpoint)
+    const data: any = await apiFetch(endpoint)
     
-    if (data.value?.success) {
-      const newTransactions = data.value.transactions || []
+    if (data?.success) {
+      const newTransactions = data.transactions || []
       
       if (append) {
         transactions.value = [...transactions.value, ...newTransactions]

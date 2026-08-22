@@ -210,17 +210,20 @@
             />
           </div>
 
-          <!-- ID Upload (auction buyers only) -->
-          <div v-if="form.role === 'buyer' && form.buyerType === 'auction'" class="border border-red-200 rounded-lg p-4 bg-red-50">
-            <label class="block text-sm font-semibold text-red-800 mb-2">{{ t('register.id_upload_label') }} *</label>
+          <!-- ID Upload — required for EVERY account -->
+          <div class="border-2 border-red-300 rounded-lg p-4 bg-red-50">
+            <label class="block text-sm font-semibold text-red-800 mb-1">{{ t('register.id_upload_label') }} *</label>
+            <p class="text-red-700 text-xs mb-3">{{ t('register.id_upload_required_note') }}</p>
             <input
               type="file"
               @change="onIdFileChange"
-              accept="image/*,.pdf"
+              accept="image/*,application/pdf,.pdf"
+              required
               class="block w-full text-sm text-red-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-800 hover:file:bg-red-200"
             />
             <p class="text-red-600 text-xs mt-1">{{ t('register.id_upload_help') }}</p>
-            <div v-if="idFile" class="mt-2 text-sm text-green-700">{{ idFileName }}</div>
+            <div v-if="idFileError" class="mt-2 text-sm text-red-700 font-medium">{{ idFileError }}</div>
+            <div v-else-if="idFile" class="mt-2 text-sm text-green-700">✓ {{ idFileName }}</div>
             <div class="flex items-start mt-3">
               <div class="flex items-center h-5">
                 <input
@@ -232,10 +235,16 @@
                 />
               </div>
               <label for="idConsent" class="ms-2 text-sm text-red-700">
-                I explicitly consent to SwissCarExport processing my identity document for the sole purpose of verifying my identity, as described in the
-                <a href="/privacy" class="text-red-800 hover:underline">Privacy Policy</a>. *
+                {{ t('register.id_consent') }}
+                <NuxtLink :to="localePath('/privacy')" class="text-red-800 hover:underline">{{ t('privacy_policy') }}</NuxtLink>. *
               </label>
             </div>
+          </div>
+
+          <!-- What happens next -->
+          <div class="bg-amber-50 border border-amber-300 rounded-lg p-4">
+            <p class="text-amber-900 text-sm font-semibold mb-1">{{ t('register.approval_notice_title') }}</p>
+            <p class="text-amber-800 text-sm">{{ t('register.approval_notice_body') }}</p>
           </div>
 
           <!-- Passwords -->
@@ -279,7 +288,7 @@
                 />
               </div>
               <label for="terms" class="ms-2 text-sm text-red-700">
-                {{ t('register.terms.agree_terms') }} <a href="/terms" class="text-red-800 hover:underline">{{ t('terms_of_service') }}</a> *
+                {{ t('register.terms.agree_terms') }} <NuxtLink :to="localePath('/terms')" class="text-red-800 hover:underline">{{ t('terms_of_service') }}</NuxtLink> *
               </label>
             </div>
 
@@ -294,7 +303,7 @@
                 />
               </div>
               <label for="privacy" class="ms-2 text-sm text-red-700">
-                {{ t('register.terms.agree_privacy') }} <a href="/privacy" class="text-red-800 hover:underline">{{ t('privacy_policy') }}</a> *
+                {{ t('register.terms.agree_privacy') }} <NuxtLink :to="localePath('/privacy')" class="text-red-800 hover:underline">{{ t('privacy_policy') }}</NuxtLink> *
               </label>
             </div>
 
@@ -331,12 +340,19 @@
           <!-- Submit Button -->
           <button
             type="submit"
-            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || (form.role === 'buyer' && form.buyerType === 'auction' && (!idFile || !form.idConsent))"
+            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || !idFile || !form.idConsent"
             class="w-full py-3 px-4 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200 disabled:opacity-50 mt-4"
           >
             <span v-if="loading">{{ t('register.creating_account') || 'Creating account...' }}</span>
             <span v-else>{{ t('auth.signup_button') }}</span>
           </button>
+
+          <!-- Visible on phones. The same link exists in the right-hand column,
+               which is `hidden md:flex`, so mobile users had no way back. -->
+          <p class="md:hidden text-center text-sm text-red-600 pt-2">
+            {{ t('auth.have_account') }}
+            <NuxtLink :to="localePath('/login')" class="text-red-800 hover:text-red-900 font-semibold">{{ t('auth.login_link') }}</NuxtLink>
+          </p>
         </form>
       </div>
 
@@ -386,7 +402,7 @@
         </div>
         <div class="mt-6 text-center text-sm text-red-600">
           {{ t('auth.have_account') }}
-          <NuxtLink to="/login" class="text-red-800 hover:text-red-900 font-semibold">{{ t('auth.login_link') }}</NuxtLink>
+          <NuxtLink :to="localePath('/login')" class="text-red-800 hover:text-red-900 font-semibold">{{ t('auth.login_link') }}</NuxtLink>
         </div>
       </div>
     </div>
@@ -395,6 +411,11 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
+const { compressImage } = useImageCompression()
+
+const MAX_ID_BYTES = 6 * 1024 * 1024
+const ALLOWED_ID_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
 
 useHead({
   title: t('register.seo.title') || 'Create Account - SwissExportCar',
@@ -432,6 +453,8 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const idFile = ref<File | null>(null)
 const idFileName = ref('')
+const idFileError = ref('')
+const registered = ref(false)
 
 const cantons = ['Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden', 'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft', 'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen', 'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura']
 
@@ -442,15 +465,56 @@ const setRole = (role: 'buyer' | 'seller') => {
   }
 }
 
-const onIdFileChange = (event: Event) => {
+const onIdFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    idFile.value = target.files[0]
-    idFileName.value = target.files[0].name
+  const file = target.files?.[0]
+  idFileError.value = ''
+  idFile.value = null
+  idFileName.value = ''
+  if (!file) return
+
+  // Accept ANY image plus PDF here. iPhones send image/heic and some Android
+  // browsers send image/webp; checking the allow-list before compression
+  // rejected those outright, which locked those users out of signing up.
+  const isImage = file.type.startsWith('image/')
+  if (!isImage && file.type !== 'application/pdf') {
+    idFileError.value = t('register.validation.id_file_type')
+    target.value = ''
+    return
   }
+
+  // Phone cameras produce 5-12 MB photos, which used to blow past the request
+  // limit and fail with an unhelpful error. compressImage() also converts HEIC
+  // and WebP to JPEG, which is what makes the file acceptable to the server.
+  let prepared = file
+  if (isImage) {
+    try {
+      prepared = await compressImage(file, { maxDimension: 2000, quality: 0.85, skipUnderKB: 0 })
+    } catch {
+      prepared = file
+    }
+  }
+
+  // Now that it has been converted, check what we are actually about to send.
+  if (!ALLOWED_ID_TYPES.includes(prepared.type)) {
+    idFileError.value = t('register.validation.id_file_type')
+    target.value = ''
+    return
+  }
+
+  if (prepared.size > MAX_ID_BYTES) {
+    idFileError.value = t('register.validation.id_file_size') || 'That file is too large. Please upload a document smaller than 6 MB.'
+    target.value = ''
+    return
+  }
+
+  idFile.value = prepared
+  idFileName.value = file.name
 }
 
 const handleRegister = async () => {
+  error.value = null
+
   if (form.value.password !== form.value.confirmPassword) {
     error.value = t('register.validation.passwords_not_match') || 'Passwords do not match'
     return
@@ -460,37 +524,34 @@ const handleRegister = async () => {
     return
   }
   if ((form.value.role === 'seller' || form.value.buyerType === 'auction') && !form.value.phone) {
-    error.value = 'Phone number is required'
+    error.value = t('register.validation.phone_required') || 'Phone number is required'
     return
   }
   if (!form.value.termsAccepted || !form.value.privacyAccepted) {
     error.value = t('register.validation.accept_terms') || 'Please accept the terms and privacy policy'
     return
   }
-  if (form.value.role === 'buyer' && form.value.buyerType === 'auction' && !idFile.value) {
-    error.value = 'ID document is required for auction participation'
+  // Every account needs an ID document — this is what the admin reviews before
+  // the account is allowed to post, message or bid.
+  if (!idFile.value) {
+    error.value = t('register.validation.id_required') || 'Please upload your ID document. An administrator needs it to approve your account.'
+    return
+  }
+  if (!form.value.idConsent) {
+    error.value = t('register.validation.id_consent_required') || 'Please confirm you consent to your ID document being processed.'
     return
   }
 
   try {
     loading.value = true
-    error.value = null
 
-    // Convert ID file to base64 so the server can upload it with admin credentials
-    let idFileBase64 = ''
-    let idFileMimeType = ''
-    if (idFile.value) {
-      idFileMimeType = idFile.value.type
-      idFileBase64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const result = reader.result as string
-          resolve(result.split(',')[1])
-        }
-        reader.onerror = () => reject(new Error('Failed to read file'))
-        reader.readAsDataURL(idFile.value!)
-      })
-    }
+    const idFileMimeType = idFile.value.type
+    const idFileBase64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve((reader.result as string).split(',')[1])
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsDataURL(idFile.value!)
+    })
 
     const cleanedPhone = form.value.phone ? form.value.phone.replace(/\D/g, '') : null
 
@@ -517,10 +578,13 @@ const handleRegister = async () => {
       }
     })
 
-    alert(t('register.messages.success') || 'Account created successfully! Please login to continue.')
-    await navigateTo('/login')
+    registered.value = true
+    // navigateTo('/login') used to 404: with i18n strategy 'prefix' the real
+    // route is /<locale>/login.
+    await navigateTo(localePath('/login?registered=1'))
   } catch (err: any) {
-    error.value = err.data?.statusMessage || err.message || t('register.messages.registration_failed') || 'Registration failed. Please try again.'
+    error.value = err.data?.statusMessage || err.data?.message || err.message
+      || t('register.messages.registration_failed') || 'Registration failed. Please try again.'
   } finally {
     loading.value = false
   }

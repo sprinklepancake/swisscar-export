@@ -16,7 +16,7 @@ export default defineEventHandler(async () => {
         is_featured, featured_until, permanent_feature, created_at
       `)
       .eq('is_featured', true)
-      .eq('status', 'active')
+      .in('status', ['active', 'auction'])
       .or(`permanent_feature.eq.true,featured_until.gt.${now}`)
       .order('created_at', { ascending: false })
       .limit(20) // Explicit limit for performance

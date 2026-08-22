@@ -69,6 +69,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const { apiFetch } = useApiFetch()
 
 const props = defineProps({
   carId: {
@@ -119,7 +120,9 @@ const placeBid = async () => {
   
   loading.value = true
   try {
-    const { data, error } = await useFetch('/api/bids/create', {
+    // useFetch() inside a click handler does not work — the bid silently
+    // never left the browser. $fetch with a fresh token does.
+    const data: any = await apiFetch('/api/bids/create', {
       method: 'POST',
       body: {
         carId: props.carId,
@@ -127,17 +130,12 @@ const placeBid = async () => {
       }
     })
 
-    if (error.value) {
-      throw error.value
-    }
-
-    if (data.value?.success) {
-      // Update UI or emit event
-      emit('bid-placed', data.value.bid)
+    if (data?.success) {
+      emit('bid-placed', data.bid)
     }
   } catch (err: any) {
     console.error('Bid error:', err)
-    bidError.value = err.message || t('auction.bid_failed') || 'Failed to place bid'
+    bidError.value = err?.data?.statusMessage || err.message || t('auction.bid_failed') || 'Failed to place bid'
   } finally {
     loading.value = false
   }

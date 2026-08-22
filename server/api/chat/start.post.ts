@@ -1,13 +1,8 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireVerified } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
-  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
-
-  // Only verified users can start chats
-  if (!user.verified) {
-    throw createError({ statusCode: 403, statusMessage: 'Only verified users can send messages. Please wait for admin verification.' })
-  }
+  const user = await requireVerified(event, 'message sellers')
 
   const { carId, sellerEmail } = await readBody(event)
   if (!carId || !sellerEmail) throw createError({ statusCode: 400, statusMessage: 'Car ID and seller email are required' })

@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Votre Tableau de Bord d'Enchères",
     "your_bid": "Votre offre",
     "your_max_bid": "Votre offre maximale",
-    "your_wallet": "Votre Portefeuille"
+    "your_wallet": "Votre Portefeuille",
+    "status_heading": "Statut de l’enchère"
   },
   "auth": {
     "confirm_message": "Veuillez patienter pendant que nous vérifions votre adresse email...",
@@ -138,7 +139,22 @@
     "signup_button": "S'inscrire",
     "signup_link": "S'inscrire",
     "signup_success": "Veuillez vérifier votre email pour confirmer votre compte !",
-    "signup_title": "Créer un Compte"
+    "signup_title": "Créer un Compte",
+    "forgot_password": "Mot de passe oublié ?",
+    "forgot_password_title": "Réinitialiser votre mot de passe",
+    "forgot_password_intro": "Saisissez l'adresse email avec laquelle vous vous êtes inscrit et nous vous enverrons un lien pour définir un nouveau mot de passe.",
+    "forgot_password_sent": "Si un compte existe pour cette adresse, un lien de réinitialisation est en route. Pensez à vérifier votre boîte de réception ainsi que vos spams.",
+    "back_to_login": "Retour à la connexion",
+    "sending": "Envoi en cours...",
+    "send_reset_link": "Envoyer le lien de réinitialisation",
+    "reset_password_title": "Choisissez un nouveau mot de passe",
+    "reset_link_invalid": "Ce lien de réinitialisation n'est plus valable. Les liens de réinitialisation expirent après un court délai et ne fonctionnent que dans le navigateur où vous les avez ouverts.",
+    "request_new_link": "Demander un nouveau lien",
+    "password_changed": "Votre mot de passe a été modifié.",
+    "password_change_failed": "Nous n'avons pas pu modifier votre mot de passe. Veuillez réessayer.",
+    "new_password": "Nouveau mot de passe",
+    "set_new_password": "Enregistrer le nouveau mot de passe",
+    "logging_in": "Connexion en cours..."
   },
   "body_type_label": "Type de Carrosserie",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Année",
     "your_balance": "Votre Solde",
     "zip_code": "Code Postal",
-    "zip_code_placeholder": "ex. 3032"
+    "zip_code_placeholder": "ex. 3032",
+    "upload_failed": "Échec",
+    "upload_failed_generic": "Certaines photos n'ont pas pu être téléchargées. Si vous êtes sur cette page depuis un moment, votre session a peut-être expiré : actualisez la page et réessayez.",
+    "try_again": "Réessayer le téléchargement"
   },
   "cars_page": {
     "description": "Parcourez des véhicules suisses de qualité à des prix d'exportation abordables",
@@ -672,7 +691,8 @@
       "year_desc": "Les Plus Récentes en Premier"
     },
     "subtitle": "Véhicules suisses de qualité à des prix d'exportation abordables",
-    "title": "Parcourir les Voitures d'Exportation"
+    "title": "Parcourir les Voitures d'Exportation",
+    "filter_status": "Statut"
   },
   "chat": {
     "buyer": "Acheteur",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Vous êtes l'acheteur",
     "you_are_buyer_label": "Vous êtes l'acheteur",
     "you_are_seller": "Vous êtes le vendeur",
-    "you_are_seller_label": "Vous êtes le vendeur"
+    "you_are_seller_label": "Vous êtes le vendeur",
+    "verification_required": "Un administrateur doit encore vérifier votre compte avant que vous puissiez envoyer des messages. Vous pouvez continuer à lire cette conversation en attendant."
   },
   "city_label": "Ville",
   "city_placeholder": "Entrer la ville",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Contactez l'administrateur pour la gestion des fonds",
     "error": {
-      "login_to_view": "Veuillez vous connecter pour voir votre profil"
+      "login_to_view": "Veuillez vous connecter pour voir votre profil",
+      "load_failed": "Nous n'avons pas pu charger votre profil. Veuillez actualiser la page."
     },
     "featured": "En Vedette",
     "member_since": "Membre depuis",
@@ -991,7 +1013,8 @@
       "list_new_car": "Annoncer une Nouvelle Voiture",
       "request_verification": "Demander une Vérification",
       "title": "Actions Rapides",
-      "view_dashboard": "Voir le Tableau de Bord"
+      "view_dashboard": "Voir le Tableau de Bord",
+      "view_profile": "Accéder à mon profil"
     },
     "recent_activity": {
       "empty": "Aucune activité récente",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Acheteur Enregistré",
-      "verified_seller": "Vendeur Vérifié"
+      "verified_seller": "Vendeur Vérifié",
+      "administrator": "Administrateur",
+      "seller": "Vendeur",
+      "verified_buyer": "Acheteur vérifié"
     },
     "saving": "Enregistrement en cours...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Total",
       "listings": "Annonces",
       "status": "Statut",
-      "total": "Total"
+      "total": "Total",
+      "buyer_type": "Type d’acheteur",
+      "saved_cars": "Voitures enregistrées",
+      "watchlist": "Liste de suivi"
     },
     "transactions": {
       "change": "Changement",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Vous pouvez contacter les vendeurs et parcourir les annonces.",
       "verified_title": "Compte vérifié"
     },
-    "verified": "Vérifié"
+    "verified": "Vérifié",
+    "status": {
+      "pending_title": "En attente de vérification",
+      "pending_body": "Un administrateur est en train d'examiner votre pièce d'identité. Vous pouvez consulter toutes les annonces en attendant. Publier une voiture, écrire à un vendeur et enchérir seront débloqués dès que votre compte sera vérifié.",
+      "verified_title": "Compte vérifié",
+      "verified_body_seller": "Vous pouvez publier des annonces, écrire aux acheteurs et utiliser toutes les fonctionnalités du site.",
+      "verified_body_buyer": "Vous pouvez écrire aux vendeurs et placer des offres.",
+      "banned_title": "Compte suspendu",
+      "banned_body": "Ce compte a été suspendu : il ne peut plus publier d'annonces, envoyer de messages ni placer d'offres. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
+      "missing_id": "Nous n'avons pas encore de pièce d'identité pour ce compte, il ne peut donc pas être vérifié. Veuillez en télécharger une ci-dessous.",
+      "upload_id": "Télécharger votre pièce d'identité",
+      "replace_id": "Remplacer votre pièce d'identité",
+      "id_uploaded": "Merci. Votre document a été transmis aux administrateurs pour vérification.",
+      "id_upload_failed": "Nous n'avons pas pu télécharger ce document. Veuillez réessayer."
+    },
+    "password": {
+      "title": "Changer le mot de passe",
+      "current": "Mot de passe actuel",
+      "submit": "Changer le mot de passe",
+      "hint": "Votre nouveau mot de passe doit contenir au moins 8 caractères. Si vous avez oublié l'actuel, utilisez plutôt le lien de réinitialisation."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Fournir une fausse pièce d'identité ou ne pas finaliser une enchère remportée entraînera un bannissement permanent.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Veuillez accepter les conditions et la politique de confidentialité",
       "password_length": "Le mot de passe doit contenir au moins 8 caractères",
       "passwords_not_match": "Les mots de passe ne correspondent pas",
-      "phone_too_short": "Numéro de téléphone trop court"
-    }
+      "phone_too_short": "Numéro de téléphone trop court",
+      "id_required": "Veuillez télécharger votre pièce d'identité. Un administrateur en a besoin pour valider votre compte.",
+      "id_consent_required": "Veuillez confirmer que vous acceptez le traitement de votre pièce d'identité.",
+      "id_file_type": "Veuillez télécharger un fichier JPG, PNG ou PDF.",
+      "id_file_size": "Ce fichier est trop volumineux. Veuillez télécharger un document de moins de 6 Mo.",
+      "phone_required": "Un numéro de téléphone est obligatoire."
+    },
+    "id_upload_required_note": "Chaque compte doit fournir une pièce d'identité. Un administrateur la vérifie avant que vous puissiez publier une voiture, envoyer un message ou placer une offre.",
+    "id_consent": "J'accepte que SwissCarExport traite ma pièce d'identité dans le seul but de vérifier mon identité, comme décrit dans la",
+    "approval_notice_title": "Votre compte doit d'abord être vérifié",
+    "approval_notice_body": "Vous pouvez vous connecter et parcourir tout le site immédiatement. Publier une voiture, écrire à un vendeur et enchérir restent bloqués tant qu'un administrateur n'a pas vérifié votre pièce d'identité.",
+    "buyer_type_auction_short": "Achèteur aux enchères",
+    "buyer_type_direct_short": "Acheteur direct"
   },
   "reset_filters": "Réinitialiser les Filtres",
   "search_button": "Rechercher des Voitures",
@@ -1260,5 +1320,70 @@
   "sell_car": "Vendre une voiture",
   "stat_verified_sellers": "Vendeurs suisses vérifiés",
   "stat_free_browse": "Consultation et contact gratuits",
-  "stat_free_months": "Mois gratuits pour les vendeurs"
+  "stat_free_months": "Mois gratuits pour les vendeurs",
+  "cars": "Voitures",
+  "dashboard": "Tableau de bord",
+  "close": "Fermer",
+  "sell_gate": {
+    "loading_title": "Vérification de votre compte...",
+    "loading_body": "Un instant.",
+    "anonymous_title": "Connectez-vous pour annoncer une voiture",
+    "anonymous_body": "Vous avez besoin d'un compte vendeur pour publier une annonce. Parcourir le site reste gratuit et ne demande aucun compte.",
+    "banned_title": "Compte suspendu",
+    "banned_body": "Ce compte a été suspendu et ne peut pas publier d'annonces. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
+    "buyer_title": "Ceci est un compte acheteur",
+    "buyer_body": "Seuls les comptes vendeur peuvent publier des annonces. Si vous souhaitez vendre une voiture à l'exportation, contactez le support pour faire modifier votre compte.",
+    "unverified_title": "En attente de vérification",
+    "unverified_body": "Un administrateur doit encore examiner votre pièce d'identité avant que vous puissiez publier des annonces. Vous pourrez publier dès que votre compte sera vérifié — d'ici là, rien de ce que vous saisissez ici ne serait enregistré."
+  },
+  "contact_page": {
+    "title": "Contact",
+    "intro": "Voici comment joindre la bonne personne, selon ce dont vous avez besoin.",
+    "about_a_car_title": "Une question sur une voiture précise",
+    "about_a_car_body": "Chaque annonce affiche le numéro de téléphone du vendeur et comporte un bouton de messagerie. Le vendeur connaît la voiture : c'est le moyen le plus rapide d'obtenir une réponse sur son état, ses documents ou son prix.",
+    "browse_cars": "Parcourir les annonces",
+    "account_title": "Votre compte ou votre vérification",
+    "account_body": "Votre page de profil indique si votre compte a été vérifié et vous permet de télécharger ou de remplacer votre pièce d'identité.",
+    "support_title": "Toute autre question",
+    "support_body": "Pour un problème avec le site, un paiement ou pour signaler un autre utilisateur, contactez-nous directement.",
+    "legal_notice": "Mentions légales"
+  },
+  "shipping_page": {
+    "title": "Exportation et transport",
+    "intro": "Chaque voiture de ce site est vendue pour l'exportation hors de Suisse. Voici ce que cela implique et qui fait quoi.",
+    "step_one_title": "Conclure la vente",
+    "step_one_body": "Écrivez au vendeur ou appelez-le, mettez-vous d'accord sur un prix, puis organisez le paiement et la remise du véhicule directement avec lui. SwissCarExport est la place de marché, pas une partie à la vente.",
+    "step_two_title": "Récupérer la voiture",
+    "step_two_body": "L'annonce indique le canton suisse où se trouve la voiture. C'est le point de départ du transport, que vous veniez la chercher vous-même ou que vous fassiez appel à un transporteur.",
+    "step_three_title": "L'exporter",
+    "step_three_body": "La voiture quitte la Suisse avec des documents d'exportation. Demandez au vendeur quels documents il peut fournir avant de conclure la vente.",
+    "legs_title": "Deux étapes de transport",
+    "legs_intro": "Amener une voiture de chez un vendeur suisse jusque dans votre pays représente en général deux trajets distincts, et il vaut mieux les chiffrer séparément.",
+    "leg_one_title": "À l'intérieur de la Suisse",
+    "leg_one_body": "Du canton du vendeur jusqu'à un point de collecte, un port ou la frontière. Court, et en général la moitié la moins chère.",
+    "leg_two_title": "De la Suisse à votre pays",
+    "leg_two_body": "Par camion, par train ou par bateau, selon la destination. Le coût dépend bien plus de la destination que de la voiture.",
+    "documents_title": "Documents à demander au vendeur",
+    "doc_typenschein": "Typenschein (certificat de type) — la fiche technique du véhicule suisse",
+    "doc_registration": "Permis de circulation du véhicule (Fahrzeugausweis)",
+    "doc_invoice": "Une facture de vente ou un contrat de vente écrit",
+    "doc_customs": "La déclaration d'exportation des douanes suisses",
+    "documents_note": "Les exigences varient selon le pays de destination. Vérifiez ce que demande votre propre administration douanière avant de payer quoi que ce soit.",
+    "costs_title": "À propos des coûts",
+    "costs_body": "SwissCarExport n'organise pas le transport et n'en fixe pas les tarifs. Le transport, les droits de douane et les taxes à l'importation se négocient entre vous, le vendeur et le transporteur que vous choisissez. Demandez un devis écrit avant de vous engager.",
+    "browse_cars": "Parcourir les voitures à l'exportation"
+  },
+  "edit_listing": {
+    "title": "Modifier l'annonce",
+    "fixed_fields_note": "La marque, le modèle, l'année et le type d'annonce ne peuvent plus être modifiés après la publication — ce sont eux qui identifient la voiture auprès des personnes qui vous ont déjà écrit ou qui ont déjà enchéri. Pour vendre une autre voiture, créez une nouvelle annonce.",
+    "price_section": "Prix",
+    "condition_section": "État et description",
+    "location_section": "Localisation et coordonnées",
+    "starting_price_locked": "Cette enchère a déjà reçu des offres, le prix de départ est donc verrouillé.",
+    "no_photos": "Cette annonce n'a pas encore de photos. Les annonces avec photos suscitent bien plus d'intérêt.",
+    "saved": "Enregistré. Votre annonce a été mise à jour.",
+    "save_failed": "Nous n'avons pas pu enregistrer vos modifications. Veuillez réessayer.",
+    "load_failed": "Nous n'avons pas pu charger cette annonce.",
+    "not_yours": "Cette annonce appartient à un autre vendeur."
+  }
 }

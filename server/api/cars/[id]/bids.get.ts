@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
       userId: bid.user_id,
       userName: bid.user?.name || `User${bid.user_id}`,
       userEmail: bid.user?.email || '',
-      isWinning: bid.user_id === car.highest_bidder_id,
+      isWinning: bid.status === 'pending' && bid.user_id === car.highest_bidder_id,
     }))
 
     return {

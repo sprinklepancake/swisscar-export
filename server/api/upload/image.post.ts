@@ -3,13 +3,16 @@
 // The client compresses images before sending, so this size limit is only a
 // safety backstop for anything that slips through.
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireVerified } from '~/server/utils/auth'
 
 // 15 MB backstop. The client should send ~200-600 KB after compression.
 const MAX_BYTES = 15 * 1024 * 1024
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
-  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  // These photos land in a PUBLIC bucket. Only accounts allowed to publish a
+  // listing may put files there. (ID documents use /api/user/upload-id, which
+  // deliberately stays open to unverified users — they need it to get verified.)
+  const user = await requireVerified(event, 'upload listing photos')
 
   try {
     const formData = await readMultipartFormData(event)

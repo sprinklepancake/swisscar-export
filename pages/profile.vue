@@ -13,13 +13,72 @@
     <!-- Error state -->
     <div v-else-if="error" class="bg-red-100 rounded-xl p-6 text-center border border-red-300">
       <p class="text-red-700">{{ error }}</p>
-      <NuxtLink to="/login" class="text-red-800 hover:underline mt-2 inline-block">
+      <NuxtLink :to="localePath('/login')" class="text-red-800 hover:underline mt-2 inline-block">
         {{ t('profile.error.login_to_view') || 'Please login to view your profile' }}
       </NuxtLink>
     </div>
 
     <!-- Profile content -->
     <div v-else class="space-y-8">
+      <!-- Account status: the single place that explains what this account can do -->
+      <div
+        class="rounded-xl border p-5"
+        :class="profileData.user.banned
+          ? 'bg-red-50 border-red-300'
+          : profileData.user.verified
+            ? 'bg-green-50 border-green-300'
+            : 'bg-amber-50 border-amber-300'"
+      >
+        <div class="flex items-start gap-3">
+          <span class="text-2xl leading-none">
+            {{ profileData.user.banned ? '⛔' : profileData.user.verified ? '✅' : '⏳' }}
+          </span>
+          <div class="min-w-0">
+            <p
+              class="font-semibold"
+              :class="profileData.user.banned ? 'text-red-900' : profileData.user.verified ? 'text-green-900' : 'text-amber-900'"
+            >
+              {{ profileData.user.banned
+                ? t('profile.status.banned_title')
+                : profileData.user.verified
+                  ? t('profile.status.verified_title')
+                  : t('profile.status.pending_title') }}
+            </p>
+            <p
+              class="text-sm mt-1"
+              :class="profileData.user.banned ? 'text-red-700' : profileData.user.verified ? 'text-green-700' : 'text-amber-800'"
+            >
+              {{ profileData.user.banned
+                ? t('profile.status.banned_body')
+                : profileData.user.verified
+                  ? (profileData.user.role === 'seller' ? t('profile.status.verified_body_seller') : t('profile.status.verified_body_buyer'))
+                  : t('profile.status.pending_body') }}
+            </p>
+            <p v-if="!profileData.user.verified && !profileData.user.banned && !profileData.user.hasIdDocument"
+               class="text-sm mt-2 text-amber-900 font-medium">
+              {{ t('profile.status.missing_id') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Upload / replace the ID document -->
+        <div v-if="!profileData.user.verified && !profileData.user.banned" class="mt-4 pt-4 border-t border-amber-200">
+          <label class="block text-sm font-medium text-amber-900 mb-2">
+            {{ profileData.user.hasIdDocument ? t('profile.status.replace_id') : t('profile.status.upload_id') }}
+          </label>
+          <input
+            type="file"
+            accept="image/*,application/pdf,.pdf"
+            :disabled="uploadingId"
+            @change="onIdUpload"
+            class="block w-full text-sm text-amber-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200"
+          />
+          <p v-if="idUploadMessage" class="text-sm mt-2" :class="idUploadError ? 'text-red-700' : 'text-green-700'">
+            {{ idUploadMessage }}
+          </p>
+        </div>
+      </div>
+
       <!-- Profile Header -->
       <div class="bg-gradient-to-r from-red-100 to-red-200 rounded-xl p-6 border border-red-300">
         <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
@@ -28,21 +87,14 @@
               <div class="w-20 h-20 sm:w-24 sm:h-24 bg-red-600 rounded-full flex items-center justify-center">
                 <span class="text-3xl font-bold text-white">{{ userInitial }}</span>
               </div>
-              <button 
-                @click="showImageUpload = true"
-                class="absolute bottom-2 right-2 bg-red-800 text-white p-1 rounded-full hover:bg-red-900"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-              </button>
             </div>
             <div class="text-center sm:text-left">
               <h1 class="text-xl sm:text-2xl font-bold text-red-800">{{ profileData.user.name }}</h1>
               <p class="text-red-700 flex items-center gap-2">
-                <span>{{ profileData.user.role === 'seller' ? t('profile.role.verified_seller') : t('profile.role.registered_buyer') }}</span>
-                <span v-if="profileData.user.verifiedBuyer" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                <!-- This used to read "Verified Seller" for every seller, including
+                     ones an admin had not approved yet. -->
+                <span class="capitalize">{{ roleLabel }}</span>
+                <span v-if="profileData.user.verified" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                   ✓ {{ t('profile.verified') }}
                 </span>
               </p>
@@ -60,22 +112,41 @@
       </div>
 
       <!-- Stats Section -->
+      <!-- Buyers used to be shown three seller-only counters permanently stuck
+           at 0, while the one figure computed for them (watchlist) was never
+           displayed at all. -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div class="glass p-4 rounded-lg border border-red-200">
-          <p class="text-red-600 text-sm">{{ t('profile.stats.listings') }}</p>
-          <p class="text-2xl font-bold text-red-800">{{ profileData.stats.totalListings || 0 }}</p>
-          <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.total') }}</p>
-        </div>
-        <div class="glass p-4 rounded-lg border border-red-200">
-          <p class="text-red-600 text-sm">{{ t('profile.stats.active') }}</p>
-          <p class="text-2xl font-bold text-red-800">{{ profileData.stats.activeListings || 0 }}</p>
-          <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.listings') }}</p>
-        </div>
-        <div class="glass p-4 rounded-lg border border-red-200">
-          <p class="text-red-600 text-sm">{{ t('profile.stats.cars_sold') }}</p>
-          <p class="text-2xl font-bold text-red-800">{{ profileData.stats.carsSold || 0 }}</p>
-          <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.lifetime') }}</p>
-        </div>
+        <template v-if="profileData.user.role === 'seller'">
+          <div class="glass p-4 rounded-lg border border-red-200">
+            <p class="text-red-600 text-sm">{{ t('profile.stats.listings') }}</p>
+            <p class="text-2xl font-bold text-red-800">{{ profileData.stats.totalListings || 0 }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.total') }}</p>
+          </div>
+          <div class="glass p-4 rounded-lg border border-red-200">
+            <p class="text-red-600 text-sm">{{ t('profile.stats.active') }}</p>
+            <p class="text-2xl font-bold text-red-800">{{ profileData.stats.activeListings || 0 }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.listings') }}</p>
+          </div>
+          <div class="glass p-4 rounded-lg border border-red-200">
+            <p class="text-red-600 text-sm">{{ t('profile.stats.cars_sold') }}</p>
+            <p class="text-2xl font-bold text-red-800">{{ profileData.stats.carsSold || 0 }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.lifetime') }}</p>
+          </div>
+        </template>
+        <template v-else>
+          <div class="glass p-4 rounded-lg border border-red-200">
+            <p class="text-red-600 text-sm">{{ t('profile.stats.watchlist') }}</p>
+            <p class="text-2xl font-bold text-red-800">{{ profileData.stats.watchlistCount || 0 }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ t('profile.stats.saved_cars') }}</p>
+          </div>
+          <div class="glass p-4 rounded-lg border border-red-200">
+            <p class="text-red-600 text-sm">{{ t('profile.stats.buyer_type') }}</p>
+            <p class="text-lg font-bold text-red-800 capitalize">
+              {{ profileData.user.buyerType === 'auction' ? t('register.buyer_type_auction_short') : t('register.buyer_type_direct_short') }}
+            </p>
+            <p class="text-red-500 text-xs mt-1">{{ t('profile.personal_info.role') }}</p>
+          </div>
+        </template>
         <div class="glass p-4 rounded-lg border border-red-200">
           <p class="text-red-600 text-sm">{{ t('profile.stats.account') }}</p>
           <p class="text-2xl font-bold" :class="profileData.user.banned ? 'text-red-600' : 'text-green-600'">
@@ -230,7 +301,7 @@
           <div class="space-y-4">
             <NuxtLink 
               v-if="profileData.user.role === 'seller'"
-              to="/sell"
+              :to="localePath('/sell')"
               class="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
             >
               <div class="flex items-center">
@@ -245,7 +316,7 @@
             </NuxtLink>
 
             <NuxtLink 
-              to="/dashboard"
+              :to="localePath('/dashboard')"
               class="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
             >
               <div class="flex items-center">
@@ -292,7 +363,7 @@
             </div>
 
             <button 
-              v-if="profileData.user.role === 'buyer' && !profileData.user.verifiedBuyer"
+              v-if="!profileData.user.verified"
               @click="requestVerification"
               class="w-full flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
             >
@@ -313,12 +384,71 @@
         </div>
       </div>
 
+      <!-- Change password — there was no way at all to do this before -->
+      <div class="glass p-6 rounded-xl border border-red-200">
+        <h2 class="text-xl font-bold text-red-800 mb-4">{{ t('profile.password.title') }}</h2>
+
+        <form @submit.prevent="changePassword" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+          <div>
+            <label for="currentPassword" class="block text-red-600 text-sm mb-2">{{ t('profile.password.current') }}</label>
+            <input
+              id="currentPassword"
+              v-model="passwordForm.current"
+              type="password"
+              autocomplete="current-password"
+              required
+              class="w-full bg-red-50 rounded-lg px-4 py-2 text-red-900 border border-red-300"
+            />
+          </div>
+          <div>
+            <label for="newPassword" class="block text-red-600 text-sm mb-2">{{ t('auth.new_password') }}</label>
+            <input
+              id="newPassword"
+              v-model="passwordForm.next"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              required
+              class="w-full bg-red-50 rounded-lg px-4 py-2 text-red-900 border border-red-300"
+            />
+          </div>
+          <div>
+            <label for="confirmNewPassword" class="block text-red-600 text-sm mb-2">{{ t('register.password.confirm_label') }}</label>
+            <input
+              id="confirmNewPassword"
+              v-model="passwordForm.confirm"
+              type="password"
+              autocomplete="new-password"
+              required
+              class="w-full bg-red-50 rounded-lg px-4 py-2 text-red-900 border border-red-300"
+            />
+          </div>
+
+          <div class="md:col-span-3 flex flex-col sm:flex-row sm:items-center gap-3">
+            <button
+              type="submit"
+              :disabled="changingPassword"
+              class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {{ changingPassword ? t('profile.saving') : t('profile.password.submit') }}
+            </button>
+            <p v-if="passwordMessage" class="text-sm" :class="passwordError ? 'text-red-700' : 'text-green-700'">
+              {{ passwordMessage }}
+            </p>
+            <NuxtLink :to="localePath('/forgot-password')" class="text-sm text-red-700 hover:text-red-900 underline sm:ml-auto">
+              {{ t('auth.forgot_password') }}
+            </NuxtLink>
+          </div>
+        </form>
+        <p class="text-red-500 text-xs mt-3">{{ t('profile.password.hint') }}</p>
+      </div>
+
       <!-- My Listings Section (For Sellers) -->
       <div v-if="profileData.user.role === 'seller'" class="glass p-6 rounded-xl border border-red-200">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
           <h2 class="text-xl font-bold text-red-800">{{ t('profile.my_listings.title') }}</h2>
           <NuxtLink 
-            to="/sell"
+            :to="localePath('/sell')"
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             + {{ t('profile.my_listings.new_listing') }}
@@ -371,7 +501,7 @@
             <!-- Car Info -->
             <div class="p-4">
               <h3 class="text-lg font-bold text-red-800 mb-1">{{ car.make }} {{ car.model }}</h3>
-              <p class="text-red-600 text-sm mb-3">{{ car.year }} • {{ car.mileage.toLocaleString() }} km</p>
+              <p class="text-red-600 text-sm mb-3">{{ car.year }} • {{ Number(car.mileage || 0).toLocaleString() }} km</p>
               
               <div class="flex justify-between items-center mb-4">
                 <div>
@@ -391,13 +521,13 @@
               <!-- Actions -->
               <div class="flex flex-wrap gap-2 mt-3">
                 <NuxtLink 
-                  :to="`/cars/${car.id}`"
+                  :to="localePath(`/cars/${car.id}`)"
                   class="flex-1 px-3 py-2 bg-red-100 text-red-800 text-sm font-medium rounded-lg hover:bg-red-200 text-center min-w-0"
                 >
                   {{ t('messages.view') }}
                 </NuxtLink>
                 <NuxtLink 
-                  :to="`/seller/cars/edit/${car.id}`"
+                  :to="localePath(`/cars/edit/${car.id}`)"
                   class="flex-1 px-3 py-2 bg-red-200 text-red-800 text-sm font-medium rounded-lg hover:bg-red-300 text-center min-w-0"
                 >
                   {{ t('profile.actions.edit') }}
@@ -420,7 +550,7 @@
           </svg>
           <p class="text-red-600 mb-4">{{ t('profile.my_listings.empty') }}</p>
           <NuxtLink 
-            to="/sell" 
+            :to="localePath('/sell')" 
             class="inline-block px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200"
           >
             {{ t('profile.my_listings.list_first_car') }}
@@ -557,17 +687,30 @@
 </template>
 
 <script setup lang="ts">
+// ─────────────────────────────────────────────────────────────────────────────
+// WHY THIS PAGE WAS BROKEN
+//
+//  • The profile was loaded with useLazyFetch(), which runs during SSR. Nuxt
+//    does NOT forward the browser's cookies to internal API calls during SSR,
+//    so /api/user/profile answered 401 and the page rendered its "please
+//    login" error to users who were very much logged in.
+//  • saveProfile(), loadTransactions() and requestVerification() all called
+//    useFetch() from inside a click handler. useFetch() is a setup-time
+//    composable; used that way it silently returns stale/never-resolving data,
+//    which is why saving a profile appeared to do nothing.
+//
+// Everything now goes through apiFetch(), which runs on the client with a
+// freshly refreshed Supabase token.
+// ─────────────────────────────────────────────────────────────────────────────
 const { t } = useI18n()
+const localePath = useLocalePath()
+const { apiFetch } = useApiFetch()
+const auth = useAuth()
+const route = useRoute()
 
-// Set SEO meta tags
 useHead({
-  title: t('profile.seo.title') || 'Your Profile - SwissExportCar',
-  meta: [
-    {
-      name: 'description',
-      content: t('profile.seo.description') || 'View and manage your profile, listings, and transaction history on SwissExportCar'
-    }
-  ]
+  title: t('profile.seo.title'),
+  meta: [{ name: 'description', content: t('profile.seo.description') }]
 })
 
 const loading = ref(true)
@@ -575,328 +718,286 @@ const listingsLoading = ref(false)
 const error = ref('')
 const editMode = ref(false)
 const saving = ref(false)
-const userListings = ref([])
+const userListings = ref<any[]>([])
 
-// Transaction history
 const transactionsLoading = ref(false)
-const transactions = ref([])
+const transactions = ref<any[]>([])
 
-// Profile data
-const profileData = ref({
+const emptyProfile = () => ({
   user: {
-    id: null,
-    name: '',
-    email: '',
-    role: '',
-    joinedAt: new Date().toISOString(),
-    funds: 0,
-    banned: false,
-    phone: '',
-    companyName: '',
-    streetAddress: '',
-    city: '',
-    canton: '',
-    zipCode: '',
-    verifiedBuyer: false
+    id: null, name: '', email: '', role: '', joinedAt: new Date().toISOString(),
+    funds: 0, verified: false, banned: false, phone: '', companyName: '',
+    businessType: '', streetAddress: '', city: '', canton: '', zipCode: '',
+    profileImage: '', freeFeatureCredits: 0, buyerType: 'direct', hasIdDocument: false,
   },
-  stats: {
-    totalListings: 0,
-    activeListings: 0,
-    carsSold: 0
-  },
-  activity: []
+  stats: { totalListings: 0, activeListings: 0, carsSold: 0, watchlistCount: 0 },
+  activity: [] as any[],
 })
 
-// Edit form
+const profileData = ref<any>(emptyProfile())
+
 const editForm = ref({
-  name: '',
-  phone: '',
-  companyName: '',
-  streetAddress: '',
-  city: '',
-  canton: '',
-  zipCode: ''
+  name: '', phone: '', companyName: '', streetAddress: '', city: '', canton: '', zipCode: ''
 })
 
-// Fetch profile data
-const { data, pending, error: fetchError } = await useLazyFetch('/api/user/profile', {
-  key: 'profile-data',
-  onResponseError({ response }) {
-    if (response.status === 401) {
-      navigateTo('/login')
-    }
+const syncEditForm = () => {
+  const u = profileData.value.user
+  editForm.value = {
+    name: u.name || '',
+    phone: u.phone || '',
+    companyName: u.companyName || '',
+    streetAddress: u.streetAddress || '',
+    city: u.city || '',
+    canton: u.canton || '',
+    zipCode: u.zipCode || ''
   }
-})
+}
 
-// Watch for data changes
-watchEffect(() => {
-  if (data.value) {
-    profileData.value = data.value
-
-    // ✅ Listings are already in the profile API response — map snake_case → camelCase
-    const rawListings = (data.value as any).listings || []
-    userListings.value = rawListings.map((car: any) => ({
-      ...car,
-      // Map snake_case DB fields to camelCase used by the template
-      listingType: car.listing_type,
-      isFeatured: car.is_featured,
-      featuredUntil: car.featured_until,
-      currentBid: car.current_bid,
-      bidCount: car.bid_count || 0,
-      createdAt: car.created_at,
-    }))
-
-    // Initialize edit form with current data
-    editForm.value = {
-      name: profileData.value.user.name,
-      phone: profileData.value.user.phone || '',
-      companyName: profileData.value.user.companyName || '',
-      streetAddress: profileData.value.user.streetAddress || '',
-      city: profileData.value.user.city || '',
-      canton: profileData.value.user.canton || '',
-      zipCode: profileData.value.user.zipCode || ''
+const loadProfile = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const data: any = await apiFetch('/api/user/profile')
+    profileData.value = {
+      user: { ...emptyProfile().user, ...(data.user || {}) },
+      stats: { ...emptyProfile().stats, ...(data.stats || {}) },
+      activity: data.activity || [],
     }
-
-    // Set loading false after data is processed
+    userListings.value = data.listings || []
+    syncEditForm()
+  } catch (err: any) {
+    if (err?.statusCode === 401 || err?.response?.status === 401) {
+      await navigateTo(localePath(`/login?redirect=${encodeURIComponent(route.fullPath)}`))
+      return
+    }
+    error.value = err?.data?.statusMessage || t('profile.error.load_failed')
+  } finally {
+    loading.value = false
     listingsLoading.value = false
   }
-  loading.value = pending.value
-  error.value = fetchError.value?.message || ''
-})
+}
 
-// Load transactions
+// ── Transactions ────────────────────────────────────────────────────────────
 const loadTransactions = async () => {
   transactionsLoading.value = true
   try {
-    const { data } = await useFetch('/api/user/transactions', {
-      key: `user-transactions-${Date.now()}`
-    })
-    
-    console.log('📊 Transactions API response:', data.value) // DEBUG
-    
-    if (data.value?.success) {
-      transactions.value = data.value.transactions || []
-      
-      // Debug: Log transaction amounts
-      transactions.value.forEach((t: any, index: number) => {
-        console.log(`Transaction ${index + 1}:`, {
-          id: t.id,
-          type: t.type,
-          amount: t.amount,
-          previousBalance: t.previousBalance,
-          newBalance: t.newBalance,
-          description: t.description
-        })
-      })
-    } else {
-      console.error('❌ Failed to load transactions:', data.value?.error)
-    }
-  } catch (err: any) {
-    console.error('❌ Failed to load transactions:', err)
-    console.error('❌ Error details:', err.message)
+    const data: any = await apiFetch('/api/user/transactions')
+    transactions.value = data?.transactions || []
+  } catch {
+    transactions.value = []
   } finally {
     transactionsLoading.value = false
   }
 }
 
-const refreshTransactions = async () => {
-  await loadTransactions()
-}
+const refreshTransactions = () => loadTransactions()
 
-// Helper functions for transactions
-const getTransactionDescription = (transaction: any) => {
-  const typeMap: Record<string, string> = {
-    'deposit': 'Funds Added',
-    'withdrawal': 'Funds Withdrawn',
-    'payment': 'Payment',
-    'refund': 'Refund'
+// ── ID document upload (so a user who is stuck unverified can fix it) ───────
+const uploadingId = ref(false)
+const idUploadMessage = ref('')
+const idUploadError = ref(false)
+const { compressImage } = useImageCompression()
+
+const onIdUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  idUploadMessage.value = ''
+  idUploadError.value = false
+
+  // Accept any image (iPhones send HEIC) or a PDF; compressImage() converts
+  // images to JPEG, and only then do we check what we are really sending.
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+  const isImage = file.type.startsWith('image/')
+  if (!isImage && file.type !== 'application/pdf') {
+    idUploadError.value = true
+    idUploadMessage.value = t('register.validation.id_file_type')
+    target.value = ''
+    return
   }
-  return typeMap[transaction.type] || transaction.type || 'Transaction'
+
+  uploadingId.value = true
+  try {
+    let prepared: File = file
+    if (isImage) {
+      prepared = await compressImage(file, { maxDimension: 2000, quality: 0.85, skipUnderKB: 0 })
+    }
+    if (!allowed.includes(prepared.type)) {
+      idUploadError.value = true
+      idUploadMessage.value = t('register.validation.id_file_type')
+      return
+    }
+    const fd = new FormData()
+    fd.append('file', prepared)
+    await apiFetch('/api/user/upload-id', { method: 'POST', body: fd })
+    idUploadMessage.value = t('profile.status.id_uploaded')
+    profileData.value.user.hasIdDocument = true
+  } catch (err: any) {
+    idUploadError.value = true
+    idUploadMessage.value = err?.data?.statusMessage || t('profile.status.id_upload_failed')
+  } finally {
+    uploadingId.value = false
+    target.value = ''
+  }
 }
 
-const getAmountClass = (transaction: any) => {
-  return transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+// ── Change password ─────────────────────────────────────────────────────────
+const passwordForm = ref({ current: '', next: '', confirm: '' })
+const changingPassword = ref(false)
+const passwordMessage = ref('')
+const passwordError = ref(false)
+
+const changePassword = async () => {
+  passwordMessage.value = ''
+  passwordError.value = false
+
+  if (passwordForm.value.next.length < 8) {
+    passwordError.value = true
+    passwordMessage.value = t('register.validation.password_length')
+    return
+  }
+  if (passwordForm.value.next !== passwordForm.value.confirm) {
+    passwordError.value = true
+    passwordMessage.value = t('register.validation.passwords_not_match')
+    return
+  }
+
+  changingPassword.value = true
+  try {
+    await apiFetch('/api/user/change-password', {
+      method: 'POST',
+      body: { currentPassword: passwordForm.value.current, newPassword: passwordForm.value.next },
+    })
+    passwordMessage.value = t('auth.password_changed')
+    passwordForm.value = { current: '', next: '', confirm: '' }
+  } catch (err: any) {
+    passwordError.value = true
+    passwordMessage.value = err?.data?.statusMessage || t('auth.password_change_failed')
+  } finally {
+    changingPassword.value = false
+  }
 }
 
-const getAmountPrefix = (transaction: any) => {
-  return transaction.amount > 0 ? '+' : '-'
-}
-
-// Format transaction type for display
+// ── Display helpers ─────────────────────────────────────────────────────────
 const formatTransactionType = (type: string) => {
-  const typeMap: Record<string, string> = {
-    'deposit': t('profile.transactions.type.deposit') || 'Deposit',
-    'withdrawal': t('profile.transactions.type.withdrawal') || 'Withdrawal',
-    'payment': t('profile.transactions.type.payment') || 'Payment',
-    'refund': t('profile.transactions.type.refund') || 'Refund',
-    'listing_fee': t('profile.transactions.type.listing_fee') || 'Listing Fee',
-    'auction_fee': t('profile.transactions.type.auction_fee') || 'Auction Fee',
-    'feature_payment': t('profile.transactions.type.feature_payment') || 'Feature',
-    'permanent_feature_payment': t('profile.transactions.type.permanent_feature_payment') || 'Permanent Feature',
-    'bid_payment': t('profile.transactions.type.bid_payment') || 'Bid',
-    'admin_adjustment': t('profile.transactions.type.admin_adjustment') || 'Admin Adjustment',
-    'free_feature': t('profile.transactions.type.free_feature') || 'Free Feature'
-  }
-  return typeMap[type] || type
+  const key = `profile.transactions.type.${type}`
+  const translated = t(key)
+  return translated === key ? type : translated
 }
+
+const getAmountClass = (transaction: any) => (transaction.amount > 0 ? 'text-green-600' : 'text-red-600')
+const getAmountPrefix = (transaction: any) => (transaction.amount > 0 ? '+' : '-')
 
 const getTransactionStatusClass = (transaction: any) => {
   switch (transaction.status?.toLowerCase()) {
-    case 'completed':
-      return 'bg-green-100 text-green-800'
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800'
-    case 'failed':
-      return 'bg-red-100 text-red-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
+    case 'completed': return 'bg-green-100 text-green-800'
+    case 'pending': return 'bg-yellow-100 text-yellow-800'
+    case 'failed': return 'bg-red-100 text-red-800'
+    case 'refunded': return 'bg-blue-100 text-blue-800'
+    default: return 'bg-gray-100 text-gray-800'
   }
 }
 
-// Computed properties
-const userInitial = computed(() => profileData.value.user.name?.charAt(0)?.toUpperCase() || '?')
-const formattedJoinDate = computed(() => new Date(profileData.value.user.joinedAt).toLocaleDateString())
+const roleLabel = computed(() => {
+  const u = profileData.value.user
+  if (u.role === 'admin') return t('profile.role.administrator')
+  if (u.role === 'seller') return u.verified ? t('profile.role.verified_seller') : t('profile.role.seller')
+  return u.verified ? t('profile.role.verified_buyer') : t('profile.role.registered_buyer')
+})
 
-// Format dates
+const userInitial = computed(() => profileData.value.user.name?.charAt(0)?.toUpperCase() || '?')
+const formattedJoinDate = computed(() => {
+  const raw = profileData.value.user.joinedAt
+  const date = raw ? new Date(raw) : null
+  return date && !isNaN(date.getTime()) ? date.toLocaleDateString() : '—'
+})
+
 const formatActivityDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString()
+  const date = new Date(dateString)
+  return isNaN(date.getTime()) ? '' : date.toLocaleString()
 }
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return ''
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-// Status class helper
 const getStatusClass = (status: string) => {
   switch (status?.toLowerCase()) {
-    case 'active':
-      return 'bg-green-100 text-green-800'
-    case 'draft':
-      return 'bg-gray-100 text-gray-800'
-    case 'sold':
-      return 'bg-red-100 text-red-800'
-    case 'auction':
-      return 'bg-blue-100 text-blue-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
+    case 'active': return 'bg-green-100 text-green-800'
+    case 'draft': return 'bg-gray-100 text-gray-800'
+    case 'sold': return 'bg-red-100 text-red-800'
+    case 'auction': return 'bg-blue-100 text-blue-800'
+    default: return 'bg-gray-100 text-gray-800'
   }
 }
 
-// Status display helper
 const getStatusDisplay = (status: string, listingType?: string) => {
   if (listingType === 'auction') {
     switch (status?.toLowerCase()) {
-      case 'active': return t('auction.status.live') || 'Live Auction'
-      case 'auction_ended': return t('auction.status.ended') || 'Auction Ended'
-      case 'sold': return t('auction.status.sold') || 'Sold'
-      default: return t('auction.status.auction') || 'Auction'
+      case 'active':
+      case 'auction': return t('auction.status.live')
+      case 'auction_ended': return t('auction.status.ended')
+      case 'sold': return t('auction.status.sold')
+      default: return t('auction.status.auction')
     }
-  } else {
-    switch (status?.toLowerCase()) {
-      case 'active': return t('status_label.active') || 'Available'
-      case 'sold': return t('auction.status.sold') || 'Sold'
-      default: return t('status_label.active') || 'Available'
-    }
+  }
+  switch (status?.toLowerCase()) {
+    case 'sold': return t('auction.status.sold')
+    default: return t('status_label.active')
   }
 }
 
-// Toggle edit mode
+// ── Actions ─────────────────────────────────────────────────────────────────
 const toggleEditMode = () => {
   editMode.value = !editMode.value
-  if (editMode.value) {
-    // Reset form to current values
-    editForm.value = {
-      name: profileData.value.user.name,
-      phone: profileData.value.user.phone || '',
-      companyName: profileData.value.user.companyName || '',
-      streetAddress: profileData.value.user.streetAddress || '',
-      city: profileData.value.user.city || '',
-      canton: profileData.value.user.canton || '',
-      zipCode: profileData.value.user.zipCode || ''
-    }
-  }
+  if (editMode.value) syncEditForm()
 }
 
-// Save profile
 const saveProfile = async () => {
   saving.value = true
   try {
-    const { data: result } = await useFetch('/api/user/profile', {
-      method: 'PUT',
-      body: editForm.value
-    })
-    
-    if (result.value?.success) {
-      // Update local data
-      profileData.value.user = {
-        ...profileData.value.user,
-        ...editForm.value
-      }
-      editMode.value = false
-      alert(t('profile.messages.updated_success') || 'Profile updated successfully!')
-    }
-  } catch (err) {
-    console.error('Failed to update profile:', err)
-    alert(t('profile.messages.update_failed') || 'Failed to update profile. Please try again.')
+    await apiFetch('/api/user/profile', { method: 'PUT', body: editForm.value })
+    profileData.value.user = { ...profileData.value.user, ...editForm.value }
+    editMode.value = false
+    // Keep the header/nav in step with the new name.
+    await auth.refreshUser()
+  } catch (err: any) {
+    alert(err?.data?.statusMessage || t('profile.messages.update_failed'))
   } finally {
     saving.value = false
   }
 }
 
-// Delete listing
 const confirmDelete = async (carId: number) => {
-  console.log('🗑️ Attempting to delete car ID:', carId)
-  
-  if (confirm(t('profile.messages.confirm_delete') || 'Are you sure you want to delete this listing? This action cannot be undone.')) {
-    try {
-      // Try the new endpoint
-      const result = await $fetch(`/api/cars/${carId}/delete`, {
-        method: 'DELETE'
-      })
-      
-      console.log('✅ Delete response:', result)
-      
-      // Remove from local list
-      userListings.value = userListings.value.filter((car: any) => car.id !== carId)
-      alert(t('profile.messages.delete_success') || 'Listing deleted successfully!')
-      
-    } catch (error: any) {
-      console.error('❌ Failed to delete listing:', error)
-      console.error('❌ Error details:', error.data)
-      
-      alert(t('profile.messages.delete_failed') || 'Failed to delete listing: ' + 
-        (error.data?.message || error.message || 'Please try again'))
-    }
+  if (!confirm(t('profile.messages.confirm_delete'))) return
+  try {
+    await apiFetch(`/api/cars/${carId}/delete`, { method: 'DELETE' })
+    userListings.value = userListings.value.filter((car: any) => car.id !== carId)
+    profileData.value.stats.totalListings = Math.max(0, (profileData.value.stats.totalListings || 1) - 1)
+  } catch (err: any) {
+    alert(err?.data?.statusMessage || t('profile.messages.delete_failed'))
   }
 }
 
-// Request verification
 const requestVerification = async () => {
-  if (confirm(t('profile.messages.confirm_verification') || 'Request verification as a buyer? This will notify the admin team.')) {
-    try {
-      const { data } = await useFetch('/api/user/request-verification', {
-        method: 'POST'
-      })
-      
-      if (data.value?.success) {
-        alert(t('profile.messages.verification_sent') || 'Verification request sent! Our team will review your request soon.')
-      }
-    } catch (error) {
-      console.error('Failed to request verification:', error)
-      alert(t('profile.messages.verification_failed') || 'Failed to send verification request. Please try again.')
-    }
+  if (!confirm(t('profile.messages.confirm_verification'))) return
+  try {
+    const data: any = await apiFetch('/api/user/request-verification', { method: 'POST' })
+    if (data?.success) alert(data.message || t('profile.messages.verification_sent'))
+  } catch (err: any) {
+    alert(err?.data?.statusMessage || t('profile.messages.verification_failed'))
   }
 }
 
-// Load transactions on mount
-onMounted(() => {
-  loadTransactions()
+onMounted(async () => {
+  await loadProfile()
+  await loadTransactions()
 })
 </script>
+
 
 <style scoped>
 .glass {

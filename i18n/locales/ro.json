@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Panoul Dvs. de Licitație",
     "your_bid": "Oferta dvs.",
     "your_max_bid": "Oferta dvs. maximă",
-    "your_wallet": "Portofelul Dvs."
+    "your_wallet": "Portofelul Dvs.",
+    "status_heading": "Starea licitației"
   },
   "auth": {
     "confirm_message": "Vă rugăm așteptați în timp ce verificăm adresa dvs. de email...",
@@ -138,7 +139,22 @@
     "signup_button": "Înregistrare",
     "signup_link": "Înregistrare",
     "signup_success": "Vă rugăm verificați email-ul pentru a confirma contul!",
-    "signup_title": "Creați Cont"
+    "signup_title": "Creați Cont",
+    "forgot_password": "Ați uitat parola?",
+    "forgot_password_title": "Resetați-vă parola",
+    "forgot_password_intro": "Introduceți adresa de email cu care v-ați înregistrat și vă vom trimite un link pentru a seta o parolă nouă.",
+    "forgot_password_sent": "Dacă există un cont pentru acea adresă, linkul de resetare este pe drum. Vă rugăm să verificați căsuța de email și folderul spam.",
+    "back_to_login": "Înapoi la autentificare",
+    "sending": "Se trimite...",
+    "send_reset_link": "Trimite linkul de resetare",
+    "reset_password_title": "Alegeți o parolă nouă",
+    "reset_link_invalid": "Acest link de resetare nu mai este valabil. Linkurile de resetare expiră după scurt timp și funcționează doar în browserul în care le-ați deschis.",
+    "request_new_link": "Solicitați un link nou",
+    "password_changed": "Parola dvs. a fost schimbată.",
+    "password_change_failed": "Nu am putut schimba parola dvs. Vă rugăm să încercați din nou.",
+    "new_password": "Parolă nouă",
+    "set_new_password": "Salvați parola nouă",
+    "logging_in": "Se autentifică..."
   },
   "body_type_label": "Tip Caroserie",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "An",
     "your_balance": "Soldul Contului Dvs.",
     "zip_code": "Cod Poștal",
-    "zip_code_placeholder": "ex. 3032"
+    "zip_code_placeholder": "ex. 3032",
+    "upload_failed": "Eșuat",
+    "upload_failed_generic": "Unele fotografii nu au putut fi încărcate. Dacă sunteți de mai mult timp pe această pagină, este posibil ca sesiunea dvs. să fi expirat — vă rugăm să reîmprospătați pagina și să încercați din nou.",
+    "try_again": "Încercați să încărcați din nou"
   },
   "cars_page": {
     "description": "Răsfoiți vehicule elvețiene de calitate la prețuri accesibile de export",
@@ -672,7 +691,8 @@
       "year_desc": "Cele Mai Noi Întâi"
     },
     "subtitle": "Vehicule elvețiene de calitate la prețuri accesibile de export",
-    "title": "Răsfoiți Mașini de Export"
+    "title": "Răsfoiți Mașini de Export",
+    "filter_status": "Stare"
   },
   "chat": {
     "buyer": "Cumpărător",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Sunteți cumpărătorul",
     "you_are_buyer_label": "Sunteți cumpărătorul",
     "you_are_seller": "Sunteți vânzătorul",
-    "you_are_seller_label": "Sunteți vânzătorul"
+    "you_are_seller_label": "Sunteți vânzătorul",
+    "verification_required": "Un administrator trebuie să vă verifice contul înainte să puteți trimite mesaje. Între timp, puteți citi în continuare această conversație."
   },
   "city_label": "Oraș",
   "city_placeholder": "Introduceți orașul",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Contactați administratorul pentru gestionarea fondurilor",
     "error": {
-      "login_to_view": "Vă rugăm să vă autentificați pentru a vedea profilul"
+      "login_to_view": "Vă rugăm să vă autentificați pentru a vedea profilul",
+      "load_failed": "Nu am putut încărca profilul dvs. Vă rugăm să reîmprospătați pagina."
     },
     "featured": "Recomandat",
     "member_since": "Membru din",
@@ -991,7 +1013,8 @@
       "list_new_car": "Anunțați Mașină Nouă",
       "request_verification": "Solicitați Verificare",
       "title": "Acțiuni Rapide",
-      "view_dashboard": "Vizualizați Panou"
+      "view_dashboard": "Vizualizați Panou",
+      "view_profile": "Mergeți la profilul meu"
     },
     "recent_activity": {
       "empty": "Nu există activitate recentă",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Cumpărător Înregistrat",
-      "verified_seller": "Vânzător Verificat"
+      "verified_seller": "Vânzător Verificat",
+      "administrator": "Administrator",
+      "seller": "Vânzător",
+      "verified_buyer": "Cumpărător verificat"
     },
     "saving": "Se salvează...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Total",
       "listings": "Anunțuri",
       "status": "Stare",
-      "total": "Total"
+      "total": "Total",
+      "buyer_type": "Tip de cumpărător",
+      "saved_cars": "Mașini salvate",
+      "watchlist": "Listă de urmărire"
     },
     "transactions": {
       "change": "Schimbare",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Puteți contacta vânzătorii și naviga prin anunțuri.",
       "verified_title": "Cont verificat"
     },
-    "verified": "Verificat"
+    "verified": "Verificat",
+    "status": {
+      "pending_title": "În așteptarea verificării",
+      "pending_body": "Un administrator vă verifică actul de identitate. Între timp puteți răsfoi toate anunțurile. Publicarea unei mașini, trimiterea de mesaje către un vânzător și plasarea ofertelor se deblochează de îndată ce contul dvs. este verificat.",
+      "verified_title": "Cont verificat",
+      "verified_body_seller": "Puteți publica anunțuri, trimite mesaje cumpărătorilor și folosi toate secțiunile site-ului.",
+      "verified_body_buyer": "Puteți trimite mesaje vânzătorilor și plasa oferte.",
+      "banned_title": "Cont suspendat",
+      "banned_body": "Acest cont a fost suspendat și nu poate publica anunțuri, trimite mesaje sau plasa oferte. Vă rugăm să contactați suportul dacă credeți că este o greșeală.",
+      "missing_id": "Încă nu avem un act de identitate pentru acest cont, așa că nu poate fi verificat. Vă rugăm să încărcați unul mai jos.",
+      "upload_id": "Încărcați actul dvs. de identitate",
+      "replace_id": "Înlocuiți actul dvs. de identitate",
+      "id_uploaded": "Vă mulțumim. Documentul dvs. a fost trimis administratorilor spre verificare.",
+      "id_upload_failed": "Nu am putut încărca acel document. Vă rugăm să încercați din nou."
+    },
+    "password": {
+      "title": "Schimbați parola",
+      "current": "Parola actuală",
+      "submit": "Schimbați parola",
+      "hint": "Parola nouă trebuie să aibă cel puțin 8 caractere. Dacă ați uitat-o pe cea actuală, folosiți în schimb linkul de resetare."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Furnizarea unui act de identitate fals sau nefinalizarea unei licitații câștigate va duce la blocarea permanentă.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Vă rugăm acceptați termenii și politica de confidențialitate",
       "password_length": "Parola trebuie să aibă cel puțin 8 caractere",
       "passwords_not_match": "Parolele nu se potrivesc",
-      "phone_too_short": "Numărul de telefon este prea scurt"
-    }
+      "phone_too_short": "Numărul de telefon este prea scurt",
+      "id_required": "Vă rugăm să încărcați actul dvs. de identitate. Un administrator are nevoie de el pentru a vă verifica contul.",
+      "id_consent_required": "Vă rugăm să confirmați că sunteți de acord cu prelucrarea actului dvs. de identitate.",
+      "id_file_type": "Vă rugăm să încărcați un fișier JPG, PNG sau PDF.",
+      "id_file_size": "Acel fișier este prea mare. Vă rugăm să încărcați un document mai mic de 6 MB.",
+      "phone_required": "Numărul de telefon este obligatoriu."
+    },
+    "id_upload_required_note": "Fiecare cont are nevoie de un act de identitate. Un administrator îl verifică înainte să puteți publica o mașină, să trimiteți mesaje cuiva sau să plasați o ofertă.",
+    "id_consent": "Sunt de acord ca SwissCarExport să îmi prelucreze actul de identitate exclusiv în scopul verificării identității mele, așa cum este descris în",
+    "approval_notice_title": "Contul dvs. trebuie mai întâi verificat",
+    "approval_notice_body": "Vă puteți autentifica și naviga imediat pe tot site-ul. Publicarea unei mașini, trimiterea de mesaje către un vânzător și plasarea ofertelor rămân blocate până când un administrator vă verifică actul de identitate.",
+    "buyer_type_auction_short": "Cumpărător la licitație",
+    "buyer_type_direct_short": "Cumpărător direct"
   },
   "reset_filters": "Resetați Filtrele",
   "search_button": "Căutați Mașini",
@@ -1260,5 +1320,70 @@
   "sell_car": "Vinde mașina",
   "stat_verified_sellers": "Vânzători elvețieni verificați",
   "stat_free_browse": "Navigare și contact gratuite",
-  "stat_free_months": "Luni gratuite pentru vânzători"
+  "stat_free_months": "Luni gratuite pentru vânzători",
+  "cars": "Mașini",
+  "dashboard": "Panou",
+  "close": "Închide",
+  "sell_gate": {
+    "loading_title": "Se verifică contul dvs....",
+    "loading_body": "Un moment.",
+    "anonymous_title": "Autentificați-vă pentru a publica o mașină",
+    "anonymous_body": "Aveți nevoie de un cont de vânzător pentru a publica un anunț. Răsfoirea rămâne gratuită și nu necesită niciun cont.",
+    "banned_title": "Cont suspendat",
+    "banned_body": "Acest cont a fost suspendat și nu poate publica anunțuri. Vă rugăm să contactați suportul dacă credeți că este o greșeală.",
+    "buyer_title": "Acesta este un cont de cumpărător",
+    "buyer_body": "Doar conturile de vânzător pot publica anunțuri. Dacă doriți să vindeți o mașină pentru export, vă rugăm să contactați suportul pentru a vi se schimba tipul contului.",
+    "unverified_title": "În așteptarea verificării",
+    "unverified_body": "Un administrator trebuie să vă verifice actul de identitate înainte să puteți publica anunțuri. Veți putea publica de îndată ce contul dvs. este verificat — până atunci, nimic din ce introduceți aici nu ar fi salvat."
+  },
+  "contact_page": {
+    "title": "Contact",
+    "intro": "Iată cum ajungeți la persoana potrivită, în funcție de ce aveți nevoie.",
+    "about_a_car_title": "O întrebare despre o anumită mașină",
+    "about_a_car_body": "Fiecare anunț afișează numărul de telefon al vânzătorului și are un buton de mesaj. Vânzătorul cunoaște mașina, așa că el este cea mai rapidă cale către un răspuns despre stare, acte sau preț.",
+    "browse_cars": "Răsfoiți anunțurile",
+    "account_title": "Contul sau verificarea dvs.",
+    "account_body": "Pagina dvs. de profil arată dacă contul a fost verificat și vă permite să încărcați sau să înlocuiți actul de identitate.",
+    "support_title": "Orice altceva",
+    "support_body": "Pentru probleme cu site-ul, cu plățile sau pentru a reclama un alt utilizator, contactați-ne direct.",
+    "legal_notice": "Mențiuni legale"
+  },
+  "shipping_page": {
+    "title": "Export și transport",
+    "intro": "Fiecare mașină de pe acest site se vinde pentru export din Elveția. Iată ce presupune asta și cine ce face.",
+    "step_one_title": "Stabiliți vânzarea",
+    "step_one_body": "Trimiteți-i un mesaj vânzătorului sau sunați-l, stabiliți un preț și aranjați plata și predarea direct cu el. SwissCarExport este piața online, nu o parte în vânzare.",
+    "step_two_title": "Ridicați mașina",
+    "step_two_body": "Anunțul arată cantonul elvețian în care se află mașina. Acela este punctul de plecare pentru transport, fie că o ridicați personal, fie că angajați un transportator.",
+    "step_three_title": "Exportați-o",
+    "step_three_body": "Mașina părăsește Elveția cu acte de export. Întrebați vânzătorul ce documente vă poate pune la dispoziție înainte de a stabili vânzarea.",
+    "legs_title": "Două etape de transport",
+    "legs_intro": "Aducerea unei mașini din fața casei unui vânzător elvețian până în țara dvs. înseamnă de obicei două drumuri separate, iar prețul lor este bine să fie calculat separat.",
+    "leg_one_title": "În interiorul Elveției",
+    "leg_one_body": "De la cantonul vânzătorului până la un punct de colectare, un port sau graniță. Scurtă și, de regulă, jumătatea mai ieftină.",
+    "leg_two_title": "Din Elveția până în țara dvs.",
+    "leg_two_body": "Cu camionul, trenul sau vaporul, în funcție de destinație. Costul depinde mult mai mult de destinație decât de mașină.",
+    "documents_title": "Documente pe care să le cereți vânzătorului",
+    "doc_typenschein": "Typenschein (certificat de tip) — fișa tehnică elvețiană a vehiculului",
+    "doc_registration": "Certificatul de înmatriculare al vehiculului (Fahrzeugausweis)",
+    "doc_invoice": "O factură de vânzare sau un contract de vânzare scris",
+    "doc_customs": "Declarația vamală elvețiană de export",
+    "documents_note": "Cerințele diferă de la o țară de destinație la alta. Verificați ce solicită autoritatea vamală din țara dvs. înainte să plătiți orice.",
+    "costs_title": "Despre costuri",
+    "costs_body": "SwissCarExport nu organizează transportul și nu îi stabilește prețul. Transportul, taxele vamale și taxele de import se stabilesc între dvs., vânzător și transportatorul pe care îl alegeți. Cereți o ofertă scrisă înainte să vă angajați.",
+    "browse_cars": "Răsfoiți mașini pentru export"
+  },
+  "edit_listing": {
+    "title": "Editați anunțul",
+    "fixed_fields_note": "Marca, modelul, anul și tipul anunțului nu mai pot fi schimbate după publicare — ele identifică mașina pentru oricine v-a trimis deja un mesaj sau a plasat o ofertă. Pentru a vinde altă mașină, creați un anunț nou.",
+    "price_section": "Preț",
+    "condition_section": "Stare și descriere",
+    "location_section": "Locație și contact",
+    "starting_price_locked": "Această licitație are deja oferte, așa că prețul de pornire este blocat.",
+    "no_photos": "Acest anunț nu are încă fotografii. Anunțurile cu fotografii atrag mult mai mult interes.",
+    "saved": "Salvat. Anunțul dvs. a fost actualizat.",
+    "save_failed": "Nu am putut salva modificările dvs. Vă rugăm să încercați din nou.",
+    "load_failed": "Nu am putut încărca acest anunț.",
+    "not_yours": "Acest anunț aparține altui vânzător."
+  }
 }

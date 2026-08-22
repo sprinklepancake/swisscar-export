@@ -32,7 +32,7 @@
                   {{ t('messages.empty_state.message') }}
                 </p>
                 <NuxtLink 
-                  to="/cars" 
+                  :to="localePath('/cars')" 
                   class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-red-600 hover:bg-red-700 transition-colors duration-200"
                 >
                   {{ t('browse_cars') }}
@@ -172,7 +172,7 @@
                   </div>
                 </div>
                 <NuxtLink 
-                  :to="`/cars/${activeChatInfo.car.id}`"
+                  :to="localePath(`/cars/${activeChatInfo.car.id}`)"
                   class="text-red-600 hover:text-red-800 flex-shrink-0 flex items-center"
                 >
                   <span class="text-sm mr-1">{{ t('messages.view') }}</span>
@@ -219,6 +219,8 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
+const { apiFetch } = useApiFetch()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuth()
@@ -336,10 +338,13 @@ const getStatusDisplay = (status: string, listingType?: string) => {
   }
 }
 
-const loadChats = async () => {
-  loading.value = true
+const loadChats = async (silent = false) => {
+  // Only show the spinner on the first load. The 30-second refresh used to set
+  // loading=true as well, so the whole conversation list vanished behind a
+  // spinner every half minute.
+  if (!silent) loading.value = true
   try {
-    const response: any = await $fetch('/api/chat')
+    const response: any = await apiFetch('/api/chat')
     console.log('Chats response:', response)
     
     // Process chats to ensure we have all needed data
@@ -363,7 +368,7 @@ const loadChats = async () => {
 
 const markMessagesAsRead = async (chatId: number) => {
   try {
-    await $fetch(`/api/chat/${chatId}/read`, {
+    await apiFetch(`/api/chat/${chatId}/read`, {
       method: 'POST'
     })
     
@@ -408,7 +413,7 @@ const refreshInterval = ref<NodeJS.Timeout | null>(null)
 
 onMounted(() => {
   refreshInterval.value = setInterval(async () => {
-    await loadChats()
+    await loadChats(true)
   }, 30000) // Refresh every 30 seconds
 })
 

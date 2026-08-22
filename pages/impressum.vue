@@ -46,7 +46,7 @@
           <p>
             This website is hosted by Render Services, Inc. and uses Supabase Inc. for
             database, authentication and file storage. Data may be processed on their
-            infrastructure. See our <NuxtLink to="/privacy" class="text-red-600 hover:underline">Privacy Policy</NuxtLink> for details.
+            infrastructure. See our <NuxtLink :to="localePath('/privacy')" class="text-red-600 hover:underline">Privacy Policy</NuxtLink> for details.
           </p>
         </section>
 
@@ -56,16 +56,17 @@
             SwissCarExport operates an online marketplace that connects sellers and buyers
             of used vehicles for export from Switzerland. We are not a party to the sale
             contracts concluded between users. See our
-            <NuxtLink to="/terms" class="text-red-600 hover:underline">Terms of Service</NuxtLink> for the full terms.
+            <NuxtLink :to="localePath('/terms')" class="text-red-600 hover:underline">Terms of Service</NuxtLink> for the full terms.
           </p>
         </section>
       </div>
 
-      <NuxtLink to="/" class="inline-block mt-10 text-red-700 hover:text-red-900 font-medium">← Back to home</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="inline-block mt-10 text-red-700 hover:text-red-900 font-medium">← Back to home</NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const localePath = useLocalePath()
 useHead({ title: 'Legal Notice (Impressum) — SwissCarExport' })
 </script>

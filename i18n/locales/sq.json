@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Paneli i ankandit tuaj",
     "your_bid": "Oferta juaj",
     "your_max_bid": "Oferta juaj maksimale",
-    "your_wallet": "Portofoli juaj"
+    "your_wallet": "Portofoli juaj",
+    "status_heading": "Statusi i ankandit"
   },
   "auth": {
     "confirm_message": "Ju lutemi prisni ndërsa verifikojmë adresën tuaj të emailit...",
@@ -138,7 +139,22 @@
     "signup_button": "Regjistrohu",
     "signup_link": "Regjistrohu",
     "signup_success": "Ju lutemi kontrolloni emailin tuaj për të konfirmuar llogarinë!",
-    "signup_title": "Krijo llogari"
+    "signup_title": "Krijo llogari",
+    "forgot_password": "Keni harruar fjalëkalimin?",
+    "forgot_password_title": "Rivendosni fjalëkalimin tuaj",
+    "forgot_password_intro": "Shkruani adresën e emailit me të cilën u regjistruat dhe do t'ju dërgojmë një lidhje për të vendosur një fjalëkalim të ri.",
+    "forgot_password_sent": "Nëse ekziston një llogari për këtë adresë, lidhja për rivendosje është nisur. Ju lutemi kontrolloni kutinë tuaj hyrëse dhe dosjen e spamit.",
+    "back_to_login": "Kthehu te identifikimi",
+    "sending": "Duke dërguar...",
+    "send_reset_link": "Dërgo lidhjen e rivendosjes",
+    "reset_password_title": "Zgjidhni një fjalëkalim të ri",
+    "reset_link_invalid": "Kjo lidhje rivendosjeje nuk është më e vlefshme. Lidhjet e rivendosjes skadojnë pas pak kohe dhe funksionojnë vetëm në shfletuesin ku i keni hapur.",
+    "request_new_link": "Kërko një lidhje të re",
+    "password_changed": "Fjalëkalimi juaj u ndryshua.",
+    "password_change_failed": "Nuk mundëm ta ndryshojmë fjalëkalimin tuaj. Ju lutemi provoni përsëri.",
+    "new_password": "Fjalëkalimi i ri",
+    "set_new_password": "Ruaj fjalëkalimin e ri",
+    "logging_in": "Duke u identifikuar..."
   },
   "body_type_label": "Tipi i Karrocerisë",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Viti",
     "your_balance": "Bilanci i llogarisë suaj",
     "zip_code": "Kodi Postar",
-    "zip_code_placeholder": "p.sh., 3032"
+    "zip_code_placeholder": "p.sh., 3032",
+    "upload_failed": "Dështoi",
+    "upload_failed_generic": "Disa foto nuk mundën të ngarkoheshin. Nëse keni një kohë të gjatë në këtë faqe, sesioni juaj mund të ketë skaduar — ju lutemi rifreskoni faqen dhe provoni përsëri.",
+    "try_again": "Provo përsëri ngarkimin"
   },
   "cars_page": {
     "description": "Shfletoni automjete cilësore zvicerane me çmime të përballueshme eksporti",
@@ -672,7 +691,8 @@
       "year_desc": "Viti: Zbritës"
     },
     "subtitle": "Gjej makinën tënde nga Zvicra",
-    "title": "Të Gjitha Makinat"
+    "title": "Të Gjitha Makinat",
+    "filter_status": "Statusi"
   },
   "chat": {
     "buyer": "Blerës",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Ju jeni blerësi",
     "you_are_buyer_label": "Ju jeni blerësi",
     "you_are_seller": "Ju jeni shitësi",
-    "you_are_seller_label": "Ju jeni shitësi"
+    "you_are_seller_label": "Ju jeni shitësi",
+    "verification_required": "Një administrator ende duhet ta verifikojë llogarinë tuaj përpara se të mund të dërgoni mesazhe. Ndërkohë mund të vazhdoni ta lexoni këtë bisedë."
   },
   "city_label": "Qyteti",
   "city_placeholder": "Shkruani qytetin",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Kontaktoni administratorin për menaxhimin e fondeve",
     "error": {
-      "login_to_view": "Ju lutemi identifikohuni për të parë profilin tuaj"
+      "login_to_view": "Ju lutemi identifikohuni për të parë profilin tuaj",
+      "load_failed": "Nuk mundëm ta ngarkonim profilin tuaj. Ju lutemi rifreskoni faqen."
     },
     "featured": "E veçuar",
     "member_since": "Anëtar që nga",
@@ -991,7 +1013,8 @@
       "list_new_car": "Shpallni makinë të re",
       "request_verification": "Kërko verifikim",
       "title": "Veprime të shpejta",
-      "view_dashboard": "Shiko panelin"
+      "view_dashboard": "Shiko panelin",
+      "view_profile": "Shko te profili im"
     },
     "recent_activity": {
       "empty": "Nuk ka aktivitet të fundit",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Blerës i regjistruar",
-      "verified_seller": "Shitës i verifikuar"
+      "verified_seller": "Shitës i verifikuar",
+      "administrator": "Administrator",
+      "seller": "Shitës",
+      "verified_buyer": "Blerës i verifikuar"
     },
     "saving": "Duke ruajtur...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Gjatë gjithë kohës",
       "listings": "Shpalljet",
       "status": "Statusi",
-      "total": "Totali"
+      "total": "Totali",
+      "buyer_type": "Lloji i blerësit",
+      "saved_cars": "Makinat e ruajtura",
+      "watchlist": "Lista e ndjekjes"
     },
     "transactions": {
       "change": "Ndryshimi",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Ju mund të kontaktoni shitësit dhe të shfletoni shpalljet.",
       "verified_title": "Llogaria e verifikuar"
     },
-    "verified": "E verifikuar"
+    "verified": "E verifikuar",
+    "status": {
+      "pending_title": "Në pritje të verifikimit",
+      "pending_body": "Një administrator po shqyrton dokumentin tuaj të identitetit. Ndërkohë mund të shfletoni të gjitha shpalljet. Shpallja e një makine, shkrimi te një shitës dhe ofertimi hapen sapo llogaria juaj të verifikohet.",
+      "verified_title": "Llogaria e verifikuar",
+      "verified_body_seller": "Mund të publikoni shpallje, t'u shkruani blerësve dhe të përdorni çdo pjesë të faqes.",
+      "verified_body_buyer": "Mund t'u shkruani shitësve dhe të vendosni oferta.",
+      "banned_title": "Llogaria e pezulluar",
+      "banned_body": "Kjo llogari është pezulluar dhe nuk mund të shpallë, të dërgojë mesazhe ose të ofertojë. Ju lutemi kontaktoni mbështetjen nëse mendoni se ky është një gabim.",
+      "missing_id": "Ende nuk kemi një dokument identiteti për këtë llogari, prandaj ajo nuk mund të verifikohet. Ju lutemi ngarkoni një të tillë më poshtë.",
+      "upload_id": "Ngarkoni dokumentin tuaj të identitetit",
+      "replace_id": "Zëvendësoni dokumentin tuaj të identitetit",
+      "id_uploaded": "Faleminderit. Dokumenti juaj u dërgua te administratorët për shqyrtim.",
+      "id_upload_failed": "Nuk mundëm ta ngarkonim atë dokument. Ju lutemi provoni përsëri."
+    },
+    "password": {
+      "title": "Ndrysho fjalëkalimin",
+      "current": "Fjalëkalimi aktual",
+      "submit": "Ndrysho fjalëkalimin",
+      "hint": "Fjalëkalimi juaj i ri duhet të jetë të paktën 8 karaktere. Nëse e keni harruar atë aktualin, përdorni lidhjen e rivendosjes."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Dhënia e ID-së së rreme ose mospërfundimi i një ankandi të fituar do të rezultojë në bllokim të përhershëm.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Ju lutemi pranoni kushtet dhe politikën e privatësisë",
       "password_length": "Fjalëkalimi duhet të jetë të paktën 8 karaktere i gjatë",
       "passwords_not_match": "Fjalëkalimet nuk përputhen",
-      "phone_too_short": "Numri i telefonit është shumë i shkurtër"
-    }
+      "phone_too_short": "Numri i telefonit është shumë i shkurtër",
+      "id_required": "Ju lutemi ngarkoni dokumentin tuaj të identitetit. Një administratori i duhet për të verifikuar llogarinë tuaj.",
+      "id_consent_required": "Ju lutemi konfirmoni se pajtoheni me përpunimin e dokumentit tuaj të identitetit.",
+      "id_file_type": "Ju lutemi ngarkoni një skedar JPG, PNG ose PDF.",
+      "id_file_size": "Ky skedar është shumë i madh. Ju lutemi ngarkoni një dokument më të vogël se 6 MB.",
+      "phone_required": "Numri i telefonit është i detyrueshëm."
+    },
+    "id_upload_required_note": "Çdo llogari ka nevojë për një dokument identiteti. Një administrator e kontrollon atë përpara se të mund të shpallni një makinë, t'i shkruani dikujt ose të vendosni një ofertë.",
+    "id_consent": "Pajtohem që SwissCarExport të përpunojë dokumentin tim të identitetit vetëm për të verifikuar identitetin tim, siç përshkruhet në",
+    "approval_notice_title": "Llogaria juaj duhet të verifikohet së pari",
+    "approval_notice_body": "Mund të identifikoheni dhe të shfletoni menjëherë të gjithë faqen e internetit. Shpallja e një makine, shkrimi te një shitës dhe ofertimi mbeten të kyçura derisa një administrator të ketë shqyrtuar dokumentin tuaj të identitetit.",
+    "buyer_type_auction_short": "Blerës në ankand",
+    "buyer_type_direct_short": "Blerës i drejtpërdrejtë"
   },
   "reset_filters": "Rivendos filtrat",
   "search_button": "Kërko Makina",
@@ -1260,5 +1320,70 @@
   "sell_car": "Shit makinën",
   "stat_verified_sellers": "Shitës të verifikuar zviceranë",
   "stat_free_browse": "Falas për shfletim dhe kontakt",
-  "stat_free_months": "Muaj falas për shitësit"
+  "stat_free_months": "Muaj falas për shitësit",
+  "cars": "Makina",
+  "dashboard": "Paneli",
+  "close": "Mbyll",
+  "sell_gate": {
+    "loading_title": "Duke kontrolluar llogarinë tuaj...",
+    "loading_body": "Një moment.",
+    "anonymous_title": "Identifikohuni për të shpallur një makinë",
+    "anonymous_body": "Ju nevojitet një llogari shitësi për të publikuar një shpallje. Shfletimi mbetet falas dhe nuk kërkon fare llogari.",
+    "banned_title": "Llogaria e pezulluar",
+    "banned_body": "Kjo llogari është pezulluar dhe nuk mund të publikojë shpallje. Ju lutemi kontaktoni mbështetjen nëse mendoni se ky është një gabim.",
+    "buyer_title": "Kjo është një llogari blerësi",
+    "buyer_body": "Vetëm llogaritë e shitësve mund të publikojnë shpallje. Nëse dëshironi të shisni një makinë për eksport, ju lutemi kontaktoni mbështetjen që llogaria juaj të ndryshohet.",
+    "unverified_title": "Në pritje të verifikimit",
+    "unverified_body": "Një administrator ende duhet të shqyrtojë dokumentin tuaj të identitetit përpara se të mund të publikoni shpallje. Do të mund të shpallni sapo llogaria juaj të verifikohet — deri atëherë asgjë nga ajo që shkruani këtu nuk do të ruhet."
+  },
+  "contact_page": {
+    "title": "Kontakt",
+    "intro": "Ja si të gjeni personin e duhur, në varësi të asaj që ju nevojitet.",
+    "about_a_car_title": "Një pyetje për një makinë të caktuar",
+    "about_a_car_body": "Çdo shpallje shfaq numrin e telefonit të shitësit dhe ka një buton për mesazh. Shitësi e njeh makinën, prandaj është rruga më e shpejtë për një përgjigje rreth gjendjes, dokumenteve ose çmimit.",
+    "browse_cars": "Shfleto shpalljet",
+    "account_title": "Llogaria juaj ose verifikimi",
+    "account_body": "Faqja e profilit tuaj tregon nëse llogaria juaj është verifikuar dhe ju lejon të ngarkoni ose të zëvendësoni dokumentin tuaj të identitetit.",
+    "support_title": "Çdo gjë tjetër",
+    "support_body": "Për probleme me faqen, me pagesat ose për të raportuar një përdorues tjetër, na kontaktoni drejtpërdrejt.",
+    "legal_notice": "Njoftim ligjor"
+  },
+  "shipping_page": {
+    "title": "Eksporti dhe transporti",
+    "intro": "Çdo makinë në këtë faqe shitet për eksport jashtë Zvicrës. Ja çfarë përfshin kjo dhe kush bën çfarë.",
+    "step_one_title": "Bini dakord për shitjen",
+    "step_one_body": "Shkruani ose telefonojini shitësit, bini dakord për një çmim dhe merruni vesh për pagesën dhe dorëzimin drejtpërdrejt me të. SwissCarExport është tregu, jo palë në shitje.",
+    "step_two_title": "Merrni makinën",
+    "step_two_body": "Shpallja tregon kantonin zviceran ku ndodhet makina. Ai është pika e nisjes për transportin, qoftë kur e merrni vetë, qoftë kur porositni një transportues.",
+    "step_three_title": "Eksportojeni",
+    "step_three_body": "Makina largohet nga Zvicra me dokumentet e eksportit. Pyeteni shitësin cilat dokumente mund t'ju japë përpara se të bini dakord për shitjen.",
+    "legs_title": "Dy etapa transporti",
+    "legs_intro": "Sjellja e një makine nga oborri i shitësit në Zvicër deri në vendin tuaj janë zakonisht dy udhëtime të veçanta dhe është mirë t'i llogaritni kostot veç e veç.",
+    "leg_one_title": "Brenda Zvicrës",
+    "leg_one_body": "Nga kantoni i shitësit deri te një pikë grumbullimi, port ose kufi. E shkurtër dhe zakonisht gjysma më e lirë.",
+    "leg_two_title": "Nga Zvicra në vendin tuaj",
+    "leg_two_body": "Me kamion, tren ose anije, në varësi të destinacionit. Kostoja varet shumë më tepër nga destinacioni sesa nga makina.",
+    "documents_title": "Dokumentet që duhet t'i kërkoni shitësit",
+    "doc_typenschein": "Typenschein (certifikata e tipit) — fleta zvicerane me të dhënat e automjetit",
+    "doc_registration": "Dokumenti i regjistrimit të automjetit (Fahrzeugausweis)",
+    "doc_invoice": "Një faturë shitjeje ose kontratë shitjeje me shkrim",
+    "doc_customs": "Deklarata doganore zvicerane e eksportit",
+    "documents_note": "Kërkesat ndryshojnë sipas vendit të destinacionit. Kontrolloni çfarë kërkon dogana e vendit tuaj përpara se të paguani për çfarëdo gjëje.",
+    "costs_title": "Rreth kostove",
+    "costs_body": "SwissCarExport nuk e organizon transportin dhe nuk cakton çmimet e tij. Transporti, taksat doganore dhe taksat e importit merren vesh mes jush, shitësit dhe transportuesit që zgjidhni. Merrni një ofertë me shkrim përpara se të angazhoheni.",
+    "browse_cars": "Shfleto makina për eksport"
+  },
+  "edit_listing": {
+    "title": "Redakto shpalljen",
+    "fixed_fields_note": "Marka, modeli, viti dhe tipi i shpalljes nuk mund të ndryshohen pas publikimit — ato e identifikojnë makinën për këdo që ju ka shkruar ose ka ofertuar tashmë. Për të shitur një makinë tjetër, krijoni një shpallje të re.",
+    "price_section": "Çmimi",
+    "condition_section": "Gjendja dhe përshkrimi",
+    "location_section": "Vendndodhja dhe kontakti",
+    "starting_price_locked": "Ky ankand ka tashmë oferta, prandaj çmimi fillestar është i kyçur.",
+    "no_photos": "Kjo shpallje ende nuk ka foto. Shpalljet me foto tërheqin shumë më tepër interes.",
+    "saved": "U ruajt. Shpallja juaj u përditësua.",
+    "save_failed": "Nuk mundëm t'i ruanim ndryshimet tuaja. Ju lutemi provoni përsëri.",
+    "load_failed": "Nuk mundëm ta ngarkonim këtë shpallje.",
+    "not_yours": "Kjo shpallje i përket një shitësi tjetër."
+  }
 }

@@ -21,8 +21,13 @@ export default defineEventHandler(async (event) => {
   const { records, adminKey, batchSize = 500 } = body
 
   // Simple auth check
+  // Fail CLOSED. Previously, if ADMIN_IMPORT_KEY happened to be unset the
+  // whole check was skipped and anyone could write to typenschein_cache.
   const expectedKey = config.adminSetupKey || process.env.ADMIN_IMPORT_KEY
-  if (expectedKey && adminKey !== expectedKey) {
+  if (!expectedKey) {
+    throw createError({ statusCode: 503, statusMessage: 'Import is disabled: ADMIN_IMPORT_KEY is not configured on the server.' })
+  }
+  if (adminKey !== expectedKey) {
     throw createError({ statusCode: 403, statusMessage: 'Invalid admin key' })
   }
 

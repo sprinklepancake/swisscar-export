@@ -1,9 +1,11 @@
 // server/api/chat/[carId]/[sellerId].get.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireVerified } from '~/server/utils/auth'
 
+// Despite being a GET, this route creates a chat row when none exists — so it
+// is a write, and it needs the same approval check as /api/chat/start.
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
-  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  const user = await requireVerified(event, 'message sellers')
 
   const carId = getRouterParam(event, 'carId')
   const sellerId = getRouterParam(event, 'sellerId')
@@ -18,6 +20,7 @@ export default defineEventHandler(async (event) => {
 
   if (!car) throw createError({ statusCode: 404, statusMessage: 'Car not found' })
   if (!seller) throw createError({ statusCode: 404, statusMessage: 'Seller not found' })
+  if (seller.id === user.id) throw createError({ statusCode: 400, statusMessage: 'You cannot message yourself' })
 
   // Find or create chat
   let { data: chat } = await supabase.from('chats').select('id, buyer_id, seller_id, car_id, last_message_at').eq('car_id', carId).eq('seller_id', sellerId).eq('buyer_id', user.id).maybeSingle()

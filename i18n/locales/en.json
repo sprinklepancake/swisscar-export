@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Your Auction Dashboard",
     "your_bid": "Your bid",
     "your_max_bid": "Your max bid",
-    "your_wallet": "Your Wallet"
+    "your_wallet": "Your Wallet",
+    "status_heading": "Auction status"
   },
   "auth": {
     "confirm_message": "Please wait while we verify your email address...",
@@ -138,7 +139,22 @@
     "signup_button": "Sign Up",
     "signup_link": "Sign up",
     "signup_success": "Please check your email to confirm your account!",
-    "signup_title": "Create Account"
+    "signup_title": "Create Account",
+    "forgot_password": "Forgot your password?",
+    "forgot_password_title": "Reset your password",
+    "forgot_password_intro": "Enter the email address you signed up with and we will send you a link to set a new password.",
+    "forgot_password_sent": "If an account exists for that address, a reset link is on its way. Please check your inbox and your spam folder.",
+    "back_to_login": "Back to log in",
+    "sending": "Sending...",
+    "send_reset_link": "Send reset link",
+    "reset_password_title": "Choose a new password",
+    "reset_link_invalid": "This reset link is no longer valid. Reset links expire after a short time and only work in the browser you opened them in.",
+    "request_new_link": "Request a new link",
+    "password_changed": "Your password has been changed.",
+    "password_change_failed": "We could not change your password. Please try again.",
+    "new_password": "New password",
+    "set_new_password": "Save new password",
+    "logging_in": "Logging in..."
   },
   "body_type_label": "Body Type",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Year",
     "your_balance": "Your Account Balance",
     "zip_code": "ZIP Code",
-    "zip_code_placeholder": "e.g., 3032"
+    "zip_code_placeholder": "e.g., 3032",
+    "upload_failed": "Failed",
+    "upload_failed_generic": "Some photos could not be uploaded. If you have been on this page for a while, your session may have expired — please refresh and try again.",
+    "try_again": "Try uploading again"
   },
   "cars_page": {
     "description": "Browse quality Swiss vehicles at affordable export prices",
@@ -672,7 +691,8 @@
       "year_desc": "Newest First"
     },
     "subtitle": "Quality Swiss vehicles at affordable export prices",
-    "title": "Browse Export Cars"
+    "title": "Browse Export Cars",
+    "filter_status": "Status"
   },
   "chat": {
     "buyer": "Buyer",
@@ -706,7 +726,8 @@
     "you_are_buyer": "You are the buyer",
     "you_are_buyer_label": "You are the buyer",
     "you_are_seller": "You are the seller",
-    "you_are_seller_label": "You are the seller"
+    "you_are_seller_label": "You are the seller",
+    "verification_required": "An administrator still has to approve your account before you can send messages. You can keep reading this conversation in the meantime."
   },
   "city_label": "City",
   "city_placeholder": "Enter city",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Contact admin for fund management",
     "error": {
-      "login_to_view": "Please login to view your profile"
+      "login_to_view": "Please login to view your profile",
+      "load_failed": "We could not load your profile. Please refresh the page."
     },
     "featured": "Featured",
     "member_since": "Member since",
@@ -991,7 +1013,8 @@
       "list_new_car": "List New Car",
       "request_verification": "Request Verification",
       "title": "Quick Actions",
-      "view_dashboard": "View Dashboard"
+      "view_dashboard": "View Dashboard",
+      "view_profile": "Go to my profile"
     },
     "recent_activity": {
       "empty": "No recent activity",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Registered Buyer",
-      "verified_seller": "Verified Seller"
+      "verified_seller": "Verified Seller",
+      "administrator": "Administrator",
+      "seller": "Seller",
+      "verified_buyer": "Verified buyer"
     },
     "saving": "Saving...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Lifetime",
       "listings": "Listings",
       "status": "Status",
-      "total": "Total"
+      "total": "Total",
+      "watchlist": "Watchlist",
+      "saved_cars": "Saved cars",
+      "buyer_type": "Buyer type"
     },
     "transactions": {
       "change": "Change",
@@ -1052,7 +1081,27 @@
       "verified_direct": "You can contact sellers and browse listings.",
       "verified_title": "Account Verified"
     },
-    "verified": "Verified"
+    "verified": "Verified",
+    "status": {
+      "pending_title": "Waiting for approval",
+      "pending_body": "An administrator is reviewing your ID document. You can browse every listing in the meantime. Posting a car, messaging a seller and bidding unlock as soon as your account is approved.",
+      "verified_title": "Account approved",
+      "verified_body_seller": "You can post listings, message buyers and use every part of the site.",
+      "verified_body_buyer": "You can message sellers and place bids.",
+      "banned_title": "Account suspended",
+      "banned_body": "This account has been suspended and cannot post, message or bid. Please contact support if you believe this is a mistake.",
+      "missing_id": "We do not have an ID document for this account yet, so it cannot be approved. Please upload one below.",
+      "upload_id": "Upload your ID document",
+      "replace_id": "Replace your ID document",
+      "id_uploaded": "Thank you. Your document has been sent to the administrators for review.",
+      "id_upload_failed": "We could not upload that document. Please try again."
+    },
+    "password": {
+      "title": "Change password",
+      "current": "Current password",
+      "submit": "Change password",
+      "hint": "Your new password must be at least 8 characters. If you have forgotten your current one, use the reset link instead."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Providing false ID or failing to complete a won auction will result in permanent ban.",
@@ -1068,8 +1117,8 @@
     "buyer_type_label": "I want to",
     "creating_account": "Creating account...",
     "id_upload_button": "Choose File",
-    "id_upload_help": "Required for auction participation. Accepted formats: JPG, PNG, PDF (max 5MB).",
-    "id_upload_label": "Upload your ID (passport, driver's license)",
+    "id_upload_help": "Accepted formats: JPG, PNG or PDF, up to 6 MB. Your document is stored privately and is only visible to administrators.",
+    "id_upload_label": "Upload your ID (passport, ID card or driver's licence)",
     "important_notice": {
       "message": "By registering as a seller, you agree that providing false information or fraudulent activity may result in account suspension. Phone verification will be required for all sellers before listing vehicles.",
       "title": "Important"
@@ -1137,8 +1186,19 @@
       "accept_terms": "Please accept the terms and privacy policy",
       "password_length": "Password must be at least 8 characters long",
       "passwords_not_match": "Passwords do not match",
-      "phone_too_short": "Phone number too short"
-    }
+      "phone_too_short": "Phone number too short",
+      "id_required": "Please upload your ID document. An administrator needs it to approve your account.",
+      "id_consent_required": "Please confirm that you consent to your ID document being processed.",
+      "id_file_type": "Please upload a JPG, PNG or PDF file.",
+      "id_file_size": "That file is too large. Please upload a document smaller than 6 MB.",
+      "phone_required": "A phone number is required."
+    },
+    "id_upload_required_note": "Every account needs an ID document. An administrator checks it before you can post a car, message anyone or place a bid.",
+    "id_consent": "I consent to SwissCarExport processing my identity document for the sole purpose of verifying my identity, as described in the",
+    "approval_notice_title": "Your account needs approval first",
+    "approval_notice_body": "You can log in and browse the whole site straight away. Posting a car, messaging a seller and bidding stay locked until an administrator has reviewed your ID document.",
+    "buyer_type_auction_short": "Auction buyer",
+    "buyer_type_direct_short": "Direct buyer"
   },
   "reset_filters": "Reset Filters",
   "search_button": "Search Cars",
@@ -1260,5 +1320,70 @@
   "sell_car": "Sell Car",
   "stat_verified_sellers": "Swiss Verified Sellers",
   "stat_free_browse": "Free to Browse & Contact",
-  "stat_free_months": "Free Months for Sellers"
+  "stat_free_months": "Free Months for Sellers",
+  "cars": "Cars",
+  "dashboard": "Dashboard",
+  "close": "Close",
+  "sell_gate": {
+    "loading_title": "Checking your account...",
+    "loading_body": "One moment.",
+    "anonymous_title": "Log in to list a car",
+    "anonymous_body": "You need a seller account to publish a listing. Browsing stays free and needs no account at all.",
+    "banned_title": "Account suspended",
+    "banned_body": "This account has been suspended and cannot publish listings. Please contact support if you believe this is a mistake.",
+    "buyer_title": "This is a buyer account",
+    "buyer_body": "Only seller accounts can publish listings. If you would like to sell a car for export, please contact support so your account can be changed.",
+    "unverified_title": "Waiting for approval",
+    "unverified_body": "An administrator still has to review your ID document before you can publish listings. You will be able to post as soon as your account is approved — nothing you enter here would be saved until then."
+  },
+  "contact_page": {
+    "title": "Contact",
+    "intro": "Here is how to reach the right person, depending on what you need.",
+    "about_a_car_title": "A question about a specific car",
+    "about_a_car_body": "Every listing shows the seller's phone number and has a message button. The seller knows the car, so they are the fastest route to an answer about condition, paperwork or price.",
+    "browse_cars": "Browse listings",
+    "account_title": "Your account or verification",
+    "account_body": "Your profile page shows whether your account has been approved and lets you upload or replace your ID document.",
+    "support_title": "Anything else",
+    "support_body": "For problems with the site, payments or a report about another user, contact us directly.",
+    "legal_notice": "Legal notice"
+  },
+  "shipping_page": {
+    "title": "Export and shipping",
+    "intro": "Every car on this site is sold for export out of Switzerland. Here is what that involves and who does what.",
+    "step_one_title": "Agree the sale",
+    "step_one_body": "Message the seller or call them, agree a price, and arrange payment and handover directly with them. SwissCarExport is the marketplace, not a party to the sale.",
+    "step_two_title": "Collect the car",
+    "step_two_body": "The listing shows the Swiss canton the car is in. That is the starting point for transport, whether you collect it yourself or book a carrier.",
+    "step_three_title": "Export it",
+    "step_three_body": "The car leaves Switzerland with export papers. Ask the seller which documents they can provide before you agree the sale.",
+    "legs_title": "Two transport legs",
+    "legs_intro": "Getting a car from a Swiss driveway to your country is usually two separate journeys, and it helps to price them separately.",
+    "leg_one_title": "Inside Switzerland",
+    "leg_one_body": "From the seller's canton to a collection point, port or border. Short, and usually the cheaper half.",
+    "leg_two_title": "Switzerland to your country",
+    "leg_two_body": "By truck, train or ship, depending on the destination. Cost depends far more on the destination than on the car.",
+    "documents_title": "Documents to ask the seller for",
+    "doc_typenschein": "Typenschein (type certificate) — the Swiss vehicle data sheet",
+    "doc_registration": "Vehicle registration document (Fahrzeugausweis)",
+    "doc_invoice": "A sales invoice or written sale contract",
+    "doc_customs": "Swiss customs export declaration",
+    "documents_note": "Requirements differ by destination country. Check what your own customs authority asks for before you pay for anything.",
+    "costs_title": "About costs",
+    "costs_body": "SwissCarExport does not arrange or price transport. Transport, customs duties and import taxes are agreed between you, the seller and whichever carrier you choose. Get a written quote before committing.",
+    "browse_cars": "Browse cars for export"
+  },
+  "edit_listing": {
+    "title": "Edit listing",
+    "fixed_fields_note": "Make, model, year and listing type cannot be changed after publishing — those identify the car to anyone who has already messaged or bid. To sell a different car, create a new listing.",
+    "price_section": "Price",
+    "condition_section": "Condition and description",
+    "location_section": "Location and contact",
+    "starting_price_locked": "This auction already has bids, so the starting price is locked.",
+    "no_photos": "This listing has no photos yet. Listings with photos get far more interest.",
+    "saved": "Saved. Your listing has been updated.",
+    "save_failed": "We could not save your changes. Please try again.",
+    "load_failed": "We could not load this listing.",
+    "not_yours": "This listing belongs to another seller."
+  }
 }

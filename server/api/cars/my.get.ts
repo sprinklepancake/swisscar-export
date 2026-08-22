@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: cars, error } = await supabase
       .from('cars')
-      .select('id, make, model, year, price, mileage, images, city, canton, status, listing_type, current_bid, starting_price, is_featured, created_at, views')
+      .select('id, make, model, year, price, mileage, images, city, canton, status, listing_type, current_bid, starting_price, is_featured, created_at, views, bid_count, auction_end, featured_until, permanent_feature')
       .eq('seller_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -22,6 +22,9 @@ export default defineEventHandler(async (event) => {
         price: car.price, mileage: car.mileage, images: car.images || [],
         city: car.city, canton: car.canton, status: car.status,
         listingType: car.listing_type, currentBid: car.current_bid,
+        // These are rendered by /dashboard/my-cars but were never returned.
+        bidCount: car.bid_count || 0, auctionEnd: car.auction_end,
+        featuredUntil: car.featured_until, permanentFeature: car.permanent_feature,
         startingPrice: car.starting_price, isFeatured: car.is_featured,
         createdAt: car.created_at, views: car.views || 0,
       })),

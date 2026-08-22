@@ -1,5 +1,6 @@
 // server/api/admin/listings/[id].delete.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { releaseHeldBids } from '~/server/utils/wallet'
 
 export default defineEventHandler(async (event) => {
   const admin = event.context.user
@@ -12,6 +13,12 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: car } = await supabase.from('cars').select('id').eq('id', listingId).single()
     if (!car) throw createError({ statusCode: 404, message: 'Listing not found' })
+
+    // Bidders' deposits are held against this car — return them before the bid
+    // rows are deleted, otherwise the money vanishes with no record.
+    await releaseHeldBids(parseInt(listingId), {
+      reason: 'Listing removed by an administrator — your bid was returned',
+    })
 
     // Cascade delete in correct order
     const { data: chats } = await supabase.from('chats').select('id').eq('car_id', listingId)

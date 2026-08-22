@@ -2,19 +2,33 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
-  const token = getCookie(event, 'sb-access-token') || getCookie(event, 'access_token')
-  if (!token) return { user: null }
+  // server/middleware/auth.ts already resolved the caller from EITHER the
+  // Authorization header or the cookie. Reading the cookie again here meant a
+  // request that carried only a Bearer token (which is what apiFetch sends when
+  // the cookie holds a token that has just expired) came back as logged out.
+  const ctxUser = event.context.user
+  const token = ctxUser
+    ? null
+    : (getCookie(event, 'sb-access-token') || getCookie(event, 'access_token'))
+
+  if (!ctxUser && !token) return { user: null }
 
   try {
     const supabase = getSupabaseAdmin()
-    const { data: { user: authUser }, error } = await supabase.auth.getUser(token)
-    if (error || !authUser) return { user: null }
 
-    const { data: profile } = await supabase
+    let query = supabase
       .from('users')
       .select('id, email, name, role, funds, verified, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits')
-      .eq('auth_uid', authUser.id)
-      .single()
+
+    if (ctxUser) {
+      query = query.eq('id', ctxUser.id)
+    } else {
+      const { data: { user: authUser }, error } = await supabase.auth.getUser(token as string)
+      if (error || !authUser) return { user: null }
+      query = query.eq('auth_uid', authUser.id)
+    }
+
+    const { data: profile } = await query.single()
 
     if (!profile) return { user: null }
 

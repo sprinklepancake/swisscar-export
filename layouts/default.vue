@@ -95,7 +95,7 @@
               </div>
             </div>
 
-            <div v-if="!auth.isInitialized" class="flex space-x-2">
+            <div v-if="!auth.isInitialized.value" class="flex space-x-2">
               <div class="w-20 h-9 bg-red-100 rounded-xl animate-pulse"></div>
               <div class="w-20 h-9 bg-red-100 rounded-xl animate-pulse"></div>
             </div>
@@ -240,7 +240,7 @@
               <svg class="w-5 h-5 mr-3 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
               </svg>
-              {{ t('messages') }}
+              {{ t('messages.title') }}
               <span v-if="unreadCount > 0" class="ml-auto bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {{ unreadCount > 9 ? '9+' : unreadCount }}
               </span>
@@ -360,6 +360,15 @@ const { t } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 const localePath = useLocalePath()
 const auth = useAuth()
+const { apiFetch } = useApiFetch()
+
+// Created here, in setup, so it can be written from an event handler later.
+// (useCookie() must not be called after an await or outside a Nuxt context.)
+const localeCookie = useCookie('i18n_redirected', {
+  path: '/',
+  maxAge: 60 * 60 * 24 * 365,
+  sameSite: 'lax',
+})
 
 const currentUser = computed(() => auth.user?.value ?? null)
 const unreadCount = ref(0)
@@ -383,11 +392,26 @@ const availableLanguages = [
 
 const currentLang = computed(() => availableLanguages.find(l => l.code === locale.value) || availableLanguages[0])
 
-const switchLanguage = (code: string) => {
+const route = useRoute()
+
+const switchLanguage = async (code: string) => {
   langDropdownOpen.value = false
-  const route = useRoute()
+
+  // The old version only changed the URL. It never updated the
+  // `i18n_redirected` cookie, so the next visit to the site root bounced the
+  // user straight back to their previous language — the "language switch
+  // sometimes doesn't work" report.
+  localeCookie.value = code
+
+  const target = switchLocalePath(code)
+  if (target) {
+    await navigateTo(target)
+    return
+  }
+
+  // Fallback for routes switchLocalePath cannot resolve (e.g. a 404 page).
   const cleanPath = route.fullPath.replace(
-    new RegExp(`^/(${locales.value.map((l: any) => l.code).join('|')})`),
+    new RegExp(`^/(${locales.value.map((l: any) => l.code).join('|')})(?=/|$)`),
     ''
   )
   window.location.assign(`/${code}${cleanPath || '/'}`)
@@ -395,16 +419,15 @@ const switchLanguage = (code: string) => {
 
 const handleLogout = async () => {
   try {
-    const { $supabase } = useNuxtApp()
-    if ($supabase) {
-      await ($supabase as any).auth.signOut()
-    }
-    useCookie('sb-access-token').value = null
+    // Go through the composable so the auth cookie is cleared with exactly the
+    // options it was written with — otherwise a stale duplicate can linger.
+    await auth.logout()
   } catch (error) {
     console.error('Logout error:', error)
   } finally {
     closeMobileMenu()
-    window.location.href = localePath('/')
+    unreadCount.value = 0
+    await navigateTo(localePath('/'))
   }
 }
 
@@ -417,15 +440,22 @@ const closeMobileMenu = () => {
 }
 
 const loadUnreadCount = async () => {
+  if (!currentUser.value) {
+    unreadCount.value = 0
+    return
+  }
   try {
-    const response = await $fetch('/api/chat/unread-count')
-    unreadCount.value = (response as any).count || 0
-  } catch {}
+    const response: any = await apiFetch('/api/chat/unread-count')
+    unreadCount.value = response?.count || 0
+  } catch {
+    unreadCount.value = 0
+  }
 }
 
-onMounted(() => {
-  loadUnreadCount()
-})
+onMounted(loadUnreadCount)
+// Refresh the badge once the session has actually been read, and whenever the
+// signed-in user changes.
+watch(currentUser, loadUnreadCount)
 </script>
 
 <style scoped>

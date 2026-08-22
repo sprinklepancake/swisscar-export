@@ -1,13 +1,10 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireVerified } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
-  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
-
-  // Require verified
-  if (!user.verified) {
-    throw createError({ statusCode: 403, statusMessage: 'Only verified users can send messages.' })
-  }
+  // This route checked `verified` but not `banned`, so a suspended account
+  // could keep messaging. requireVerified() covers both.
+  const user = await requireVerified(event, 'send messages')
 
   const chatId = getRouterParam(event, 'id')
   if (!chatId) throw createError({ statusCode: 400, statusMessage: 'Chat ID is required' })
@@ -34,7 +31,7 @@ export default defineEventHandler(async (event) => {
       .insert({
         chat_id: parseInt(chatId),
         sender_id: user.id,
-        content: content.trim(),
+        content: content.trim().slice(0, 4000),
         read: false,
       })
       .select('id, content, sender_id, read, created_at, sender:users!sender_id (id, name, profile_image)')

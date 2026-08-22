@@ -49,8 +49,13 @@ export default defineEventHandler(async (event) => {
       .select(LIST_COLUMNS)
       .order('created_at', { ascending: false })
 
-    // Status: default to active listings; allow override (e.g. auction).
-    query = query.eq('status', (q.status as string) || 'active')
+    // Status: 'active' (normal listings) and 'auction' (live auctions) are both
+    // live states. Filtering on 'active' alone hid every auction from the site.
+    if (q.status && q.status !== 'all') {
+      query = query.eq('status', q.status as string)
+    } else {
+      query = query.in('status', ['active', 'auction'])
+    }
 
     if (q.featured === 'true' || q.featured === '1') query = query.eq('is_featured', true)
 

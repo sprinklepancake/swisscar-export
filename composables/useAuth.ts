@@ -33,7 +33,8 @@ export const useAuth = () => {
   const authCookie = useCookie('sb-access-token', {
     maxAge: 60 * 60 * 24 * 7, // 7 days
     sameSite: 'lax',           // was 'strict' — causes cookie to be blocked on redirects
-    secure: process.env.NODE_ENV === 'production',
+    secure: !import.meta.dev,
+    path: '/',                 // explicit: the cookie must be sent to /api/* too
     // NOT httpOnly — must be readable/writable from client JS
   })
 
@@ -94,12 +95,19 @@ export const useAuth = () => {
     nextTick(() => {
       const supabase = getSupabase()
       if (supabase) {
-        supabase.auth.onAuthStateChange(async (event: string, session: any) => {
+        supabase.auth.onAuthStateChange((event: string, session: any) => {
+          // ─── IMPORTANT ──────────────────────────────────────────────────
+          // Supabase runs this callback while it holds its internal storage
+          // lock. Calling another supabase.auth.* method from inside it (the
+          // previous code awaited syncAuth(), which calls getSession()) can
+          // deadlock the auth client — after which every request that needs a
+          // token hangs forever. Anything that touches Supabase has to be
+          // deferred out of the callback.
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session?.access_token) {
               setAuthCookie(session.access_token)
             }
-            await syncAuth()
+            setTimeout(() => { syncAuth() }, 0)
           } else if (event === 'SIGNED_OUT') {
             user.value = null
             setAuthCookie(null)
@@ -113,10 +121,39 @@ export const useAuth = () => {
     })
   }
 
+  // Convenience flags used all over the UI to gate posting / chatting / bidding.
+  const isVerified = computed(() => !!user.value?.verified)
+  const isBanned = computed(() => !!user.value?.banned)
+  const isAdmin = computed(() => user.value?.role === 'admin')
+
+  /**
+   * Returns an access token that is valid right now. supabase-js refreshes a
+   * stale token inside getSession(), so this never hands back a dead JWT the
+   * way the raw cookie used to.
+   */
+  const getAccessToken = async (): Promise<string | null> => {
+    const supabase = getSupabase()
+    if (!supabase) return authCookie.value || null
+    try {
+      const { data } = await supabase.auth.getSession()
+      const token = data?.session?.access_token || null
+      if (token && authCookie.value !== token) setAuthCookie(token)
+      return token
+    } catch {
+      return authCookie.value || null
+    }
+  }
+
   return {
     user: readonly(user),
     isAuthenticated,
     isInitialized: readonly(isInitialized),
+    isVerified,
+    isBanned,
+    isAdmin,
+    getAccessToken,
+    /** Re-reads the profile row, e.g. after an admin verifies the account. */
+    refreshUser: syncAuth,
 
     async login(email: string, password: string) {
       try {
@@ -144,6 +181,12 @@ export const useAuth = () => {
             throw new Error('Account profile not found. Please contact support.')
           }
 
+          if (profileData.banned) {
+            await supabase.auth.signOut()
+            setAuthCookie(null)
+            throw new Error('This account has been suspended. Please contact support.')
+          }
+
           user.value = { ...profileData, auth_uid: data.user.id }
 
           // Update last login (fire-and-forget, don't block the login flow)
@@ -167,57 +210,14 @@ export const useAuth = () => {
     },
 
     async register(userData: any) {
-      try {
-        const supabase = getSupabase()
-        if (!supabase) throw new Error('Supabase client not available')
-
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: userData.email,
-          password: userData.password,
-          options: {
-            data: {
-              name: userData.name,
-              phone: userData.phone,
-              role: userData.role,
-            },
-          },
-        })
-
-        if (authError) throw authError
-        if (!authData.user) throw new Error('User creation failed')
-
-        const { data: profileData, error: profileError } = await supabase
-          .from('users')
-          .insert({
-            email: userData.email,
-            name: userData.name,
-            phone: userData.phone?.replace(/\D/g, ''),
-            role: userData.role,
-            company_name: userData.companyName,
-            business_type: userData.businessType,
-            tax_id: userData.taxId,
-            street_address: userData.streetAddress,
-            address: userData.streetAddress,
-            canton: userData.canton,
-            city: userData.city,
-            zip_code: userData.zipCode,
-            country: userData.country || 'Switzerland',
-            auth_uid: authData.user.id,
-            free_feature_credits: userData.role === 'seller' ? 1 : 0,
-            verified: false,
-            banned: false,
-            funds: 0,
-          })
-          .select()
-          .single()
-
-        if (profileError) throw profileError
-
-        user.value = { ...profileData, auth_uid: authData.user.id }
-        return { user: user.value }
-      } catch (error: any) {
-        throw new Error(error.message || 'Registration failed')
-      }
+      // Registration goes through the server endpoint only. It is the single
+      // place that enforces the ID-document requirement, creates the auth user
+      // with the service-role key and rolls back cleanly on failure.
+      const result: any = await $fetch('/api/auth/register', {
+        method: 'POST',
+        body: userData,
+      })
+      return result
     },
 
     async logout() {

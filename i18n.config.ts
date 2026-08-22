@@ -1,6 +1,12 @@
 export default {
   legacy: false,
   locale: 'en',
+  // Explicit fallback so a key that has not been translated yet renders the
+  // English text instead of the raw key name (e.g. a bare "dashboard").
+  fallbackLocale: 'en',
+  // These warnings are noisy in the browser console and mean nothing to users.
+  missingWarn: false,
+  fallbackWarn: false,
   availableLocales: ['en', 'fr', 'de', 'ro', 'sr', 'ar', 'bg', 'uk', 'el', 'ru', 'pl', 'sq', 'es', 'it'],
   messages: {
     en: () => import('./i18n/locales/en.json'),

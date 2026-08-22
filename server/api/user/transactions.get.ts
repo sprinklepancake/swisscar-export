@@ -34,6 +34,8 @@ export default defineEventHandler(async (event) => {
       description: t.description || '',
       referenceId: t.reference_id || '',
       metadata: t.metadata || {},
+      // Was omitted, so a refunded transaction still displayed as "completed".
+      status: t.status || 'completed',
       createdAt: t.created_at,
       updatedAt: t.updated_at,
     }))

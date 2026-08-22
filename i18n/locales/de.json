@@ -116,7 +116,8 @@
     "your_auction_dashboard": "Ihr Auktions-Dashboard",
     "your_bid": "Ihr Gebot",
     "your_max_bid": "Ihr Maximalgebot",
-    "your_wallet": "Ihr Wallet"
+    "your_wallet": "Ihr Wallet",
+    "status_heading": "Auktionsstatus"
   },
   "auth": {
     "confirm_message": "Bitte warten Sie, während wir Ihre E-Mail-Adresse verifizieren...",
@@ -138,7 +139,22 @@
     "signup_button": "Registrieren",
     "signup_link": "Registrieren",
     "signup_success": "Bitte überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen!",
-    "signup_title": "Konto erstellen"
+    "signup_title": "Konto erstellen",
+    "forgot_password": "Passwort vergessen?",
+    "forgot_password_title": "Passwort zurücksetzen",
+    "forgot_password_intro": "Geben Sie die E-Mail-Adresse ein, mit der Sie sich registriert haben. Wir senden Ihnen einen Link, mit dem Sie ein neues Passwort festlegen können.",
+    "forgot_password_sent": "Falls für diese Adresse ein Konto besteht, ist ein Link zum Zurücksetzen unterwegs. Bitte prüfen Sie Ihren Posteingang und Ihren Spam-Ordner.",
+    "back_to_login": "Zurück zur Anmeldung",
+    "sending": "Wird gesendet...",
+    "send_reset_link": "Link zum Zurücksetzen senden",
+    "reset_password_title": "Neues Passwort wählen",
+    "reset_link_invalid": "Dieser Link ist nicht mehr gültig. Links zum Zurücksetzen laufen nach kurzer Zeit ab und funktionieren nur in dem Browser, in dem Sie sie geöffnet haben.",
+    "request_new_link": "Neuen Link anfordern",
+    "password_changed": "Ihr Passwort wurde geändert.",
+    "password_change_failed": "Ihr Passwort konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
+    "new_password": "Neues Passwort",
+    "set_new_password": "Neues Passwort speichern",
+    "logging_in": "Anmeldung läuft..."
   },
   "body_type_label": "Karosserieform",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Jahr",
     "your_balance": "Ihr Kontostand",
     "zip_code": "Postleitzahl",
-    "zip_code_placeholder": "z.B. 3032"
+    "zip_code_placeholder": "z.B. 3032",
+    "upload_failed": "Fehlgeschlagen",
+    "upload_failed_generic": "Einige Fotos konnten nicht hochgeladen werden. Wenn Sie schon länger auf dieser Seite sind, ist Ihre Sitzung möglicherweise abgelaufen – bitte laden Sie die Seite neu und versuchen Sie es erneut.",
+    "try_again": "Erneut hochladen"
   },
   "cars_page": {
     "description": "Durchsuchen Sie qualitativ hochwertige Schweizer Fahrzeuge zu erschwinglichen Exportpreisen",
@@ -672,7 +691,8 @@
       "year_desc": "Neueste zuerst"
     },
     "subtitle": "Qualitativ hochwertige Schweizer Fahrzeuge zu erschwinglichen Exportpreisen",
-    "title": "Exportautos durchsuchen"
+    "title": "Exportautos durchsuchen",
+    "filter_status": "Status"
   },
   "chat": {
     "buyer": "Käufer",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Sie sind der Käufer",
     "you_are_buyer_label": "Sie sind der Käufer",
     "you_are_seller": "Sie sind der Verkäufer",
-    "you_are_seller_label": "Sie sind der Verkäufer"
+    "you_are_seller_label": "Sie sind der Verkäufer",
+    "verification_required": "Ein Administrator muss Ihr Konto noch verifizieren, bevor Sie Nachrichten senden können. Sie können diese Unterhaltung in der Zwischenzeit weiterlesen."
   },
   "city_label": "Stadt",
   "city_placeholder": "Stadt eingeben",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Kontaktieren Sie den Admin für die Mittelverwaltung",
     "error": {
-      "login_to_view": "Bitte melden Sie sich an, um Ihr Profil anzuzeigen"
+      "login_to_view": "Bitte melden Sie sich an, um Ihr Profil anzuzeigen",
+      "load_failed": "Ihr Profil konnte nicht geladen werden. Bitte laden Sie die Seite neu."
     },
     "featured": "Vorgestellt",
     "member_since": "Mitglied seit",
@@ -991,7 +1013,8 @@
       "list_new_car": "Neues Auto listen",
       "request_verification": "Verifizierung anfordern",
       "title": "Schnellaktionen",
-      "view_dashboard": "Dashboard anzeigen"
+      "view_dashboard": "Dashboard anzeigen",
+      "view_profile": "Zu meinem Profil"
     },
     "recent_activity": {
       "empty": "Keine letzten Aktivitäten",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Registrierter Käufer",
-      "verified_seller": "Verifizierter Verkäufer"
+      "verified_seller": "Verifizierter Verkäufer",
+      "administrator": "Administrator",
+      "seller": "Verkäufer",
+      "verified_buyer": "Verifizierter Käufer"
     },
     "saving": "Wird gespeichert...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Gesamt",
       "listings": "Listen",
       "status": "Status",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "buyer_type": "Käufertyp",
+      "saved_cars": "Gemerkte Fahrzeuge",
+      "watchlist": "Merkliste"
     },
     "transactions": {
       "change": "Änderung",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Sie können Verkäufer kontaktieren und Inserate durchsuchen.",
       "verified_title": "Konto verifiziert"
     },
-    "verified": "Verifiziert"
+    "verified": "Verifiziert",
+    "status": {
+      "pending_title": "Verifizierung ausstehend",
+      "pending_body": "Ein Administrator prüft Ihr Ausweisdokument. In der Zwischenzeit können Sie alle Inserate ansehen. Ein Auto inserieren, Verkäufer anschreiben und bieten wird freigeschaltet, sobald Ihr Konto verifiziert ist.",
+      "verified_title": "Konto verifiziert",
+      "verified_body_seller": "Sie können Inserate aufgeben, Käufer anschreiben und die ganze Website nutzen.",
+      "verified_body_buyer": "Sie können Verkäufer anschreiben und Gebote abgeben.",
+      "banned_title": "Konto gesperrt",
+      "banned_body": "Dieses Konto wurde gesperrt und kann keine Inserate aufgeben, keine Nachrichten schreiben und nicht bieten. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich um einen Fehler handelt.",
+      "missing_id": "Für dieses Konto liegt uns noch kein Ausweisdokument vor, deshalb kann es nicht verifiziert werden. Bitte laden Sie unten eines hoch.",
+      "upload_id": "Ausweisdokument hochladen",
+      "replace_id": "Ausweisdokument ersetzen",
+      "id_uploaded": "Vielen Dank. Ihr Dokument wurde zur Prüfung an die Administratoren gesendet.",
+      "id_upload_failed": "Dieses Dokument konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut."
+    },
+    "password": {
+      "title": "Passwort ändern",
+      "current": "Aktuelles Passwort",
+      "submit": "Passwort ändern",
+      "hint": "Ihr neues Passwort muss mindestens 8 Zeichen lang sein. Falls Sie Ihr aktuelles vergessen haben, nutzen Sie stattdessen den Link zum Zurücksetzen."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Die Angabe falscher Ausweisdaten oder das Nichtabschließen einer gewonnenen Auktion führt zu einer dauerhaften Sperre.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Bitte akzeptieren Sie die AGB und Datenschutzerklärung",
       "password_length": "Passwort muss mindestens 8 Zeichen lang sein",
       "passwords_not_match": "Passwörter stimmen nicht überein",
-      "phone_too_short": "Telefonnummer zu kurz"
-    }
+      "phone_too_short": "Telefonnummer zu kurz",
+      "id_required": "Bitte laden Sie Ihr Ausweisdokument hoch. Ein Administrator benötigt es, um Ihr Konto zu verifizieren.",
+      "id_consent_required": "Bitte bestätigen Sie, dass Sie mit der Verarbeitung Ihres Ausweisdokuments einverstanden sind.",
+      "id_file_type": "Bitte laden Sie eine JPG-, PNG- oder PDF-Datei hoch.",
+      "id_file_size": "Diese Datei ist zu gross. Bitte laden Sie ein Dokument mit weniger als 6 MB hoch.",
+      "phone_required": "Eine Telefonnummer ist erforderlich."
+    },
+    "id_upload_required_note": "Für jedes Konto ist ein Ausweisdokument nötig. Ein Administrator prüft es, bevor Sie ein Auto inserieren, jemandem schreiben oder ein Gebot abgeben können.",
+    "id_consent": "Ich bin damit einverstanden, dass SwissCarExport mein Ausweisdokument ausschliesslich zur Überprüfung meiner Identität verarbeitet, wie beschrieben in der",
+    "approval_notice_title": "Ihr Konto muss zuerst verifiziert werden",
+    "approval_notice_body": "Sie können sich sofort anmelden und die ganze Website ansehen. Ein Auto inserieren, Verkäufer anschreiben und bieten bleibt gesperrt, bis ein Administrator Ihr Ausweisdokument geprüft hat.",
+    "buyer_type_auction_short": "Auktionskäufer",
+    "buyer_type_direct_short": "Direktkäufer"
   },
   "reset_filters": "Filter zurücksetzen",
   "search_button": "Autos suchen",
@@ -1260,5 +1320,70 @@
   "sell_car": "Auto verkaufen",
   "stat_verified_sellers": "Schweizer verifizierte Verkäufer",
   "stat_free_browse": "Kostenloses Stöbern & Kontaktieren",
-  "stat_free_months": "Gratismonate für Verkäufer"
+  "stat_free_months": "Gratismonate für Verkäufer",
+  "cars": "Autos",
+  "dashboard": "Dashboard",
+  "close": "Schliessen",
+  "sell_gate": {
+    "loading_title": "Ihr Konto wird geprüft...",
+    "loading_body": "Einen Moment.",
+    "anonymous_title": "Melden Sie sich an, um ein Auto zu inserieren",
+    "anonymous_body": "Für ein Inserat brauchen Sie ein Verkäuferkonto. Das Stöbern bleibt kostenlos und ganz ohne Konto möglich.",
+    "banned_title": "Konto gesperrt",
+    "banned_body": "Dieses Konto wurde gesperrt und kann keine Inserate veröffentlichen. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich um einen Fehler handelt.",
+    "buyer_title": "Dies ist ein Käuferkonto",
+    "buyer_body": "Nur Verkäuferkonten können Inserate veröffentlichen. Wenn Sie ein Auto für den Export verkaufen möchten, wenden Sie sich bitte an den Support, damit Ihr Konto umgestellt werden kann.",
+    "unverified_title": "Verifizierung ausstehend",
+    "unverified_body": "Ein Administrator muss Ihr Ausweisdokument noch prüfen, bevor Sie Inserate veröffentlichen können. Sobald Ihr Konto verifiziert ist, können Sie inserieren – bis dahin würde nichts gespeichert, was Sie hier eingeben."
+  },
+  "contact_page": {
+    "title": "Kontakt",
+    "intro": "So erreichen Sie die richtige Stelle – je nachdem, worum es geht.",
+    "about_a_car_title": "Eine Frage zu einem bestimmten Auto",
+    "about_a_car_body": "Jedes Inserat zeigt die Telefonnummer des Verkäufers und hat einen Nachrichten-Button. Der Verkäufer kennt das Auto und ist deshalb der schnellste Weg zu einer Antwort zu Zustand, Papieren oder Preis.",
+    "browse_cars": "Inserate durchsuchen",
+    "account_title": "Ihr Konto oder Ihre Verifizierung",
+    "account_body": "Auf Ihrer Profilseite sehen Sie, ob Ihr Konto verifiziert wurde, und dort können Sie Ihr Ausweisdokument hochladen oder ersetzen.",
+    "support_title": "Alles andere",
+    "support_body": "Bei Problemen mit der Website, mit Zahlungen oder wenn Sie einen anderen Nutzer melden möchten, kontaktieren Sie uns direkt.",
+    "legal_notice": "Impressum"
+  },
+  "shipping_page": {
+    "title": "Export und Versand",
+    "intro": "Jedes Auto auf dieser Website wird für den Export aus der Schweiz verkauft. Hier lesen Sie, was dazugehört und wer was macht.",
+    "step_one_title": "Verkauf vereinbaren",
+    "step_one_body": "Schreiben Sie dem Verkäufer oder rufen Sie ihn an, einigen Sie sich auf einen Preis und regeln Sie Zahlung und Übergabe direkt mit ihm. SwissCarExport ist der Marktplatz und nicht Partei des Verkaufs.",
+    "step_two_title": "Auto abholen",
+    "step_two_body": "Im Inserat steht, in welchem Schweizer Kanton das Auto steht. Das ist der Ausgangspunkt für den Transport – egal, ob Sie es selbst abholen oder einen Transporteur beauftragen.",
+    "step_three_title": "Auto exportieren",
+    "step_three_body": "Das Auto verlässt die Schweiz mit Exportpapieren. Fragen Sie den Verkäufer vor dem Kauf, welche Dokumente er liefern kann.",
+    "legs_title": "Zwei Transportetappen",
+    "legs_intro": "Ein Auto von einer Schweizer Einfahrt bis in Ihr Land zu bringen, sind meist zwei getrennte Fahrten – und es lohnt sich, sie getrennt zu berechnen.",
+    "leg_one_title": "Innerhalb der Schweiz",
+    "leg_one_body": "Vom Kanton des Verkäufers zu einem Sammelpunkt, in einen Hafen oder an die Grenze. Kurz und meist die günstigere Hälfte.",
+    "leg_two_title": "Von der Schweiz in Ihr Land",
+    "leg_two_body": "Per Lastwagen, Bahn oder Schiff, je nach Ziel. Die Kosten hängen weit mehr vom Zielort ab als vom Auto.",
+    "documents_title": "Diese Dokumente sollten Sie beim Verkäufer verlangen",
+    "doc_typenschein": "Typenschein – das Schweizer Datenblatt zum Fahrzeug",
+    "doc_registration": "Fahrzeugausweis – das Zulassungsdokument des Autos",
+    "doc_invoice": "Eine Verkaufsrechnung oder ein schriftlicher Kaufvertrag",
+    "doc_customs": "Schweizer Zoll-Ausfuhrdeklaration",
+    "documents_note": "Die Anforderungen sind je nach Zielland unterschiedlich. Klären Sie ab, was Ihre eigene Zollbehörde verlangt, bevor Sie etwas bezahlen.",
+    "costs_title": "Zu den Kosten",
+    "costs_body": "SwissCarExport organisiert keinen Transport und legt auch keine Preise dafür fest. Transport, Zölle und Einfuhrsteuern vereinbaren Sie mit dem Verkäufer und dem Transporteur Ihrer Wahl. Holen Sie ein schriftliches Angebot ein, bevor Sie sich festlegen.",
+    "browse_cars": "Exportautos durchsuchen"
+  },
+  "edit_listing": {
+    "title": "Inserat bearbeiten",
+    "fixed_fields_note": "Marke, Modell, Jahr und die Art des Inserats lassen sich nach dem Veröffentlichen nicht mehr ändern – daran erkennen alle, die Ihnen bereits geschrieben oder geboten haben, das Auto wieder. Wenn Sie ein anderes Auto verkaufen möchten, erstellen Sie ein neues Inserat.",
+    "price_section": "Preis",
+    "condition_section": "Zustand und Beschreibung",
+    "location_section": "Standort und Kontakt",
+    "starting_price_locked": "Für diese Auktion liegen bereits Gebote vor, deshalb ist der Startpreis fixiert.",
+    "no_photos": "Dieses Inserat hat noch keine Fotos. Inserate mit Fotos bekommen deutlich mehr Interesse.",
+    "saved": "Gespeichert. Ihr Inserat wurde aktualisiert.",
+    "save_failed": "Ihre Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "load_failed": "Dieses Inserat konnte nicht geladen werden.",
+    "not_yours": "Dieses Inserat gehört einem anderen Verkäufer."
+  }
 }

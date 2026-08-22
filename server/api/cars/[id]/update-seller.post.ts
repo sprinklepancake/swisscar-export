@@ -1,7 +1,12 @@
 // server/api/cars/[id]/update-seller.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireAdmin } from '~/server/utils/auth'
 
+// SECURITY: this route had no authentication at all — an anonymous POST could
+// move any car listing to any account. Admin only now.
 export default defineEventHandler(async (event) => {
+  await requireAdmin(event)
+
   const carId = getRouterParam(event, 'id')
   if (!carId) throw createError({ statusCode: 400, statusMessage: 'Car ID is required' })
 

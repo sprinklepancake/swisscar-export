@@ -93,7 +93,7 @@
           <div class="text-gray-400 text-6xl mb-4">🚗</div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">No cars found</h3>
           <p class="text-gray-600 mb-6">You haven't listed any cars yet.</p>
-          <NuxtLink to="/sell" class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
+          <NuxtLink :to="localePath('/sell')" class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -193,7 +193,7 @@
                 <div class="flex flex-col space-y-2">
                   <!-- View Button -->
                   <NuxtLink 
-                    :to="`/cars/${car.id}`"
+                    :to="localePath(`/cars/${car.id}`)"
                     class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center font-medium text-sm"
                   >
                     View
@@ -217,15 +217,17 @@
                   </button>
                   
                   <!-- Status Button -->
+                  <!-- 'auction' is a live listing too; gating on 'active' alone
+                       meant an auction could never be marked sold. -->
                   <button
-                    v-if="car.status === 'active'"
+                    v-if="car.status === 'active' || car.status === 'auction'"
                     @click="markAsSold(car.id)"
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm"
                   >
                     Mark as Sold
                   </button>
                   <button
-                    v-else-if="car.status === 'draft'"
+                    v-else-if="car.status === 'draft' || car.status === 'sold'"
                     @click="activateCar(car.id)"
                     class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium text-sm"
                   >
@@ -244,6 +246,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import FeatureButton from '~/components/FeatureButton.vue'
+
+const localePath = useLocalePath()
+const { apiFetch } = useApiFetch()
 
 interface Car {
   id: number
@@ -276,7 +281,7 @@ const filteredCars = computed(() => {
 })
 
 const activeCars = computed(() => {
-  return cars.value.filter(car => car.status === 'active')
+  return cars.value.filter(car => car.status === 'active' || car.status === 'auction')
 })
 
 const featuredCars = computed(() => {
@@ -323,13 +328,10 @@ const calculateDaysRemaining = (featuredUntil?: string) => {
 const loadMyCars = async () => {
   try {
     loading.value = true
-    const { data } = await useFetch('/api/cars/my', {
-      credentials: 'include'
-    })
-    
-    if (data.value) {
-      cars.value = data.value
-    }
+    const data: any = await apiFetch('/api/cars/my')
+    // /api/cars/my returns { success, cars } — the old code assigned the whole
+    // envelope to cars.value, so the list always rendered as empty.
+    cars.value = Array.isArray(data) ? data : (data?.cars || [])
   } catch (error) {
     console.error('Error loading cars:', error)
   } finally {
@@ -338,22 +340,16 @@ const loadMyCars = async () => {
 }
 
 const editCar = (carId: number) => {
-  // Navigate to edit page
-  navigateTo(`/cars/edit/${carId}`)
+  navigateTo(localePath(`/cars/edit/${carId}`))
 }
 
 const markAsSold = async (carId: number) => {
   if (!confirm('Are you sure you want to mark this car as sold?')) return
   
   try {
-    const { data } = await useFetch(`/api/cars/${carId}/sold`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
+    const data: any = await apiFetch(`/api/cars/${carId}/sold`, { method: 'POST' })
+    if (data?.success) {
       await loadMyCars()
-      alert('Car marked as sold!')
     }
   } catch (error) {
     console.error('Error marking as sold:', error)
@@ -363,14 +359,9 @@ const markAsSold = async (carId: number) => {
 
 const activateCar = async (carId: number) => {
   try {
-    const { data } = await useFetch(`/api/cars/${carId}/activate`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    
-    if (data.value?.success) {
+    const data: any = await apiFetch(`/api/cars/${carId}/activate`, { method: 'POST' })
+    if (data?.success) {
       await loadMyCars()
-      alert('Car activated!')
     }
   } catch (error) {
     console.error('Error activating car:', error)

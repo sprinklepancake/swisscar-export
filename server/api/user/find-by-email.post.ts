@@ -1,7 +1,12 @@
 // server/api/user/find-by-email.post.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { requireAdmin } from '~/server/utils/auth'
 
+// SECURITY: unauthenticated account enumeration — anyone could probe whether an email had an account here.
+// Nothing in the UI calls this; it is an admin/debug tool, so lock it down.
 export default defineEventHandler(async (event) => {
+  await requireAdmin(event)
+
   const { email } = await readBody(event)
   if (!email) return { found: false, message: 'Email is required' }
 

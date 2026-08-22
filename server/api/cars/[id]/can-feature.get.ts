@@ -19,7 +19,8 @@ export default defineEventHandler(async (event) => {
 
     if (!car) return { canFeature: false, reason: 'Car not found' }
     if (car.seller_id !== user.id) return { canFeature: false, reason: 'You do not own this listing' }
-    if (car.status !== 'active') return { canFeature: false, reason: 'Only active listings can be featured' }
+    if (car.status !== 'active' && car.status !== 'auction') return { canFeature: false, reason: 'Only live listings can be featured' }
+    if (car.permanent_feature) return { canFeature: false, reason: 'This car already has a permanent feature' }
     if (car.is_featured && car.featured_until && new Date(car.featured_until) > new Date()) {
       return { canFeature: false, reason: 'This car is already featured' }
     }

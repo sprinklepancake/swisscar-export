@@ -1,5 +1,6 @@
 // server/api/cars/[id].delete.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { releaseHeldBids } from '~/server/utils/wallet'
 
 export default defineEventHandler(async (event) => {
   const user = event.context.user
@@ -15,6 +16,12 @@ export default defineEventHandler(async (event) => {
     if (car.seller_id !== user.id && user.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'You can only delete your own listings' })
 
     // Cascade delete in order
+    // Bidders' deposits are held against this car. Give them back BEFORE the
+    // bid rows are deleted, otherwise the money simply vanishes with no record.
+    await releaseHeldBids(parseInt(String(carId)), {
+      reason: 'Listing removed by the seller — your bid was returned',
+    })
+
     const { data: chats } = await supabase.from('chats').select('id').eq('car_id', carId)
     const chatIds = (chats || []).map((c: any) => c.id)
     if (chatIds.length > 0) await supabase.from('messages').delete().in('chat_id', chatIds)

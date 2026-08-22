@@ -249,6 +249,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const { apiFetch } = useApiFetch()
 
 const props = defineProps<{
   carId: number
@@ -318,12 +319,9 @@ const formatDate = (dateString: string) => {
 
 const loadUserData = async () => {
   try {
-    const { data } = await useFetch('/api/auth/me', {
-      credentials: 'include'
-    })
-    
-    if (data.value?.user) {
-      userData.value = data.value.user
+    const data: any = await apiFetch('/api/auth/me')
+    if (data?.user) {
+      userData.value = data.user
     }
   } catch (error) {
     console.error('Error loading user data:', error)
@@ -333,18 +331,11 @@ const loadUserData = async () => {
 const checkFeatureEligibility = async () => {
   try {
     isLoading.value = true
-    const { data } = await useFetch(`/api/cars/${props.carId}/can-feature`, {
-      credentials: 'include'
-    })
-    
-    if (data.value) {
-      checkResult.value = data.value
+    const data: any = await apiFetch(`/api/cars/${props.carId}/can-feature`)
+    if (data) {
+      checkResult.value = data
       // Auto-select free option if available
-      if (data.value.freeCreditsAvailable) {
-        selectedOption.value = 'free'
-      } else {
-        selectedOption.value = 'paid'
-      }
+      selectedOption.value = data.freeCreditsAvailable ? 'free' : 'paid'
     }
   } catch (error) {
     console.error('Error checking feature eligibility:', error)
@@ -367,23 +358,18 @@ const featureCar = async () => {
       body = { useFreeCredit: false, permanent: true }
     }
     
-    const { data, error } = await useFetch(`/api/cars/${props.carId}/feature`, {
+    const data: any = await apiFetch(`/api/cars/${props.carId}/feature`, {
       method: 'POST',
-      credentials: 'include',
       body
     })
     
-    if (error.value) {
-      throw new Error(error.value.data?.statusMessage || t('feature.failed_to_feature') || 'Failed to feature car')
-    }
-    
-    if (data.value?.success) {
+    if (data?.success) {
       if (selectedOption.value === 'free') {
-        successMessage.value = t('feature.success_free', { days: data.value.durationDays, credits: data.value.remainingCredits }) || `Car featured for free! ${data.value.durationDays} days. You have ${data.value.remainingCredits} free credits left.`
+        successMessage.value = t('feature.success_free', { days: data.durationDays, credits: data.remainingCredits })
       } else if (selectedOption.value === 'permanent') {
-        successMessage.value = t('feature.success_permanent') || 'Car permanently featured! It will stay featured until sold or removed.'
+        successMessage.value = t('feature.success_permanent')
       } else {
-        successMessage.value = t('feature.success_paid', { days: data.value.durationDays }) || `Car featured for ${data.value.durationDays} days!`
+        successMessage.value = t('feature.success_paid', { days: data.durationDays })
       }
       
       showSuccessToast.value = true

@@ -116,7 +116,8 @@
     "your_auction_dashboard": "La tua dashboard aste",
     "your_bid": "La tua offerta",
     "your_max_bid": "La tua offerta massima",
-    "your_wallet": "Il tuo portafoglio"
+    "your_wallet": "Il tuo portafoglio",
+    "status_heading": "Stato dell’asta"
   },
   "auth": {
     "confirm_message": "Attendi mentre verifichiamo il tuo indirizzo email...",
@@ -138,7 +139,22 @@
     "signup_button": "Registrati",
     "signup_link": "Registrati",
     "signup_success": "Controlla la tua email per confermare il tuo account!",
-    "signup_title": "Crea account"
+    "signup_title": "Crea account",
+    "forgot_password": "Hai dimenticato la password?",
+    "forgot_password_title": "Reimposta la tua password",
+    "forgot_password_intro": "Inserisci l'indirizzo email con cui ti sei registrato e ti invieremo un link per impostare una nuova password.",
+    "forgot_password_sent": "Se esiste un account con quell'indirizzo, il link per reimpostare la password è in arrivo. Controlla la posta in arrivo e anche la cartella spam.",
+    "back_to_login": "Torna all'accesso",
+    "sending": "Invio in corso...",
+    "send_reset_link": "Invia il link di reimpostazione",
+    "reset_password_title": "Scegli una nuova password",
+    "reset_link_invalid": "Questo link non è più valido. I link per reimpostare la password scadono dopo poco tempo e funzionano solo nel browser da cui li hai aperti.",
+    "request_new_link": "Richiedi un nuovo link",
+    "password_changed": "La tua password è stata modificata.",
+    "password_change_failed": "Non siamo riusciti a modificare la tua password. Riprova.",
+    "new_password": "Nuova password",
+    "set_new_password": "Salva la nuova password",
+    "logging_in": "Accesso in corso..."
   },
   "body_type_label": "Tipo di Carrozzeria",
   "body_types": {
@@ -644,7 +660,10 @@
     "year": "Anno",
     "your_balance": "Il saldo del tuo account",
     "zip_code": "Codice Postale",
-    "zip_code_placeholder": "es. 3032"
+    "zip_code_placeholder": "es. 3032",
+    "upload_failed": "Non riuscito",
+    "upload_failed_generic": "Non è stato possibile caricare alcune foto. Se sei su questa pagina da un po', la tua sessione potrebbe essere scaduta: aggiorna la pagina e riprova.",
+    "try_again": "Riprova a caricare"
   },
   "cars_page": {
     "description": "Sfoglia veicoli svizzeri di qualità a prezzi di esportazione accessibili",
@@ -672,7 +691,8 @@
       "year_desc": "Anno: Decrescente"
     },
     "subtitle": "Trova la tua auto ideale dalla Svizzera",
-    "title": "Tutte le Auto"
+    "title": "Tutte le Auto",
+    "filter_status": "Stato"
   },
   "chat": {
     "buyer": "Acquirente",
@@ -706,7 +726,8 @@
     "you_are_buyer": "Sei l'acquirente",
     "you_are_buyer_label": "Sei l'acquirente",
     "you_are_seller": "Sei il venditore",
-    "you_are_seller_label": "Sei il venditore"
+    "you_are_seller_label": "Sei il venditore",
+    "verification_required": "Un amministratore deve ancora approvare il tuo account prima che tu possa inviare messaggi. Nel frattempo puoi continuare a leggere questa conversazione."
   },
   "city_label": "Città",
   "city_placeholder": "Inserisci la città",
@@ -949,7 +970,8 @@
     },
     "contact_admin_funds": "Contatta l'amministratore per la gestione dei fondi",
     "error": {
-      "login_to_view": "Accedi per visualizzare il tuo profilo"
+      "login_to_view": "Accedi per visualizzare il tuo profilo",
+      "load_failed": "Non siamo riusciti a caricare il tuo profilo. Aggiorna la pagina."
     },
     "featured": "In evidenza",
     "member_since": "Membro dal",
@@ -991,7 +1013,8 @@
       "list_new_car": "Pubblica una nuova auto",
       "request_verification": "Richiedi verifica",
       "title": "Azioni rapide",
-      "view_dashboard": "Vedi dashboard"
+      "view_dashboard": "Vedi dashboard",
+      "view_profile": "Vai al mio profilo"
     },
     "recent_activity": {
       "empty": "Nessuna attività recente",
@@ -999,7 +1022,10 @@
     },
     "role": {
       "registered_buyer": "Acquirente registrato",
-      "verified_seller": "Venditore verificato"
+      "verified_seller": "Venditore verificato",
+      "administrator": "Amministratore",
+      "seller": "Venditore",
+      "verified_buyer": "Acquirente verificato"
     },
     "saving": "Salvataggio...",
     "seo": {
@@ -1014,7 +1040,10 @@
       "lifetime": "Totale",
       "listings": "Annunci",
       "status": "Stato",
-      "total": "Totale"
+      "total": "Totale",
+      "buyer_type": "Tipo di acquirente",
+      "saved_cars": "Auto salvate",
+      "watchlist": "Lista salvati"
     },
     "transactions": {
       "change": "Variazione",
@@ -1052,7 +1081,27 @@
       "verified_direct": "Puoi contattare i venditori e sfogliare gli annunci.",
       "verified_title": "Account verificato"
     },
-    "verified": "Verificato"
+    "verified": "Verificato",
+    "status": {
+      "pending_title": "In attesa di approvazione",
+      "pending_body": "Un amministratore sta esaminando il tuo documento d'identità. Nel frattempo puoi sfogliare tutti gli annunci. Pubblicare un'auto, scrivere a un venditore e piazzare offerte si sbloccano non appena il tuo account viene approvato.",
+      "verified_title": "Account approvato",
+      "verified_body_seller": "Puoi pubblicare annunci, scrivere agli acquirenti e usare tutte le funzioni del sito.",
+      "verified_body_buyer": "Puoi scrivere ai venditori e piazzare offerte.",
+      "banned_title": "Account sospeso",
+      "banned_body": "Questo account è stato sospeso e non può pubblicare annunci, inviare messaggi né piazzare offerte. Contatta l'assistenza se pensi che si tratti di un errore.",
+      "missing_id": "Non abbiamo ancora un documento d'identità per questo account, quindi non può essere approvato. Caricane uno qui sotto.",
+      "upload_id": "Carica il tuo documento d'identità",
+      "replace_id": "Sostituisci il tuo documento d'identità",
+      "id_uploaded": "Grazie. Il tuo documento è stato inviato agli amministratori per la verifica.",
+      "id_upload_failed": "Non siamo riusciti a caricare il documento. Riprova."
+    },
+    "password": {
+      "title": "Cambia password",
+      "current": "Password attuale",
+      "submit": "Cambia password",
+      "hint": "La tua nuova password deve avere almeno 8 caratteri. Se hai dimenticato quella attuale, usa invece il link per reimpostarla."
+    }
   },
   "register": {
     "auction_warning": "⚠️ Fornire un documento d'identità falso o non completare un'asta vinta comporterà un ban permanente.",
@@ -1137,8 +1186,19 @@
       "accept_terms": "Accetta i termini e l'informativa sulla privacy",
       "password_length": "La password deve contenere almeno 8 caratteri",
       "passwords_not_match": "Le password non corrispondono",
-      "phone_too_short": "Numero di telefono troppo corto"
-    }
+      "phone_too_short": "Numero di telefono troppo corto",
+      "id_required": "Carica il tuo documento d'identità. Serve a un amministratore per approvare il tuo account.",
+      "id_consent_required": "Conferma di acconsentire al trattamento del tuo documento d'identità.",
+      "id_file_type": "Carica un file JPG, PNG o PDF.",
+      "id_file_size": "Il file è troppo grande. Carica un documento di dimensioni inferiori a 6 MB.",
+      "phone_required": "Il numero di telefono è obbligatorio."
+    },
+    "id_upload_required_note": "Ogni account ha bisogno di un documento d'identità. Un amministratore lo controlla prima che tu possa pubblicare un'auto, scrivere a qualcuno o piazzare un'offerta.",
+    "id_consent": "Acconsento al trattamento del mio documento d'identità da parte di SwissCarExport al solo scopo di verificare la mia identità, come descritto nell'",
+    "approval_notice_title": "Il tuo account deve prima essere approvato",
+    "approval_notice_body": "Puoi accedere e sfogliare subito tutto il sito. Pubblicare un'auto, scrivere a un venditore e piazzare offerte restano bloccati finché un amministratore non ha esaminato il tuo documento d'identità.",
+    "buyer_type_auction_short": "Acquirente all’asta",
+    "buyer_type_direct_short": "Acquirente diretto"
   },
   "reset_filters": "Reimposta filtri",
   "search_button": "Cerca Auto",
@@ -1260,5 +1320,70 @@
   "sell_car": "Vendi auto",
   "stat_verified_sellers": "Venditori svizzeri verificati",
   "stat_free_browse": "Consultazione e contatto gratuiti",
-  "stat_free_months": "Mesi gratuiti per i venditori"
+  "stat_free_months": "Mesi gratuiti per i venditori",
+  "cars": "Auto",
+  "dashboard": "Dashboard",
+  "close": "Chiudi",
+  "sell_gate": {
+    "loading_title": "Verifica del tuo account in corso...",
+    "loading_body": "Un attimo.",
+    "anonymous_title": "Accedi per pubblicare un'auto",
+    "anonymous_body": "Per pubblicare un annuncio ti serve un account venditore. Sfogliare gli annunci resta gratuito e non richiede alcun account.",
+    "banned_title": "Account sospeso",
+    "banned_body": "Questo account è stato sospeso e non può pubblicare annunci. Contatta l'assistenza se pensi che si tratti di un errore.",
+    "buyer_title": "Questo è un account acquirente",
+    "buyer_body": "Solo gli account venditore possono pubblicare annunci. Se vuoi vendere un'auto per l'esportazione, contatta l'assistenza per far modificare il tuo account.",
+    "unverified_title": "In attesa di approvazione",
+    "unverified_body": "Un amministratore deve ancora esaminare il tuo documento d'identità prima che tu possa pubblicare annunci. Potrai pubblicare non appena il tuo account sarà approvato: fino ad allora nulla di ciò che inserisci qui verrebbe salvato."
+  },
+  "contact_page": {
+    "title": "Contatto",
+    "intro": "Ecco come raggiungere la persona giusta, a seconda di ciò che ti serve.",
+    "about_a_car_title": "Una domanda su un'auto specifica",
+    "about_a_car_body": "Ogni annuncio mostra il numero di telefono del venditore e ha un pulsante per inviare un messaggio. Il venditore conosce l'auto, quindi è la via più rapida per avere una risposta su condizioni, documenti o prezzo.",
+    "browse_cars": "Sfoglia gli annunci",
+    "account_title": "Il tuo account o la verifica",
+    "account_body": "La pagina del tuo profilo mostra se il tuo account è stato approvato e ti permette di caricare o sostituire il tuo documento d'identità.",
+    "support_title": "Qualsiasi altra cosa",
+    "support_body": "Per problemi con il sito, con i pagamenti o per segnalare un altro utente, contattaci direttamente.",
+    "legal_notice": "Note legali"
+  },
+  "shipping_page": {
+    "title": "Esportazione e spedizione",
+    "intro": "Ogni auto su questo sito è venduta per l'esportazione fuori dalla Svizzera. Ecco cosa comporta e chi fa cosa.",
+    "step_one_title": "Concordare la vendita",
+    "step_one_body": "Scrivi al venditore o chiamalo, concorda un prezzo e organizza pagamento e consegna direttamente con lui. SwissCarExport è il marketplace, non una parte della compravendita.",
+    "step_two_title": "Ritirare l'auto",
+    "step_two_body": "L'annuncio indica il cantone svizzero in cui si trova l'auto. È da lì che parte il trasporto, sia che la ritiri di persona sia che prenoti un trasportatore.",
+    "step_three_title": "Esportarla",
+    "step_three_body": "L'auto lascia la Svizzera con i documenti di esportazione. Chiedi al venditore quali documenti può fornirti prima di concordare la vendita.",
+    "legs_title": "Due tratte di trasporto",
+    "legs_intro": "Portare un'auto da un vialetto svizzero fino al tuo paese di solito significa due viaggi separati, ed è utile calcolarne il costo separatamente.",
+    "leg_one_title": "All'interno della Svizzera",
+    "leg_one_body": "Dal cantone del venditore a un punto di raccolta, a un porto o alla frontiera. Breve, e di solito la metà più economica.",
+    "leg_two_title": "Dalla Svizzera al tuo paese",
+    "leg_two_body": "Su camion, treno o nave, a seconda della destinazione. Il costo dipende molto più dalla destinazione che dall'auto.",
+    "documents_title": "Documenti da chiedere al venditore",
+    "doc_typenschein": "Typenschein (certificato di omologazione) — la scheda tecnica svizzera del veicolo",
+    "doc_registration": "Licenza di circolazione (Fahrzeugausweis)",
+    "doc_invoice": "Una fattura di vendita o un contratto di vendita scritto",
+    "doc_customs": "Dichiarazione doganale svizzera di esportazione",
+    "documents_note": "I requisiti cambiano da paese a paese. Verifica cosa chiede la dogana del tuo paese prima di pagare qualsiasi cosa.",
+    "costs_title": "I costi",
+    "costs_body": "SwissCarExport non organizza il trasporto e non ne stabilisce il prezzo. Trasporto, dazi doganali e tasse d'importazione si concordano tra te, il venditore e il trasportatore che scegli. Fatti fare un preventivo scritto prima di impegnarti.",
+    "browse_cars": "Sfoglia le auto per l'esportazione"
+  },
+  "edit_listing": {
+    "title": "Modifica annuncio",
+    "fixed_fields_note": "Marca, modello, anno e tipo di annuncio non possono essere modificati dopo la pubblicazione: sono ciò che identifica l'auto per chi ti ha già scritto o ha già fatto un'offerta. Per vendere un'altra auto, crea un nuovo annuncio.",
+    "price_section": "Prezzo",
+    "condition_section": "Condizione e descrizione",
+    "location_section": "Posizione e contatto",
+    "starting_price_locked": "Questa asta ha già delle offerte, quindi il prezzo di partenza è bloccato.",
+    "no_photos": "Questo annuncio non ha ancora foto. Gli annunci con foto ricevono molto più interesse.",
+    "saved": "Salvato. Il tuo annuncio è stato aggiornato.",
+    "save_failed": "Non siamo riusciti a salvare le tue modifiche. Riprova.",
+    "load_failed": "Non siamo riusciti a caricare questo annuncio.",
+    "not_yours": "Questo annuncio appartiene a un altro venditore."
+  }
 }

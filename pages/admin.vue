@@ -119,6 +119,26 @@
         </div>
       </div>
       
+      <!-- Accounts waiting for ID approval -->
+      <button
+        v-if="pendingUsers.length > 0"
+        @click="showPendingUsers"
+        class="w-full mb-6 flex items-center justify-between gap-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-5 text-left hover:bg-amber-100 transition-colors"
+      >
+        <div class="flex items-center gap-4 min-w-0">
+          <span class="text-3xl">⏳</span>
+          <div class="min-w-0">
+            <p class="font-bold text-amber-900">
+              {{ pendingUsers.length }} account{{ pendingUsers.length === 1 ? '' : 's' }} waiting for approval
+            </p>
+            <p class="text-sm text-amber-800">
+              These people can browse the site but cannot post, message or bid until you check their ID and press Verify.
+            </p>
+          </div>
+        </div>
+        <span class="shrink-0 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold">Review</span>
+      </button>
+
       <!-- Main Content -->
       <div class="bg-white rounded-xl shadow overflow-hidden">
         <!-- Tabs -->
@@ -1167,13 +1187,15 @@
 // useFetch() does NOT work inside regular async functions, so
 // we use $fetch everywhere and inject the cookie token manually.
 // ─────────────────────────────────────────────────────────────
-const getAdminHeaders = () => {
-  const token = useCookie('sb-access-token').value
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+// The old helper read the sb-access-token cookie directly. A Supabase access
+// token expires after about an hour while that cookie lived for seven days, so
+// an admin who left the tab open came back to a panel where every request
+// 403'd and the page just showed "Access Restricted".
+// apiFetch() refreshes the token first, so the panel keeps working.
+const localePath = useLocalePath()
+const { apiFetch } = useApiFetch()
 
-const adminFetch = (url: string, options: Record<string, any> = {}) =>
-  $fetch(url, { ...options, headers: { ...getAdminHeaders(), ...(options.headers ?? {}) } })
+const adminFetch = (url: string, options: Record<string, any> = {}) => apiFetch(url, options)
 
 // Stat Card Component
 const StatCard = defineComponent({
@@ -1290,6 +1312,14 @@ const tabs = [
   { id: 'funds', label: 'Funds' },
   { id: 'settings', label: 'Settings' }
 ]
+
+const pendingUsers = computed(() => users.value.filter((u: any) => !u.verified && !u.banned))
+
+const showPendingUsers = () => {
+  activeTab.value = 'users'
+  userFilter.value = 'unverified'
+  userSearch.value = ''
+}
 
 const filteredUsers = computed(() => {
   let filtered = users.value
@@ -1835,11 +1865,14 @@ const updateUserFunds = async () => {
   try {
     const data: any = await adminFetch(`/api/admin/users/${editingUser.value.id}/funds`, {
       method: 'POST',
-      body: { amount: parseFloat(newFundsAmount.value), description: 'Admin manual adjustment' }
+      // `absolute` means "make the balance exactly this". The server works out
+      // the movement from the balance it reads, so nothing that happened while
+      // this page was open gets wiped.
+      body: { amount: parseFloat(newFundsAmount.value), absolute: true, reason: 'Manual adjustment' }
     })
     if (data?.success) {
       const i = users.value.findIndex(u => u.id === editingUser.value.id)
-      if (i !== -1) users.value[i].funds = parseFloat(newFundsAmount.value)
+      if (i !== -1) users.value[i].funds = data.newBalance
       if (viewingUser.value?.id === editingUser.value.id) await loadUserTransactions()
       closeEditFundsModal()
       alert('✅ Funds updated successfully!')
@@ -1856,12 +1889,9 @@ const addFunds = async () => {
     return
   }
   try {
-    const user = users.value.find(u => u.id == selectedUserForFunds.value)
-    if (!user) return
-    const newAmount = (user.funds || 0) + parseFloat(fundsAmount.value)
     const data: any = await adminFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
       method: 'POST',
-      body: { amount: newAmount }
+      body: { delta: Math.abs(parseFloat(fundsAmount.value)), reason: 'Funds added' }
     })
     if (data?.success) {
       await loadAdminData()
@@ -1881,12 +1911,9 @@ const removeFunds = async () => {
     return
   }
   try {
-    const user = users.value.find(u => u.id == selectedUserForFunds.value)
-    if (!user) return
-    const newAmount = Math.max(0, (user.funds || 0) - parseFloat(fundsAmount.value))
     const data: any = await adminFetch(`/api/admin/users/${selectedUserForFunds.value}/funds`, {
       method: 'POST',
-      body: { amount: newAmount }
+      body: { delta: -Math.abs(parseFloat(fundsAmount.value)), reason: 'Funds removed' }
     })
     if (data?.success) {
       await loadAdminData()
@@ -1922,11 +1949,11 @@ const formatPrice = (price: number | string) => {
 }
 
 const goToHome = () => {
-  navigateTo('/')
+  navigateTo(localePath('/'))
 }
 
 const goToLogin = () => {
-  navigateTo('/login')
+  navigateTo(localePath('/login'))
 }
 
 const toggleFeatureSetting = (key: string) => {

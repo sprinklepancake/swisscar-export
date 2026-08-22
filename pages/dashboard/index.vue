@@ -2,7 +2,7 @@
   <div class="max-w-6xl mx-auto px-4 py-8 min-h-[70vh]">
 
     <!-- Loading state -->
-    <div v-if="pending" class="flex flex-col items-center justify-center py-24">
+    <div v-if="loading" class="flex flex-col items-center justify-center py-24">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600 mx-auto mb-4"></div>
       <p class="text-red-600">Loading dashboard...</p>
     </div>
@@ -10,7 +10,7 @@
     <!-- Error state -->
     <div v-else-if="error" class="bg-red-100 rounded-xl p-6 text-center border border-red-300">
       <p class="text-red-700">{{ error }}</p>
-      <NuxtLink to="/login" class="text-red-800 hover:underline mt-2 inline-block">
+      <NuxtLink :to="localePath('/login')" class="text-red-800 hover:underline mt-2 inline-block">
         Please login to access dashboard
       </NuxtLink>
     </div>
@@ -37,7 +37,7 @@
         <div class="glass p-6 rounded-xl border border-red-200">
           <h2 class="text-lg font-semibold text-red-800 mb-4">List a New Car</h2>
           <NuxtLink 
-            to="/sell" 
+            :to="localePath('/sell')" 
             class="inline-block w-full py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg text-center font-medium text-white hover:from-red-700 hover:to-red-900 transition-all duration-200"
           >
             Add New Listing
@@ -172,7 +172,7 @@
           </svg>
           <p class="text-red-600 mb-4">No listings found</p>
           <NuxtLink 
-            to="/sell" 
+            :to="localePath('/sell')" 
             class="inline-block px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200"
           >
             Create Your First Listing
@@ -243,6 +243,15 @@
 </template>
 
 <script setup lang="ts">
+// Moved from pages/dashboard.vue to pages/dashboard/index.vue.
+// As pages/dashboard.vue it became the PARENT route of pages/dashboard/my-cars.vue,
+// and because it has no <NuxtPage/> the child never rendered — /dashboard/my-cars
+// quietly showed the dashboard instead of the seller's listings.
+const localePath = useLocalePath()
+const route = useRoute()
+// Every dashboard call reads the signed-in seller, so it needs a live token.
+const { apiFetch } = useApiFetch()
+
 const loading = ref(true)
 const error = ref('')
 const filterStatus = ref('all')
@@ -266,24 +275,27 @@ const dashboardData = ref({
 })
 
 // Fetch all dashboard data in parallel using a single API call
-const { data, pending, error: fetchError, refresh } = useLazyFetch('/api/seller/dashboard', {
-  key: 'dashboard-data',
-  onResponseError({ response }) {
-    if (response.status === 401 || response.status === 403) {
-      navigateTo('/login')
+const loadDashboard = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const data: any = await apiFetch('/api/seller/dashboard')
+    dashboardData.value = data
+  } catch (err: any) {
+    const status = err?.statusCode || err?.response?.status
+    if (status === 401 || status === 403) {
+      await navigateTo(localePath(`/login?redirect=${encodeURIComponent(route.fullPath)}`))
+      return
     }
+    error.value = err?.data?.statusMessage || err?.message || ''
+  } finally {
+    loading.value = false
   }
-})
+}
 
-// Watch for data changes
-watchEffect(() => {
-  if (data.value) {
-    dashboardData.value = data.value
-    console.log('Dashboard data loaded:', data.value)
-  }
-  loading.value = pending.value
-  error.value = fetchError.value?.message || ''
-})
+const refresh = loadDashboard
+
+onMounted(loadDashboard)
 
 // Filter listings based on status
 const filteredListings = computed(() => {
@@ -334,7 +346,7 @@ const confirmDelete = (carId: number) => {
 // Delete listing
 const deleteListing = async (carId: number) => {
   try {
-    await $fetch(`/api/cars/${carId}/delete`, {
+    await apiFetch(`/api/cars/${carId}/delete`, {
       method: 'DELETE'
     })
     await refreshData()
@@ -347,7 +359,8 @@ const deleteListing = async (carId: number) => {
 
 // Edit listing
 const editListing = (carId: number) => {
-  navigateTo(`/seller/cars/edit/${carId}`)
+  // /seller/cars/edit/:id never existed — this button was a guaranteed 404.
+  navigateTo(localePath(`/cars/edit/${carId}`))
 }
 
 // Quick actions
@@ -356,7 +369,7 @@ const viewAnalytics = () => {
 }
 
 const viewSettings = () => {
-  navigateTo('/profile')
+  navigateTo(localePath('/profile'))
 }
 
 const viewPayments = () => {

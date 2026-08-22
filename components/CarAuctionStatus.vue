@@ -1,7 +1,7 @@
 <template>
   <div class="border border-slate-700 rounded-lg p-4 mb-4">
     <div class="flex justify-between items-center mb-3">
-      <h3 class="text-lg font-bold text-white">{{ t('auction.status') }}</h3>
+      <h3 class="text-lg font-bold text-white">{{ t('auction.status_heading') }}</h3>
       <span class="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-sm">
         {{ timeLeft }}
       </span>

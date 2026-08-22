@@ -9,7 +9,7 @@
         </svg>
         <h3 class="text-xl font-bold text-red-800 mb-2">{{ $t('car_details.error.title') }}</h3>
         <p class="text-red-700 max-w-md mx-auto mb-6">{{ $t('car_details.error.message') }}</p>
-        <NuxtLink to="/cars" class="px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-900 transition-all duration-200">
+        <NuxtLink :to="localePath('/cars')" class="px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg font-semibold hover:from-red-700 hover:to-red-900 transition-all duration-200">
           {{ $t('car_details.error.back_button') }}
         </NuxtLink>
       </div>
@@ -29,9 +29,9 @@
       <!-- Breadcrumb Navigation -->
       <div class="mb-6">
         <nav class="flex items-center space-x-2 text-sm text-red-700">
-          <NuxtLink to="/" class="hover:text-red-900 transition-colors">{{ $t('home') }}</NuxtLink>
+          <NuxtLink :to="localePath('/')" class="hover:text-red-900 transition-colors">{{ $t('home') }}</NuxtLink>
           <span class="text-red-400">/</span>
-          <NuxtLink to="/cars" class="hover:text-red-900 transition-colors">{{ $t('cars_page.title') }}</NuxtLink>
+          <NuxtLink :to="localePath('/cars')" class="hover:text-red-900 transition-colors">{{ $t('cars_page.title') }}</NuxtLink>
           <span class="text-red-400">/</span>
           <span class="text-red-900 font-medium">{{ car.make }} {{ car.model }}</span>
         </nav>
@@ -309,7 +309,7 @@
                         <p class="text-yellow-700 text-xs mt-1">{{ $t('auction.verification_time') }}</p>
                       </div>
                       <div v-if="bidEligibility.userBanned" class="mt-2">
-                        <NuxtLink to="/contact" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
+                        <NuxtLink :to="localePath('/contact')" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
                           {{ $t('auction.contact_support') }}
                         </NuxtLink>
                       </div>
@@ -376,7 +376,7 @@
               
               <div v-if="!auth.user.value" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p class="text-yellow-800 text-sm text-center">
-                  {{ $t('auction.login_to_bid_pre') }} <NuxtLink to="/login" class="font-semibold underline hover:text-yellow-900">{{ $t('auction.login_to_bid_link') }}</NuxtLink> {{ $t('auction.login_to_bid_post') }}
+                  {{ $t('auction.login_to_bid_pre') }} <NuxtLink :to="localePath('/login')" class="font-semibold underline hover:text-yellow-900">{{ $t('auction.login_to_bid_link') }}</NuxtLink> {{ $t('auction.login_to_bid_post') }}
                 </p>
               </div>
             </div>
@@ -770,6 +770,10 @@ const route = useRoute()
 const { t } = useI18n()
 const auth = useAuth()
 const router = useRouter()
+const localePath = useLocalePath()
+// Bids, chats and contact reveals all hit endpoints that read the logged-in
+// user, so they need a token that is refreshed at call time.
+const { apiFetch } = useApiFetch()
 
 // State
 const car = ref<any>(null)
@@ -879,12 +883,12 @@ const closeLightbox = () => {
 const revealContactInfo = async () => {
   if (!auth.user.value) {
     alert(t('car_details.login_to_view_contact'))
-    await router.push('/login')
+    await navigateTo(localePath(`/login?redirect=${encodeURIComponent(route.fullPath)}`))
     return
   }
   
   try {
-    await $fetch('/api/contact/reveal', {
+    await apiFetch('/api/contact/reveal', {
       method: 'POST',
       body: {
         carId: car.value.id,
@@ -902,7 +906,7 @@ const revealContactInfo = async () => {
 const revealPhoneNumber = async () => {
   // No login required - anyone can see the phone number
   try {
-    await $fetch('/api/contact/reveal', {
+    await apiFetch('/api/contact/reveal', {
       method: 'POST',
       body: {
         carId: car.value.id,
@@ -1085,21 +1089,9 @@ const loadBidHistory = async () => {
   try {
     console.log('🔄 Loading bid history for car:', car.value.id)
     
-    const { data, error } = await useFetch(`/api/cars/${car.value.id}/bids`)
-    
-    console.log('📊 Full API response:', data.value)
-    
-    if (data.value?.success) {
-      bidHistory.value = data.value.bids || []
-      console.log('✅ Loaded bid history - First bid:', bidHistory.value[0])
-      console.log('✅ All bids:', bidHistory.value.map(b => ({
-        id: b.id,
-        amount: b.amount,
-        userName: b.userName,
-        userId: b.userId
-      })))
-    } else if (error.value) {
-      console.error('❌ Error fetching bid history:', error.value)
+    const data: any = await apiFetch(`/api/cars/${car.value.id}/bids`)
+    if (data?.success) {
+      bidHistory.value = data.bids || []
     }
   } catch (error) {
     console.error('❌ Exception loading bid history:', error)
@@ -1126,7 +1118,7 @@ const checkBidEligibility = async () => {
 
   isCheckingEligibility.value = true
   try {
-    const response = await $fetch('/api/bids/canBid')
+    const response: any = await apiFetch('/api/bids/canBid')
     
     if (response.canBid) {
       bidEligibility.value = {
@@ -1167,7 +1159,7 @@ const requestVerification = async () => {
   if (!auth.user.value) return
   
   try {
-    const response = await $fetch('/api/user/request-verification', {
+    const response: any = await apiFetch('/api/user/request-verification', {
       method: 'POST'
     })
     
@@ -1189,11 +1181,20 @@ const placeBid = async () => {
   
   if (!auth.user.value) {
     alert(t('auction.login_to_place_bid'))
-    await router.push('/login')
+    await navigateTo(localePath(`/login?redirect=${encodeURIComponent(route.fullPath)}`))
     return
   }
   
-  if (parseFloat(bidAmount.value) > (bidEligibility.value.user?.funds || 0)) {
+  // Raising your own bid only costs the difference — the deposit already held
+  // against this car is released as part of the same operation (see
+  // server/utils/bidding.ts). Comparing the whole new bid against the remaining
+  // balance made it impossible for the leading bidder to ever raise.
+  const alreadyHeld = car.value?.highestBidderId === auth.user.value?.id
+    ? parseFloat(String(car.value?.currentBid ?? 0)) || 0
+    : 0
+  const availableToBid = (bidEligibility.value.user?.funds || 0) + alreadyHeld
+
+  if (parseFloat(bidAmount.value) > availableToBid) {
     bidError.value = t('auction.insufficient_funds')
     return
   }
@@ -1202,7 +1203,7 @@ const placeBid = async () => {
   bidError.value = ''
   
   try {
-    const response = await $fetch('/api/bids/create', {
+    const response: any = await apiFetch('/api/bids/create', {
       method: 'POST',
       body: {
         carId: car.value.id,
@@ -1211,15 +1212,19 @@ const placeBid = async () => {
     })
     
     if (response.success) {
-      car.value.currentBid = parseFloat(bidAmount.value)
+      const placed = parseFloat(bidAmount.value)
+      car.value.currentBid = placed
       car.value.bidCount = (car.value.bidCount || 0) + 1
       car.value.highestBidderId = auth.user.value.id
-      
-      bidAmount.value = ''
-      
-      if (bidEligibility.value.user) {
-        bidEligibility.value.user.funds -= parseFloat(bidAmount.value)
+
+      // Read the authoritative balance back from the server rather than doing
+      // the arithmetic here. The old code cleared bidAmount first and then did
+      // `funds -= parseFloat('')`, which turned the displayed balance into NaN.
+      if (bidEligibility.value.user && typeof response.user?.newBalance === 'number') {
+        bidEligibility.value.user.funds = response.user.newBalance
       }
+
+      bidAmount.value = ''
       
       await loadBidHistory()
       alert(t('auction.bid_placed_success'))
@@ -1261,7 +1266,7 @@ const startChatWithSeller = async () => {
   
   if (!auth.user.value) {
     alert(t('car_details.login_to_chat'))
-    await router.push('/login')
+    await navigateTo(localePath(`/login?redirect=${encodeURIComponent(route.fullPath)}`))
     return
   }
 
@@ -1286,7 +1291,7 @@ const startChatWithSeller = async () => {
     console.log('Creating chat for car:', car.value.id)
     console.log('Seller email:', car.value.sellerEmail)
 
-    const response = await $fetch('/api/chat/start', {
+    const response: any = await apiFetch('/api/chat/start', {
       method: 'POST',
       body: {
         carId: car.value.id,
@@ -1307,10 +1312,19 @@ const startChatWithSeller = async () => {
   } catch (error: any) {
     console.error('❌ Chat creation error:', error)
     
-    if (error.status === 404) {
+    // The server explains exactly why (unverified account, suspended, cannot
+    // message yourself…). Showing "please try again" instead left unverified
+    // users clicking forever with no idea what was wrong.
+    const reason = error?.data?.statusMessage || error?.statusMessage || error?.data?.message
+    const status = error?.status || error?.statusCode
+
+    if (status === 403 && reason) {
+      alert(reason)
+      await auth.refreshUser()
+    } else if (status === 404) {
       alert(t('car_details.seller_needs_account'))
-    } else if (error.status === 400) {
-      alert(error.data?.message || t('car_details.chat_request_failed'))
+    } else if (reason) {
+      alert(reason)
     } else {
       alert(t('car_details.chat_generic_error'))
     }
@@ -1325,10 +1339,12 @@ const closeChatModal = () => {
 }
 
 // Send message via contact form
-const sendMessage = () => {
-  console.log('Message sent to:', car.value?.sellerEmail)
+// This used to just close the dialog, print to the console and tell the user
+// "message sent". Nothing was ever delivered. It now opens the real chat with
+// the seller, which is the only messaging channel that exists.
+const sendMessage = async () => {
   showContactForm.value = false
-  alert(t('car_details.message_sent'))
+  await startChatWithSeller()
 }
 
 // Helper functions

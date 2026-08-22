@@ -2,7 +2,7 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 
 export class WalletService {
-  static async addFunds(userId: number, amount: number, description?: string) {
+  static async addFunds(userId: number, amount: number, description?: string, adminId?: number) {
     if (amount <= 0) throw new Error('Amount must be positive')
     if (amount > 10000) throw new Error('Maximum single transaction is 10,000 CHF')
     const supabase = getSupabaseAdmin()
@@ -11,7 +11,7 @@ export class WalletService {
     const previousBalance = parseFloat(user.funds || 0)
     const newBalance = previousBalance + amount
     await supabase.from('users').update({ funds: newBalance }).eq('id', userId)
-    await supabase.from('transaction_logs').insert({ user_id: userId, type: 'deposit', amount, previous_balance: previousBalance, new_balance: newBalance, description: description || 'Manual deposit' })
+    await supabase.from('transaction_logs').insert({ user_id: userId, type: 'deposit', amount, previous_balance: previousBalance, new_balance: newBalance, description: description || 'Manual deposit', admin_id: adminId ?? null })
     return { success: true, newBalance, previousBalance }
   }
 

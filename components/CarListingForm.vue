@@ -1,5 +1,44 @@
 <template>
   <div class="min-h-screen py-8 px-4 sm:px-6">
+    <!-- ── Account gate ──────────────────────────────────────────────────────
+         Sellers used to be able to fill in this entire multi-step form and only
+         discover at the very last click that the server rejects listings from
+         accounts an admin has not approved. Tell them up front instead. -->
+    <div v-if="accountState !== 'ready'" class="max-w-3xl mx-auto">
+      <div class="rounded-2xl border-2 p-8 text-center"
+           :class="accountState === 'banned' ? 'border-red-300 bg-red-50' : 'border-amber-300 bg-amber-50'">
+        <div class="text-5xl mb-4">
+          {{ accountState === 'banned' ? '⛔' : accountState === 'anonymous' ? '🔒' : accountState === 'buyer' ? '🚗' : '⏳' }}
+        </div>
+        <h2 class="text-2xl font-bold mb-3"
+            :class="accountState === 'banned' ? 'text-red-900' : 'text-amber-900'">
+          {{ gateTitle }}
+        </h2>
+        <p class="mb-6" :class="accountState === 'banned' ? 'text-red-800' : 'text-amber-800'">
+          {{ gateBody }}
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <NuxtLink v-if="accountState === 'anonymous'" :to="localePath('/login')"
+                    class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+            {{ $t('auth.login_button') }}
+          </NuxtLink>
+          <NuxtLink v-if="accountState === 'anonymous'" :to="localePath('/register')"
+                    class="px-6 py-3 border border-red-600 text-red-700 rounded-lg font-semibold hover:bg-red-50">
+            {{ $t('auth.signup_button') }}
+          </NuxtLink>
+          <NuxtLink v-if="accountState === 'unverified' || accountState === 'banned'" :to="localePath('/profile')"
+                    class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+            {{ $t('profile.quick_actions.view_profile') }}
+          </NuxtLink>
+          <NuxtLink :to="localePath('/cars')"
+                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">
+            {{ $t('cars_page.title') }}
+          </NuxtLink>
+        </div>
+      </div>
+    </div>
+
+    <template v-else>
     <!-- Header Section -->
     <div class="swiss-header rounded-2xl text-center mb-8 sm:mb-12 py-8 sm:py-12 px-4">
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
@@ -359,7 +398,7 @@
             <div>
               <h4 class="font-semibold text-red-900">{{ $t('car_listing_form.insufficient_funds') }}</h4>
               <p class="text-red-700 text-sm mt-1">{{ $t('car_listing_form.funds_needed', { required: requiredFee, balance: userData.funds || 0 }) }}</p>
-              <NuxtLink to="/profile" class="text-red-800 hover:underline text-sm font-medium mt-2 inline-block">{{ $t('car_listing_form.add_funds') }}</NuxtLink>
+              <NuxtLink :to="localePath('/profile')" class="text-red-800 hover:underline text-sm font-medium mt-2 inline-block">{{ $t('car_listing_form.add_funds') }}</NuxtLink>
             </div>
           </div>
         </div>
@@ -594,8 +633,14 @@
                 <p class="text-gray-400 text-xs mt-2">{{ $t('car_listing_form.file_requirements') }}</p>
               </div>
               <input ref="fileInput" type="file" multiple accept="image/*" @change="handleImageUpload" class="hidden">
+              <div v-if="uploadError" class="mt-3 rounded-lg border border-red-300 bg-red-50 p-3">
+                <p class="text-sm text-red-800">{{ uploadError }}</p>
+                <button type="button" @click="triggerFileInput" class="mt-2 text-sm font-semibold text-red-700 underline">
+                  {{ $t('car_listing_form.try_again') }}
+                </button>
+              </div>
               <div v-if="uploadingImages" class="mt-3 mb-2"><div class="flex items-center gap-2 text-sm text-gray-600 mb-1"><div class="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>Uploading images... {{ uploadProgress }}%</div><div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-red-600 h-1.5 rounded-full transition-all" :style="{ width: uploadProgress + '%' }"></div></div></div>
-              <div v-if="form.images.length > 0" class="mt-4"><div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4"><div v-for="(image, index) in form.images" :key="index" class="relative group"><img :src="image.url" :alt="`Car image ${index + 1}`" class="w-full h-20 sm:h-24 object-cover rounded-lg" :class="{ 'opacity-50': image.uploading }"><div v-if="image.uploading" class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div></div><div v-if="image.error" class="absolute inset-0 flex items-center justify-center bg-red-500/60 rounded-lg"><span class="text-white text-xs font-bold">Failed</span></div><button @click="removeImage(index)" class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors">×</button></div></div><p class="text-gray-600 text-xs sm:text-sm mt-2">{{ form.images.filter(img => !img.error && !img.uploading).length }} / {{ form.images.length }} photos uploaded</p></div>
+              <div v-if="form.images.length > 0" class="mt-4"><div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4"><div v-for="(image, index) in form.images" :key="index" class="relative group"><img :src="image.url" :alt="`Car image ${index + 1}`" class="w-full h-20 sm:h-24 object-cover rounded-lg" :class="{ 'opacity-50': image.uploading }"><div v-if="image.uploading" class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div></div><div v-if="image.error" class="absolute inset-0 flex flex-col items-center justify-center bg-red-600/70 rounded-lg p-1 text-center" :title="image.reason || $t('car_listing_form.upload_failed_generic')"><span class="text-white text-xs font-bold">{{ $t('car_listing_form.upload_failed') }}</span></div><button @click="removeImage(index)" class="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors">×</button></div></div><p class="text-gray-600 text-xs sm:text-sm mt-2">{{ form.images.filter(img => !img.error && !img.uploading).length }} / {{ form.images.length }} photos uploaded</p></div>
             </div>
 
             <!-- Description (now optional) -->
@@ -606,7 +651,7 @@
 
             <!-- Terms & Conditions -->
             <div class="mt-4 sm:mt-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
-              <label class="flex items-start"><input type="checkbox" v-model="form.acceptedTerms" class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 mt-1"><span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm">{{ $t('car_listing_form.accept_terms') }} <a href="/terms" class="text-red-600 hover:underline">{{ $t('car_listing_form.terms_and_conditions') }}</a> {{ $t('car_listing_form.confirm_accuracy') }}</span></label>
+              <label class="flex items-start"><input type="checkbox" v-model="form.acceptedTerms" class="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 mt-1"><span class="ml-2 sm:ml-3 text-gray-700 text-xs sm:text-sm">{{ $t('car_listing_form.accept_terms') }} <NuxtLink :to="localePath('/terms')" target="_blank" class="text-red-600 hover:underline">{{ $t('car_listing_form.terms_and_conditions') }}</NuxtLink> {{ $t('car_listing_form.confirm_accuracy') }}</span></label>
             </div>
 
             <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
@@ -621,6 +666,7 @@
         </div>
       </div>
     </div>
+    </template>
   </div>
 </template>
 
@@ -631,11 +677,50 @@ import { carMakes, makeModels } from '~/constants/carData'
 import { navigateTo } from '#app'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
+const auth = useAuth()
+// apiFetch refreshes the Supabase token before every call. Plain $fetch relied
+// on the sb-access-token cookie, which expires after about an hour — that is
+// why every photo came back "Failed" and publishing ended in
+// "Unauthorized. Please log in." after a long form-filling session.
+const { apiFetch } = useApiFetch()
+
+// ── Account gate ────────────────────────────────────────────────────────────
+const accountState = computed<'loading' | 'anonymous' | 'banned' | 'unverified' | 'buyer' | 'ready'>(() => {
+  if (!auth.isInitialized.value) return 'loading'
+  const u = auth.user.value
+  if (!u) return 'anonymous'
+  if (u.banned) return 'banned'
+  if (u.role !== 'seller' && u.role !== 'admin') return 'buyer'
+  if (!u.verified && u.role !== 'admin') return 'unverified'
+  return 'ready'
+})
+
+const gateTitle = computed(() => {
+  switch (accountState.value) {
+    case 'anonymous': return t('sell_gate.anonymous_title')
+    case 'banned': return t('sell_gate.banned_title')
+    case 'buyer': return t('sell_gate.buyer_title')
+    case 'unverified': return t('sell_gate.unverified_title')
+    default: return t('sell_gate.loading_title')
+  }
+})
+
+const gateBody = computed(() => {
+  switch (accountState.value) {
+    case 'anonymous': return t('sell_gate.anonymous_body')
+    case 'banned': return t('sell_gate.banned_body')
+    case 'buyer': return t('sell_gate.buyer_body')
+    case 'unverified': return t('sell_gate.unverified_body')
+    default: return t('sell_gate.loading_body')
+  }
+})
 
 // Form state
 const uploadingImages = ref(false)
 const { compressImage } = useImageCompression()
 const uploadProgress = ref(0)
+const uploadError = ref('')
 const currentStep = ref(0)
 const entryMethod = ref<'typenschein' | 'manual' | null>(null)
 const isSubmitting = ref(false)
@@ -698,7 +783,7 @@ const form = ref({
   withWarranty: false,
   validInspection: false,
   hasAccident: false,
-  images: [] as Array<{ url: string; uploading: boolean; error: boolean }>,
+  images: [] as Array<{ url: string; uploading: boolean; error: boolean; reason?: string }>,
   description: '',
   acceptedTerms: false,
   typenscheinNr: '',
@@ -1007,10 +1092,7 @@ const loadUserData = async () => {
     console.log('🚀 Loading user data for car listing form...')
     userLoading.value = true
     
-    // ✅ Use $fetch instead of useFetch
-    const data = await $fetch('/api/auth/me', {
-      method: 'GET'
-    })
+    const data: any = await apiFetch('/api/auth/me', { method: 'GET' })
     if (data?.user) {
       userData.value = data.user
       console.log('✅ User data loaded:', userData.value)
@@ -1089,6 +1171,7 @@ const handleImageUpload = async (event: Event) => {
 
   uploadingImages.value = true
   uploadProgress.value = 0
+  uploadError.value = ''
 
   const total = files.length
   let done = 0
@@ -1098,7 +1181,7 @@ const handleImageUpload = async (event: Event) => {
     if (!file.type.startsWith('image/')) continue
 
     const previewUrl = URL.createObjectURL(file)
-    const imageEntry = { url: previewUrl, uploading: true, error: false }
+    const imageEntry = { url: previewUrl, uploading: true, error: false, reason: '' }
     form.value.images.push(imageEntry)
     const idx = form.value.images.length - 1
 
@@ -1107,16 +1190,18 @@ const handleImageUpload = async (event: Event) => {
       const compressed = await compressImage(file)
       fd.append('file', compressed)
 
-      const result = await $fetch('/api/upload/image', {
+      const result: any = await apiFetch('/api/upload/image', {
         method: 'POST',
         body: fd,
       })
 
       URL.revokeObjectURL(previewUrl)
       form.value.images[idx] = { url: result.url, uploading: false, error: false }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Image upload failed:', err)
-      form.value.images[idx] = { url: previewUrl, uploading: false, error: true }
+      const reason = err?.data?.statusMessage || err?.statusMessage || err?.message || ''
+      form.value.images[idx] = { url: previewUrl, uploading: false, error: true, reason }
+      uploadError.value = reason || t('car_listing_form.upload_failed_generic')
     }
 
     done++
@@ -1277,8 +1362,7 @@ const submitListing = async () => {
       isFeatured: false
     }
 
-    // ✅ Use $fetch instead of useFetch
-    const data = await $fetch('/api/cars/create', {
+    const data: any = await apiFetch('/api/cars/create', {
       method: 'POST',
       body: submissionData
     })
@@ -1302,9 +1386,9 @@ const submitListing = async () => {
       resetForm()
       
       if (data.car?.id) {
-        await navigateTo(`/cars/${data.car.id}`)
+        await navigateTo(localePath(`/cars/${data.car.id}`))
       } else {
-        await navigateTo('/cars')
+        await navigateTo(localePath('/cars'))
       }
     }
     

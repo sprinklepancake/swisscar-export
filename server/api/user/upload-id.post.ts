@@ -3,6 +3,7 @@
 // we store only the storage PATH (not a public URL). Admins fetch a short-lived
 // signed URL when they need to view a document.
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { notifyAdminInBackground } from '~/server/utils/notify'
 
 const PRIVATE_BUCKET = 'user-documents'
 
@@ -45,8 +46,32 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 500, statusMessage: `Upload failed: ${error.message}` })
     }
 
-    // Store the PATH, not a public URL.
-    await supabase.from('users').update({ id_document_url: filePath }).eq('id', user.id)
+    // Store the PATH, not a public URL. buyer_type is set in the SAME statement:
+    // an identity document is only ever uploaded to get auction access, and the
+    // admin queue keys off both columns. Setting them together is what stops an
+    // upload from landing in a state no queue matches — which is exactly what
+    // happened when the follow-up "request access" call failed on its own.
+    await supabase
+      .from('users')
+      .update({ id_document_url: filePath, buyer_type: 'auction' })
+      .eq('id', user.id)
+
+    // A document only ever gets uploaded because someone wants auction access,
+    // so this is the moment an admin needs to know there is something to review.
+    const siteUrl = String(useRuntimeConfig().public.siteUrl || '').replace(/\/$/, '')
+    notifyAdminInBackground({
+      type: 'id_document_uploaded',
+      userId: user.id,
+      subject: `ID document uploaded: ${user.name}`,
+      body: [
+        `${user.name} (${user.email}) uploaded an identity document for auction approval.`,
+        ``,
+        `Open the admin panel, view the ID, then press "Approve auctions" to let them bid.`,
+        ``,
+        `Admin panel: ${siteUrl}/en/admin`,
+      ].join('\n'),
+      metadata: { email: user.email, role: user.role },
+    })
 
     return { success: true, path: filePath }
   } catch (error: any) {

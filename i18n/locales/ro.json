@@ -82,7 +82,6 @@
     "login_to_bid": "Vă rugăm autentificați-vă pentru a plasa oferte",
     "login_to_bid_link": "vă autentificați",
     "login_to_bid_message": "Trebuie să vă autentificați pentru a plasa oferte",
-    "login_to_bid_post": "și să vă verificați identitatea pentru a plasa oferte",
     "login_to_bid_pre": "Trebuie să",
     "login_to_place_bid": "Vă rugăm autentificați-vă pentru a plasa o ofertă",
     "max_button": "Max",
@@ -91,7 +90,6 @@
     "place_bid": "Plasează Ofertă",
     "placing_bid": "Se plasează oferta...",
     "processing": "Se procesează...",
-    "request_verification": "Solicită Verificare",
     "reserve": "Rezervă",
     "reserve_met": "Îndeplinit",
     "reserve_not_met": "Neîndeplinit",
@@ -108,16 +106,21 @@
     "time_left": "rămase",
     "time_minutes": "{minutes}m",
     "verification_request_failed": "Eroare la trimiterea cererii de verificare. Vă rugăm încercați din nou.",
-    "verification_request_sent": "Cererea de verificare a fost trimisă! Echipa de administratori va examina cererea dvs.",
-    "verification_required": "Va trebui să vă verificați identitatea pentru a finaliza achiziția.",
-    "verification_time": "Administratorii verifică de obicei în 24 de ore",
     "watching_auction": "Urmăriți licitația dvs. live. {count} ofertă(e) până acum.",
     "winning": "Câștigător",
     "your_auction_dashboard": "Panoul Dvs. de Licitație",
     "your_bid": "Oferta dvs.",
     "your_max_bid": "Oferta dvs. maximă",
     "your_wallet": "Portofelul Dvs.",
-    "status_heading": "Starea licitației"
+    "status_heading": "Starea licitației",
+    "auction_access_pending": "Accesul dvs. la licitații este în curs de verificare. Veți putea plasa oferte imediat ce un administrator vă aprobă actul de identitate.",
+    "auction_access_required": "Plasarea ofertelor este singura secțiune a site-ului care necesită verificarea identității. Încărcați un document în profilul dvs. pentru a solicita acces la licitații.",
+    "go_to_profile": "Mergeți la profilul meu",
+    "login_to_bid_post": "și să obțineți acces la licitații pentru a plasa oferte",
+    "request_verification": "Solicitați acces la licitații",
+    "verification_request_sent": "Cerere trimisă! Un administrator vă va verifica actul de identitate.",
+    "verification_required": "Plasarea ofertelor necesită o singură verificare a identității. Restul site-ului funcționează fără ea.",
+    "verification_time": "Administratorii aprobă de obicei în 24 de ore"
   },
   "auth": {
     "confirm_message": "Vă rugăm așteptați în timp ce verificăm adresa dvs. de email...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Nu am putut schimba parola dvs. Vă rugăm să încercați din nou.",
     "new_password": "Parolă nouă",
     "set_new_password": "Salvați parola nouă",
-    "logging_in": "Se autentifică..."
+    "logging_in": "Se autentifică...",
+    "registered_title": "Cont creat",
+    "registered_body": "Vă puteți autentifica și puteți începe să folosiți site-ul imediat."
   },
   "body_type_label": "Tip Caroserie",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Piață auto elvețiană"
     },
-    "view_listing": "Vezi anunțul"
+    "view_listing": "Vezi anunțul",
+    "gallery": {
+      "close": "Închide",
+      "counter": "{current} din {total}",
+      "next": "Fotografia următoare",
+      "no_photos": "Încă nu există fotografii pentru acest anunț",
+      "open_fullscreen": "Deschideți pe tot ecranul",
+      "previous": "Fotografia anterioară",
+      "view_all": "Vedeți toate cele {count} fotografii"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Accept",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Sunteți cumpărătorul",
     "you_are_seller": "Sunteți vânzătorul",
     "you_are_seller_label": "Sunteți vânzătorul",
-    "verification_required": "Un administrator trebuie să vă verifice contul înainte să puteți trimite mesaje. Între timp, puteți citi în continuare această conversație."
+    "verification_required": "Un administrator a restricționat acest cont, așa că nu poate trimite mesaje. Puteți citi în continuare această conversație. Contactați asistența dacă credeți că este o greșeală."
   },
   "city_label": "Oraș",
   "city_placeholder": "Introduceți orașul",
@@ -846,7 +860,6 @@
     "you_have_left": "Mai aveți {count}",
     "your_balance": "Soldul Dvs.:"
   },
-  "feature_1_desc": "Toți vânzătorii sunt rezidenți elvețieni verificați cu documentație autentică și istoric complet al vehiculului.",
   "feature_1_title": "Vânzători Elvețieni Verificați",
   "feature_2_desc": "Ne concentrăm pe mașini second-hand de calitate la prețuri de export competitive, făcând vehiculele elvețiene accesibile pentru cumpărătorii internaționali.",
   "feature_2_title": "Prețuri de Export Accesibile",
@@ -1009,12 +1022,12 @@
       "zip_code": "Cod Poștal"
     },
     "quick_actions": {
-      "get_verified": "Obțineți statut de cumpărător verificat",
       "list_new_car": "Anunțați Mașină Nouă",
-      "request_verification": "Solicitați Verificare",
       "title": "Acțiuni Rapide",
       "view_dashboard": "Vizualizați Panou",
-      "view_profile": "Mergeți la profilul meu"
+      "view_profile": "Mergeți la profilul meu",
+      "get_verified": "Încărcați actul de identitate pentru a putea licita",
+      "request_verification": "Solicitați acces la licitații"
     },
     "recent_activity": {
       "empty": "Nu există activitate recentă",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Verificat",
     "status": {
-      "pending_title": "În așteptarea verificării",
-      "pending_body": "Un administrator vă verifică actul de identitate. Între timp puteți răsfoi toate anunțurile. Publicarea unei mașini, trimiterea de mesaje către un vânzător și plasarea ofertelor se deblochează de îndată ce contul dvs. este verificat.",
-      "verified_title": "Cont verificat",
       "verified_body_seller": "Puteți publica anunțuri, trimite mesaje cumpărătorilor și folosi toate secțiunile site-ului.",
-      "verified_body_buyer": "Puteți trimite mesaje vânzătorilor și plasa oferte.",
       "banned_title": "Cont suspendat",
       "banned_body": "Acest cont a fost suspendat și nu poate publica anunțuri, trimite mesaje sau plasa oferte. Vă rugăm să contactați suportul dacă credeți că este o greșeală.",
-      "missing_id": "Încă nu avem un act de identitate pentru acest cont, așa că nu poate fi verificat. Vă rugăm să încărcați unul mai jos.",
       "upload_id": "Încărcați actul dvs. de identitate",
       "replace_id": "Înlocuiți actul dvs. de identitate",
       "id_uploaded": "Vă mulțumim. Documentul dvs. a fost trimis administratorilor spre verificare.",
-      "id_upload_failed": "Nu am putut încărca acel document. Vă rugăm să încercați din nou."
+      "id_upload_failed": "Nu am putut încărca acel document. Vă rugăm să încercați din nou.",
+      "missing_id": "Vă rugăm să contactați suportul pentru ca un administrator să vă verifice contul.",
+      "pending_body": "Un administrator a restricționat acest cont. Puteți în continuare să navigați pe site. Vă rugăm să contactați suportul dacă credeți că este o greșeală.",
+      "pending_title": "Cont restricționat",
+      "verified_body_buyer": "Puteți trimite mesaje vânzătorilor și puteți cumpăra direct. Licitarea necesită o singură verificare a identității.",
+      "verified_title": "Cont activ"
     },
     "password": {
       "title": "Schimbați parola",
       "current": "Parola actuală",
       "submit": "Schimbați parola",
       "hint": "Parola nouă trebuie să aibă cel puțin 8 caractere. Dacă ați uitat-o pe cea actuală, folosiți în schimb linkul de resetare."
+    },
+    "auction": {
+      "approved_body": "Puteți plasa oferte la orice licitație live.",
+      "approved_title": "Aprobat pentru licitații",
+      "none_body": "Restul site-ului funcționează deja. Singurul lucru care necesită verificarea identității este plasarea ofertelor, deoarece o ofertă câștigătoare vă obligă să cumpărați. Încărcați pașaportul, cartea de identitate sau permisul de conducere, iar un administrator vă va aproba.",
+      "none_title": "Fără acces la licitații",
+      "pending_body": "Un administrator vă verifică actul de identitate. Veți putea plasa oferte imediat ce este aprobat, de obicei în 24 de ore.",
+      "pending_title": "În așteptarea aprobării",
+      "replace_label": "Înlocuiți actul dvs. de identitate",
+      "request_button": "Solicitați acces la licitații",
+      "request_failed": "Nu am putut trimite cererea dvs. Vă rugăm să încercați din nou.",
+      "request_sent": "Cerere trimisă. Un administrator vă va verifica actul de identitate, de obicei în 24 de ore.",
+      "requesting": "Se trimite...",
+      "title": "Acces la licitații",
+      "upload_first": "Vă rugăm să încărcați mai întâi actul dvs. de identitate.",
+      "upload_label": "Încărcați actul dvs. de identitate"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Necesar pentru participarea la licitații. Formate acceptate: JPG, PNG, PDF (max 5MB).",
     "id_upload_label": "Încărcați actul de identitate (pașaport, permis de conducere)",
     "important_notice": {
-      "message": "Prin înregistrarea ca vânzător, sunteți de acord că furnizarea de informații false sau activitatea frauduloasă poate duce la suspendarea contului. Va fi necesară verificarea telefonică pentru toți vânzătorii înainte de a lista vehicule.",
-      "title": "Important"
+      "title": "Important",
+      "message": "Prin înregistrarea ca vânzător, sunteți de acord că furnizarea de informații false sau activitatea frauduloasă poate duce la suspendarea contului. Numărul dvs. de telefon apare pe anunțurile dvs., ca să vă poată contacta cumpărătorii."
     },
     "join_title": "Alăturați-vă SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Germania",
         "italy": "Italia",
         "other": "Altă",
-        "switzerland": "Elveția"
+        "switzerland": "Elveția",
+        "CH": "Elveția",
+        "AL": "Albania",
+        "DZ": "Algeria",
+        "AM": "Armenia",
+        "AT": "Austria",
+        "AZ": "Azerbaidjan",
+        "BE": "Belgia",
+        "BJ": "Benin",
+        "BA": "Bosnia și Herțegovina",
+        "BG": "Bulgaria",
+        "BF": "Burkina Faso",
+        "CM": "Camerun",
+        "HR": "Croația",
+        "CZ": "Cehia",
+        "CD": "Congo - Kinshasa",
+        "DK": "Danemarca",
+        "EG": "Egipt",
+        "EE": "Estonia",
+        "FI": "Finlanda",
+        "FR": "Franța",
+        "GM": "Gambia",
+        "GE": "Georgia",
+        "DE": "Germania",
+        "GH": "Ghana",
+        "GR": "Grecia",
+        "GN": "Guineea",
+        "HU": "Ungaria",
+        "IQ": "Irak",
+        "IE": "Irlanda",
+        "IT": "Italia",
+        "CI": "Côte d’Ivoire",
+        "JO": "Iordania",
+        "KZ": "Kazahstan",
+        "KE": "Kenya",
+        "XK": "Kosovo",
+        "LV": "Letonia",
+        "LB": "Liban",
+        "LR": "Liberia",
+        "LY": "Libia",
+        "LT": "Lituania",
+        "LU": "Luxemburg",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Republica Moldova",
+        "ME": "Muntenegru",
+        "MA": "Maroc",
+        "NL": "Țările de Jos",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "Macedonia de Nord",
+        "NO": "Norvegia",
+        "PL": "Polonia",
+        "PT": "Portugalia",
+        "RO": "România",
+        "SN": "Senegal",
+        "RS": "Serbia",
+        "SK": "Slovacia",
+        "SI": "Slovenia",
+        "ES": "Spania",
+        "SE": "Suedia",
+        "TZ": "Tanzania",
+        "TG": "Togo",
+        "TN": "Tunisia",
+        "TR": "Turcia",
+        "UG": "Uganda",
+        "UA": "Ucraina",
+        "GB": "Regatul Unit",
+        "ZM": "Zambia",
+        "ZW": "Zimbabwe"
       },
       "country": "Țară",
       "select_canton": "Selectați Canton",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Număr Telefon",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Orice țară. Vă rugăm să includeți prefixul țării; nu este necesar un număr elvețian.",
+      "optional": "opțional",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Afacere",
@@ -1187,18 +1287,21 @@
       "password_length": "Parola trebuie să aibă cel puțin 8 caractere",
       "passwords_not_match": "Parolele nu se potrivesc",
       "phone_too_short": "Numărul de telefon este prea scurt",
-      "id_required": "Vă rugăm să încărcați actul dvs. de identitate. Un administrator are nevoie de el pentru a vă verifica contul.",
       "id_consent_required": "Vă rugăm să confirmați că sunteți de acord cu prelucrarea actului dvs. de identitate.",
       "id_file_type": "Vă rugăm să încărcați un fișier JPG, PNG sau PDF.",
       "id_file_size": "Acel fișier este prea mare. Vă rugăm să încărcați un document mai mic de 6 MB.",
-      "phone_required": "Numărul de telefon este obligatoriu."
+      "id_required": "Conturile pentru licitații necesită un act de identitate. Încărcați unul sau alegeți „Cumpără mașini direct” pentru a vă înregistra fără el.",
+      "phone_invalid": "Acel număr de telefon nu pare corect. Vă rugăm să includeți prefixul țării, de exemplu +41 79 123 45 67 sau +40 721 234 567.",
+      "phone_required": "Numărul de telefon este obligatoriu pentru conturile de vânzător."
     },
-    "id_upload_required_note": "Fiecare cont are nevoie de un act de identitate. Un administrator îl verifică înainte să puteți publica o mașină, să trimiteți mesaje cuiva sau să plasați o ofertă.",
     "id_consent": "Sunt de acord ca SwissCarExport să îmi prelucreze actul de identitate exclusiv în scopul verificării identității mele, așa cum este descris în",
-    "approval_notice_title": "Contul dvs. trebuie mai întâi verificat",
-    "approval_notice_body": "Vă puteți autentifica și naviga imediat pe tot site-ul. Publicarea unei mașini, trimiterea de mesaje către un vânzător și plasarea ofertelor rămân blocate până când un administrator vă verifică actul de identitate.",
     "buyer_type_auction_short": "Cumpărător la licitație",
-    "buyer_type_direct_short": "Cumpărător direct"
+    "buyer_type_direct_short": "Cumpărător direct",
+    "approval_notice_body": "Contul dvs. funcționează imediat: vă puteți autentifica, naviga, trimite mesaje vânzătorilor și cumpăra direct. Doar plasarea ofertelor așteaptă ca un administrator să vă verifice actul de identitate, de obicei în 24 de ore.",
+    "approval_notice_title": "Licitarea necesită mai întâi aprobare",
+    "id_upload_required_note": "Doar pentru licitații. O ofertă înseamnă bani reali, așa că un administrator vă verifică actul de identitate înainte de a putea licita. Restul site-ului nu are nevoie de el.",
+    "no_id_needed_body": "Contul dvs. este gata de utilizare din momentul în care îl creați. Actul de identitate vă este cerut doar dacă doriți ulterior să licitați; îl puteți adăuga oricând din profilul dvs.",
+    "no_id_needed_title": "Nu este nevoie de act de identitate"
   },
   "reset_filters": "Resetați Filtrele",
   "search_button": "Căutați Mașini",
@@ -1333,8 +1436,8 @@
     "banned_body": "Acest cont a fost suspendat și nu poate publica anunțuri. Vă rugăm să contactați suportul dacă credeți că este o greșeală.",
     "buyer_title": "Acesta este un cont de cumpărător",
     "buyer_body": "Doar conturile de vânzător pot publica anunțuri. Dacă doriți să vindeți o mașină pentru export, vă rugăm să contactați suportul pentru a vi se schimba tipul contului.",
-    "unverified_title": "În așteptarea verificării",
-    "unverified_body": "Un administrator trebuie să vă verifice actul de identitate înainte să puteți publica anunțuri. Veți putea publica de îndată ce contul dvs. este verificat — până atunci, nimic din ce introduceți aici nu ar fi salvat."
+    "unverified_body": "Un administrator a restricționat acest cont, așa că momentan nu poate publica anunțuri. Vă rugăm să contactați suportul; în mod normal, publicarea unei mașini nu necesită nicio aprobare.",
+    "unverified_title": "Cont restricționat"
   },
   "contact_page": {
     "title": "Contact",
@@ -1385,5 +1488,6 @@
     "save_failed": "Nu am putut salva modificările dvs. Vă rugăm să încercați din nou.",
     "load_failed": "Nu am putut încărca acest anunț.",
     "not_yours": "Acest anunț aparține altui vânzător."
-  }
+  },
+  "feature_1_desc": "Fiecare mașină este publicată de un vânzător din Elveția, cu istoricul complet al vehiculului, iar identitatea ofertanților este verificată înainte ca aceștia să poată licita."
 }

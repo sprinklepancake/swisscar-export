@@ -323,7 +323,7 @@
             </div>
             <div class="text-right">
               <p class="text-blue-600 text-sm">{{ $t('car_listing_form.member_since', { date: formattedUserJoinDate }) }}</p>
-              <p class="text-blue-500 text-xs">{{ $t('car_listing_form.account_type', { type: $t(`profile.role.${userData.role === 'seller' ? 'verified_seller' : 'registered_buyer'}`) }) }}</p>
+              <p class="text-blue-500 text-xs">{{ $t('car_listing_form.account_type', { type: $t(`profile.role.${accountRoleKey}`) }) }}</p>
             </div>
           </div>
         </div>
@@ -547,7 +547,7 @@
           <!-- Technical Details fields -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.power_ps') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><input v-model="form.power" type="number" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.enter_power')" min="0"></div>
-            <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.cylinders') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.cylinders" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_cylinders') }}</option><option value="1">{{ $t('car_listing_form.cylinder_single') }}</option><option value="2">{{ $t('car_listing_form.cylinders', { count: 2 }) }}</option><option value="3">{{ $t('car_listing_form.cylinders', { count: 3 }) }}</option><option value="4">{{ $t('car_listing_form.cylinders', { count: 4 }) }}</option><option value="5">{{ $t('car_listing_form.cylinders', { count: 5 }) }}</option><option value="6">{{ $t('car_listing_form.cylinders', { count: 6 }) }}</option><option value="8">{{ $t('car_listing_form.cylinders', { count: 8 }) }}</option><option value="10">{{ $t('car_listing_form.cylinders', { count: 10 }) }}</option><option value="12">{{ $t('car_listing_form.cylinders', { count: 12 }) }}</option><option value="16">{{ $t('car_listing_form.cylinders', { count: 16 }) }}</option></select></div>
+            <div class="form-group"><label class="swiss-form-label">{{ $t('cylinders_label') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.cylinders" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_cylinders') }}</option><option value="1">{{ $t('car_listing_form.cylinder_single') }}</option><option value="2">{{ $t('car_listing_form.cylinders', { count: 2 }) }}</option><option value="3">{{ $t('car_listing_form.cylinders', { count: 3 }) }}</option><option value="4">{{ $t('car_listing_form.cylinders', { count: 4 }) }}</option><option value="5">{{ $t('car_listing_form.cylinders', { count: 5 }) }}</option><option value="6">{{ $t('car_listing_form.cylinders', { count: 6 }) }}</option><option value="8">{{ $t('car_listing_form.cylinders', { count: 8 }) }}</option><option value="10">{{ $t('car_listing_form.cylinders', { count: 10 }) }}</option><option value="12">{{ $t('car_listing_form.cylinders', { count: 12 }) }}</option><option value="16">{{ $t('car_listing_form.cylinders', { count: 16 }) }}</option></select></div>
             <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.drive_type') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.driveType" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_drive_type') }}</option><option v-for="type in driveTypes" :key="type.value" :value="type.value">{{ $t(`car_listing_form.drive_types.${type.value}`) || type.label }}</option></select></div>
             <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.engine_size') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><input v-model="form.engineSize" type="text" class="swiss-form-input p-3 text-sm sm:text-base" :placeholder="$t('car_listing_form.engine_size_placeholder')"></div>
             <div class="form-group"><label class="swiss-form-label">{{ $t('car_listing_form.exterior_color') }} <span class="text-gray-500 text-xs">{{ $t('car_listing_form.optional') }}</span></label><select v-model="form.colorExterior" class="swiss-form-input p-3 text-sm sm:text-base"><option value="">{{ $t('car_listing_form.select_color') }}</option><option v-for="color in exteriorColors" :key="color.value" :value="color.value">{{ $t(`colors.${color.value}`) || color.label }}</option></select></div>
@@ -696,6 +696,17 @@ const auth = useAuth()
 const { apiFetch } = useApiFetch()
 
 // ── Account gate ────────────────────────────────────────────────────────────
+// "Verified" is the ID check, which only auction accounts go through. This
+// used to hardcode 'verified_seller' for every seller — the same overclaim the
+// profile page was fixed to stop making.
+const accountRoleKey = computed(() => {
+  const u = auth.user.value
+  if (!u) return 'registered_buyer'
+  const approved = !!(u.verified_buyer ?? u.verifiedBuyer)
+  if (u.role === 'seller') return approved ? 'verified_seller' : 'seller'
+  return approved ? 'verified_buyer' : 'registered_buyer'
+})
+
 const accountState = computed<'loading' | 'anonymous' | 'banned' | 'unverified' | 'buyer' | 'ready'>(() => {
   if (!auth.isInitialized.value) return 'loading'
   const u = auth.user.value

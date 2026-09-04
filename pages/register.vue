@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white p-4">
-    <div class="glass p-8 rounded-2xl w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white p-3 sm:p-4">
+    <div class="glass p-5 sm:p-8 rounded-2xl w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Left Column (Form) -->
       <div>
         <h1 class="text-3xl font-bold text-center md:text-left text-red-800 mb-8">{{ t('auth.signup_title') }}</h1>
@@ -134,7 +134,23 @@
             </div>
           </div>
 
-          <!-- Location Information (for sellers and auction buyers) -->
+          <!-- Country. Shown to EVERYONE: this is an export marketplace and
+               most buyers are not in Switzerland. Defaulting everybody to
+               'Switzerland' behind a section they never saw was wrong. -->
+          <div>
+            <label for="country" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.country') }} *</label>
+            <select
+              v-model="form.country"
+              id="country"
+              required
+              class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option v-for="c in countries" :key="c.value" :value="c.value">{{ c.label }}</option>
+            </select>
+          </div>
+
+          <!-- The rest of the address. Sellers need it (their listings carry a
+               pickup location); auction buyers need it for the export paperwork. -->
           <div v-if="form.role === 'seller' || (form.role === 'buyer' && form.buyerType === 'auction')" class="space-y-4">
             <div>
               <label for="streetAddress" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.street_address') }}</label>
@@ -148,21 +164,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label for="country" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.country') }}</label>
-                <select
-                  v-model="form.country"
-                  id="country"
-                  class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                >
-                  <option value="Switzerland">{{ t('register.location.countries.switzerland') }}</option>
-                  <option value="Germany">{{ t('register.location.countries.germany') }}</option>
-                  <option value="France">{{ t('register.location.countries.france') }}</option>
-                  <option value="Italy">{{ t('register.location.countries.italy') }}</option>
-                  <option value="Austria">{{ t('register.location.countries.austria') }}</option>
-                  <option value="Other">{{ t('register.location.countries.other') }}</option>
-                </select>
-              </div>
               <div v-if="form.country === 'Switzerland'">
                 <label for="canton" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.location.canton') }}</label>
                 <select
@@ -197,28 +198,36 @@
             </div>
           </div>
 
-          <!-- Phone Number (always shown) -->
+          <!-- Phone Number. Only sellers must give one (theirs is published on
+               their listings). Any country's number is accepted — most buyers
+               here are not Swiss. -->
           <div>
-            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">{{ t('register.phone.label') }} <span v-if="form.role === 'seller' || form.buyerType === 'auction'">*</span></label>
+            <label for="phone" class="block text-sm font-medium text-red-700 mb-1">
+              {{ t('register.phone.label') }}
+              <span v-if="form.role === 'seller'">*</span>
+              <span v-else class="text-red-500 font-normal">({{ t('register.phone.optional') }})</span>
+            </label>
             <input
               v-model="form.phone"
               type="tel"
               id="phone"
-              :required="form.role === 'seller' || form.buyerType === 'auction'"
+              :required="form.role === 'seller'"
               class="w-full p-3 bg-white/80 border border-red-300 rounded-lg text-red-900 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               :placeholder="t('register.phone.placeholder')"
             />
+            <p class="text-red-600 text-xs mt-1">{{ t('register.phone.international_note') }}</p>
           </div>
 
-          <!-- ID Upload — required for EVERY account -->
-          <div class="border-2 border-red-300 rounded-lg p-4 bg-red-50">
+          <!-- ID Upload — ONLY for accounts that want to bid in auctions.
+               Sellers and direct buyers never see this. -->
+          <div v-if="needsIdDocument" class="border-2 border-red-300 rounded-lg p-4 bg-red-50">
             <label class="block text-sm font-semibold text-red-800 mb-1">{{ t('register.id_upload_label') }} *</label>
             <p class="text-red-700 text-xs mb-3">{{ t('register.id_upload_required_note') }}</p>
             <input
               type="file"
               @change="onIdFileChange"
               accept="image/*,application/pdf,.pdf"
-              required
+              :required="needsIdDocument"
               class="block w-full text-sm text-red-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-800 hover:file:bg-red-200"
             />
             <p class="text-red-600 text-xs mt-1">{{ t('register.id_upload_help') }}</p>
@@ -230,7 +239,7 @@
                   id="idConsent"
                   v-model="form.idConsent"
                   type="checkbox"
-                  required
+                  :required="needsIdDocument"
                   class="w-4 h-4 rounded bg-white border-red-300 text-red-600 focus:ring-red-500"
                 />
               </div>
@@ -241,8 +250,15 @@
             </div>
           </div>
 
-          <!-- What happens next -->
-          <div class="bg-amber-50 border border-amber-300 rounded-lg p-4">
+          <!-- No ID needed. Say so plainly — people abandoned the form because
+               they assumed a passport was coming. -->
+          <div v-else class="border border-green-300 rounded-lg p-4 bg-green-50">
+            <p class="text-green-900 text-sm font-semibold mb-1">{{ t('register.no_id_needed_title') }}</p>
+            <p class="text-green-800 text-sm">{{ t('register.no_id_needed_body') }}</p>
+          </div>
+
+          <!-- What happens next. Only auction accounts wait for anything. -->
+          <div v-if="needsIdDocument" class="bg-amber-50 border border-amber-300 rounded-lg p-4">
             <p class="text-amber-900 text-sm font-semibold mb-1">{{ t('register.approval_notice_title') }}</p>
             <p class="text-amber-800 text-sm">{{ t('register.approval_notice_body') }}</p>
           </div>
@@ -322,9 +338,11 @@
             </div>
           </div>
 
-          <!-- Important Notice -->
-          <div class="bg-red-100 border border-red-300 rounded-lg p-4">
-            <p class="text-red-700 text-sm">
+          <!-- Important Notice. Seller-only: the message is about publishing a
+               phone number on listings and about seller fraud, and showing it to
+               a buyer contradicted the "(optional)" phone label directly above. -->
+          <div v-if="form.role === 'seller' || form.buyerType === 'auction'" class="bg-red-100 border border-red-300 rounded-lg p-4">
+            <p v-if="form.role === 'seller'" class="text-red-700 text-sm">
               <strong>{{ t('register.important_notice.title') }}:</strong> {{ t('register.important_notice.message') }}
             </p>
             <p v-if="form.buyerType === 'auction'" class="text-red-700 text-sm mt-1 font-semibold">
@@ -340,7 +358,7 @@
           <!-- Submit Button -->
           <button
             type="submit"
-            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || !idFile || !form.idConsent"
+            :disabled="loading || !form.termsAccepted || !form.privacyAccepted || (needsIdDocument && (!idFile || !form.idConsent))"
             class="w-full py-3 px-4 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold rounded-lg hover:from-red-700 hover:to-red-900 transition-all duration-200 disabled:opacity-50 mt-4"
           >
             <span v-if="loading">{{ t('register.creating_account') || 'Creating account...' }}</span>
@@ -410,7 +428,7 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const { compressImage } = useImageCompression()
 
@@ -458,12 +476,88 @@ const registered = ref(false)
 
 const cantons = ['Zurich', 'Bern', 'Lucerne', 'Uri', 'Schwyz', 'Obwalden', 'Nidwalden', 'Glarus', 'Zug', 'Fribourg', 'Solothurn', 'Basel-Stadt', 'Basel-Landschaft', 'Schaffhausen', 'Appenzell Ausserrhoden', 'Appenzell Innerrhoden', 'St. Gallen', 'Graubünden', 'Aargau', 'Thurgau', 'Ticino', 'Vaud', 'Valais', 'Neuchâtel', 'Geneva', 'Jura']
 
+// The old list was Switzerland + four neighbours + "Other", which is useless
+// for an EXPORT marketplace whose buyers are in the Balkans, Eastern Europe and
+// Africa. Switzerland stays pinned first because that is where the cars are.
+//
+// Stored as ISO 3166-1 alpha-2 code + English name. The VALUE submitted is the
+// English name, because that is what users.country already contains and what
+// `form.country === 'Switzerland'` checks against; the code exists only so the
+// LABEL can be localised. Hardcoding 70 English names in a required field would
+// have been the one untranslated control on an otherwise fully translated form.
+const COUNTRIES: Array<[string, string]> = [
+  ['CH', 'Switzerland'],
+  ['AL', 'Albania'], ['DZ', 'Algeria'], ['AM', 'Armenia'], ['AT', 'Austria'], ['AZ', 'Azerbaijan'],
+  ['BE', 'Belgium'], ['BJ', 'Benin'], ['BA', 'Bosnia and Herzegovina'], ['BG', 'Bulgaria'], ['BF', 'Burkina Faso'],
+  ['CM', 'Cameroon'], ['HR', 'Croatia'], ['CZ', 'Czech Republic'], ['CD', 'Democratic Republic of the Congo'], ['DK', 'Denmark'],
+  ['EG', 'Egypt'], ['EE', 'Estonia'], ['FI', 'Finland'], ['FR', 'France'], ['GM', 'Gambia'], ['GE', 'Georgia'],
+  ['DE', 'Germany'], ['GH', 'Ghana'], ['GR', 'Greece'], ['GN', 'Guinea'], ['HU', 'Hungary'], ['IQ', 'Iraq'],
+  ['IE', 'Ireland'], ['IT', 'Italy'], ['CI', 'Ivory Coast'], ['JO', 'Jordan'], ['KZ', 'Kazakhstan'], ['KE', 'Kenya'],
+  ['XK', 'Kosovo'], ['LV', 'Latvia'], ['LB', 'Lebanon'], ['LR', 'Liberia'], ['LY', 'Libya'], ['LT', 'Lithuania'],
+  ['LU', 'Luxembourg'], ['MT', 'Malta'], ['ML', 'Mali'], ['MD', 'Moldova'], ['ME', 'Montenegro'], ['MA', 'Morocco'],
+  ['NL', 'Netherlands'], ['NE', 'Niger'], ['NG', 'Nigeria'], ['MK', 'North Macedonia'], ['NO', 'Norway'],
+  ['PL', 'Poland'], ['PT', 'Portugal'], ['RO', 'Romania'], ['SN', 'Senegal'], ['RS', 'Serbia'], ['SK', 'Slovakia'],
+  ['SI', 'Slovenia'], ['ES', 'Spain'], ['SE', 'Sweden'], ['TZ', 'Tanzania'], ['TG', 'Togo'], ['TN', 'Tunisia'],
+  ['TR', 'Turkey'], ['UG', 'Uganda'], ['UA', 'Ukraine'], ['GB', 'United Kingdom'], ['ZM', 'Zambia'], ['ZW', 'Zimbabwe'],
+]
+
+// Names come from i18n/locales/*.json (register.location.countries.<CODE>),
+// generated once with Intl.DisplayNames so every locale has a real translation
+// and nothing depends on the browser's ICU data at runtime — Safari < 14 has no
+// Intl.DisplayNames at all, and it is exactly the older phones this audience
+// uses. Sorting still uses localeCompare, which is universally supported.
+const countries = computed(() => {
+  const label = (code: string, fallback: string) => {
+    const key = `register.location.countries.${code}`
+    const translated = t(key)
+    // vue-i18n returns the key itself when it cannot resolve one.
+    return translated === key ? fallback : translated
+  }
+  const items = COUNTRIES.map(([code, name]) => ({
+    value: name,          // users.country stores the English name — unchanged.
+    label: label(code, name),
+    pinned: code === 'CH',
+  }))
+  // Switzerland first (that is where the cars are), then alphabetical in the
+  // reader's own language, then the catch-all.
+  const rest = items.filter(c => !c.pinned)
+    .sort((a, b) => a.label.localeCompare(b.label, locale.value))
+  return [
+    ...items.filter(c => c.pinned),
+    ...rest,
+    { value: 'Other', label: t('register.location.countries.other'), pinned: false },
+  ]
+})
+
+// An identity document is required for ONE thing: taking part in auctions.
+// Sellers and direct buyers are never asked for one — bidding is what carries
+// the "don't complete the purchase → permanent ban" rule that the ID enforces.
+const needsIdDocument = computed(() => form.value.role === 'buyer' && form.value.buyerType === 'auction')
+
 const setRole = (role: 'buyer' | 'seller') => {
   form.value.role = role
   if (role === 'seller') {
     form.value.buyerType = 'direct'
   }
 }
+
+// Leaving Switzerland must drop the canton. The field is hidden by v-if but its
+// value stayed in the form, so a buyer in Nigeria could be filed under canton
+// "Zurich" — which is also what decides the transport leg for a listing.
+watch(() => form.value.country, (country) => {
+  if (country !== 'Switzerland') form.value.canton = ''
+})
+
+// Switching away from the auction option must drop whatever was already picked,
+// or a stale file would be uploaded for an account that does not need one.
+watch(needsIdDocument, (needed) => {
+  if (!needed) {
+    idFile.value = null
+    idFileName.value = ''
+    idFileError.value = ''
+    form.value.idConsent = false
+  }
+})
 
 const onIdFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -523,21 +617,26 @@ const handleRegister = async () => {
     error.value = t('register.validation.password_length') || 'Password must be at least 8 characters long'
     return
   }
-  if ((form.value.role === 'seller' || form.value.buyerType === 'auction') && !form.value.phone) {
+  // A seller's number is published on their listings, so theirs is the only one
+  // that is mandatory. Everyone else may leave it blank.
+  if (form.value.role === 'seller' && !form.value.phone) {
     error.value = t('register.validation.phone_required') || 'Phone number is required'
+    return
+  }
+  if (form.value.phone && !isPlausiblePhone(form.value.phone)) {
+    error.value = t('register.validation.phone_invalid')
     return
   }
   if (!form.value.termsAccepted || !form.value.privacyAccepted) {
     error.value = t('register.validation.accept_terms') || 'Please accept the terms and privacy policy'
     return
   }
-  // Every account needs an ID document — this is what the admin reviews before
-  // the account is allowed to post, message or bid.
-  if (!idFile.value) {
-    error.value = t('register.validation.id_required') || 'Please upload your ID document. An administrator needs it to approve your account.'
+  // Auction accounts only. Everyone else signs up without a document.
+  if (needsIdDocument.value && !idFile.value) {
+    error.value = t('register.validation.id_required')
     return
   }
-  if (!form.value.idConsent) {
+  if (needsIdDocument.value && !form.value.idConsent) {
     error.value = t('register.validation.id_consent_required') || 'Please confirm you consent to your ID document being processed.'
     return
   }
@@ -545,15 +644,22 @@ const handleRegister = async () => {
   try {
     loading.value = true
 
-    const idFileMimeType = idFile.value.type
-    const idFileBase64 = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve((reader.result as string).split(',')[1])
-      reader.onerror = () => reject(new Error('Failed to read file'))
-      reader.readAsDataURL(idFile.value!)
-    })
+    // Only auction accounts send a document, and only if one was picked.
+    let idFileMimeType: string | null = null
+    let idFileBase64: string | null = null
+    if (idFile.value) {
+      idFileMimeType = idFile.value.type
+      idFileBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve((reader.result as string).split(',')[1])
+        reader.onerror = () => reject(new Error('Failed to read file'))
+        reader.readAsDataURL(idFile.value!)
+      })
+    }
 
-    const cleanedPhone = form.value.phone ? form.value.phone.replace(/\D/g, '') : null
+    // Keep the '+'. Stripping every non-digit turned "+40 721 234 567" into an
+    // unreachable "40721234567" for every non-Swiss user on the site.
+    const cleanedPhone = normalisePhone(form.value.phone)
 
     await $fetch('/api/auth/register', {
       method: 'POST',
@@ -580,8 +686,15 @@ const handleRegister = async () => {
 
     registered.value = true
     // navigateTo('/login') used to 404: with i18n strategy 'prefix' the real
-    // route is /<locale>/login.
-    await navigateTo(localePath('/login?registered=1'))
+    // route is /<locale>/login. The auction flag lets the login page show the
+    // "waiting for approval" note ONLY to accounts that actually asked to bid.
+    // Object form, not a raw '?a=1&b=2' string: localePath() resolves through
+    // the router, and the object form is the only shape guaranteed to keep the
+    // query intact across locales.
+    await navigateTo(localePath({
+      path: '/login',
+      query: needsIdDocument.value ? { registered: '1', auction: '1' } : { registered: '1' },
+    }))
   } catch (err: any) {
     error.value = err.data?.statusMessage || err.data?.message || err.message
       || t('register.messages.registration_failed') || 'Registration failed. Please try again.'

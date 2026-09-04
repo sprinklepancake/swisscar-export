@@ -41,21 +41,85 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         <!-- Left Column - Images & Details (NO SHIPPING AD HERE) -->
         <div class="lg:col-span-2 min-w-0 overflow-hidden">
-          <!-- Image Gallery -->
+          <!-- Image Gallery.
+               Browsing a listing's photos used to mean clicking one thumbnail
+               at a time, with no way to tell how many there were or to move
+               between them once a photo was open. It now works like a gallery:
+               arrows and a counter on the main image, keyboard and swipe in the
+               full-screen view. -->
           <div class="glass rounded-2xl overflow-hidden border border-red-200 shadow-lg mb-3 sm:mb-6">
-            <!-- Main Image (clickable) -->
-            <div 
-              class="relative h-48 sm:h-64 md:h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden cursor-pointer"
-              @click="openLightbox(currentImage)"
+            <!-- Main image -->
+            <div
+              class="relative h-48 sm:h-64 md:h-80 bg-gradient-to-r from-red-100 to-red-200 overflow-hidden group"
+              @touchstart.passive="onTouchStart"
+              @touchend.passive="onTouchEnd"
             >
-              <img 
-                :src="currentImage || car.images?.[0] || '/placeholder-car.jpg'" 
-                :alt="`${car.make} ${car.model}`" 
+              <img
+                :src="currentImage"
+                :alt="`${car.make} ${car.model}`"
                 class="w-full h-full object-cover"
+                :class="imageCount ? 'cursor-zoom-in' : 'cursor-default'"
                 loading="lazy"
                 decoding="async"
+                @error="onImageError"
+                @click="openLightbox()"
               >
-              <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100%-1rem)]">
+
+              <!-- A listing with no photos fell back to the placeholder with a
+                   zoom cursor and a dead click. Say plainly that there are none. -->
+              <div
+                v-if="!imageCount"
+                class="absolute inset-x-0 bottom-0 bg-black/50 text-white text-xs sm:text-sm text-center py-2 px-3"
+              >
+                {{ $t('car_details.gallery.no_photos') }}
+              </div>
+
+              <!-- Prev / next. Hidden entirely for a single-photo listing so
+                   they never suggest there is more to see than there is. -->
+              <template v-if="imageCount > 1">
+                <button
+                  type="button"
+                  @click.stop="prevImage"
+                  :aria-label="$t('car_details.gallery.previous')"
+                  class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 hover:bg-black/70 text-white flex items-center justify-center transition-colors backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  @click.stop="nextImage"
+                  :aria-label="$t('car_details.gallery.next')"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 hover:bg-black/70 text-white flex items-center justify-center transition-colors backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                <!-- "3 of 12" — the thing that was missing entirely. -->
+                <div class="absolute bottom-2 right-2 z-10 px-2.5 py-1 rounded-full bg-black/55 text-white text-xs font-medium backdrop-blur-sm">
+                  {{ $t('car_details.gallery.counter', { current: currentIndex + 1, total: imageCount }) }}
+                </div>
+              </template>
+
+              <!-- Full-screen affordance -->
+              <button
+                v-if="imageCount"
+                type="button"
+                @click.stop="openLightbox()"
+                :aria-label="$t('car_details.gallery.open_fullscreen')"
+                class="absolute bottom-2 left-2 z-10 px-2.5 py-1 rounded-full bg-black/55 hover:bg-black/75 text-white text-xs font-medium backdrop-blur-sm flex items-center gap-1 transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5v4m0-4h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                </svg>
+                <span v-if="imageCount > 1" class="hidden sm:inline">{{ $t('car_details.gallery.view_all', { count: imageCount }) }}</span>
+                <span v-else class="hidden sm:inline">{{ $t('car_details.gallery.open_fullscreen') }}</span>
+              </button>
+
+              <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-wrap gap-1 sm:gap-2 max-w-[calc(100%-1rem)] pointer-events-none">
                 <div v-if="car.isFeatured" class="bg-red-700 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold">
                   ⭐ {{ $t('featured') }}
                 </div>
@@ -80,18 +144,23 @@
               </div>
             </div>
 
-            <!-- Thumbnail Gallery -->
-            <div v-if="car.images && car.images.length > 1" class="p-4 flex space-x-3 overflow-x-auto">
-              <button 
-                v-for="(img, index) in car.images" 
+            <!-- Thumbnail strip. Indexed rather than compared by URL: a listing
+                 with the same photo twice used to highlight both. -->
+            <div v-if="imageCount > 1" ref="thumbStrip" class="p-4 flex space-x-3 overflow-x-auto">
+              <button
+                v-for="(img, index) in galleryImages"
                 :key="index"
-                @click="currentImage = img"
+                type="button"
+                :data-thumb="index"
+                @click="currentIndex = index"
+                :aria-label="`${$t('car_details.thumbnail')} ${index + 1}`"
+                :aria-current="currentIndex === index"
                 class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all"
-                :class="{'border-red-600': currentImage === img, 'border-transparent': currentImage !== img}"
+                :class="currentIndex === index ? 'border-red-600 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'"
               >
-                <img 
-                  :src="img" 
-                  :alt="`${$t('car_details.thumbnail')} ${index + 1}`" 
+                <img
+                  :src="img"
+                  :alt="`${$t('car_details.thumbnail')} ${index + 1}`"
                   class="w-full h-full object-cover"
                   loading="lazy"
                   decoding="async"
@@ -298,16 +367,23 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.73 0L4.346 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                     </svg>
                     <div>
-                      <p class="font-medium text-yellow-800">{{ bidEligibility.message }}</p>
+                      <p class="font-medium text-yellow-800">{{ bidGateMessage }}</p>
+                      <!-- No ID on file yet. The document is uploaded on the
+                           profile page, so send them there rather than firing a
+                           request the server will reject. -->
                       <div v-if="bidEligibility.needsVerification" class="mt-2">
-                        <button 
-                          @click="requestVerification"
-                          class="px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors"
+                        <NuxtLink
+                          :to="localePath('/profile')"
+                          class="inline-block px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors"
                         >
-                          {{ $t('auction.request_verification') }}
-                        </button>
+                          {{ $t('auction.go_to_profile') }}
+                        </NuxtLink>
                         <p class="text-yellow-700 text-xs mt-1">{{ $t('auction.verification_time') }}</p>
                       </div>
+                      <!-- Document already uploaded — nothing for them to do. -->
+                      <p v-else-if="bidEligibility.auctionAccessPending" class="text-yellow-700 text-xs mt-2">
+                        {{ $t('auction.verification_time') }}
+                      </p>
                       <div v-if="bidEligibility.userBanned" class="mt-2">
                         <NuxtLink :to="localePath('/contact')" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
                           {{ $t('auction.contact_support') }}
@@ -344,7 +420,7 @@
                   
                   <button 
                     @click="placeBid"
-                    :disabled="isPlacingBid || !bidAmount || parseFloat(bidAmount) < minBidAmount || parseFloat(bidAmount) > (bidEligibility.user?.funds || 0)"
+                    :disabled="isPlacingBid || !bidAmount || parseFloat(bidAmount) < minBidAmount || parseFloat(bidAmount) > availableToBid"
                     class="w-full py-3 bg-gradient-to-r from-purple-600 to-red-800 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-red-900 transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg v-if="!isPlacingBid" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -686,7 +762,10 @@
     </div>
 
     <!-- Contact Form Modal -->
-    <div v-if="showContactForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <!-- Same stacking trap as the gallery below: `main` is z-10, the header is
+         z-50, so this modal rendered under the header without the Teleport. -->
+    <Teleport to="body">
+    <div v-if="showContactForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100]">
       <div class="glass rounded-2xl p-6 max-w-md w-full border border-red-200 shadow-2xl">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-bold text-red-900">{{ $t('car_details.contact_seller') }}</h3>
@@ -727,6 +806,7 @@
         </form>
       </div>
     </div>
+    </Teleport>
 
     <!-- ChatSystem Modal -->
     <ChatSystem
@@ -737,28 +817,104 @@
       @close="closeChatModal"
     />
 
-    <!-- LIGHTBOX MODAL -->
-    <div v-if="lightboxImage" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" @click="closeLightbox">
-      <div class="relative max-w-5xl max-h-full" @click.stop>
-        <img 
-          :src="lightboxImage" 
-          :alt="`${car.make} ${car.model}`" 
-          class="max-w-full max-h-screen object-contain"
-          loading="eager"
-          decoding="async"
+    <!-- FULL-SCREEN GALLERY.
+         Was a dead end: it showed the one photo you clicked and the only way to
+         see the next was to close it, click a thumbnail and open it again.
+
+         TELEPORTED TO <body> ON PURPOSE. layouts/default.vue wraps every page in
+         `<main class="relative z-10">` while the header is `relative z-50`, so
+         `main` is a stacking context that sits BELOW the header no matter what
+         z-index a descendant asks for. Left in place, this overlay rendered
+         underneath the header — on a phone its close button landed directly on
+         top of the hamburger menu. Teleporting escapes that context. -->
+    <Teleport to="body">
+    <div
+      v-if="lightboxOpen"
+      class="fixed inset-0 bg-black/95 z-[100] flex flex-col"
+      role="dialog"
+      aria-modal="true"
+      @click="closeLightbox"
+    >
+      <!-- Top bar: counter + close -->
+      <div class="flex items-center justify-between p-4 text-white shrink-0" @click.stop>
+        <span v-if="imageCount" class="text-sm font-medium tabular-nums">
+          {{ $t('car_details.gallery.counter', { current: currentIndex + 1, total: imageCount }) }}
+        </span>
+        <span v-else></span>
+        <button
+          type="button"
+          @click="closeLightbox"
+          :aria-label="$t('car_details.gallery.close')"
+          class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors"
         >
-        <button @click="closeLightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
+
+      <!-- Stage -->
+      <div
+        class="flex-1 min-h-0 relative flex items-center justify-center px-2 sm:px-16"
+        @touchstart.passive="onTouchStart"
+        @touchend.passive="onTouchEnd"
+      >
+        <button
+          v-if="imageCount > 1"
+          type="button"
+          @click.stop="prevImage"
+          :aria-label="$t('car_details.gallery.previous')"
+          class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors"
+        >
+          <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <img
+          :src="currentImage"
+          :alt="`${car?.make} ${car?.model}`"
+          class="max-w-full max-h-full object-contain select-none"
+          loading="eager"
+          decoding="async"
+          @click.stop
+        >
+
+        <button
+          v-if="imageCount > 1"
+          type="button"
+          @click.stop="nextImage"
+          :aria-label="$t('car_details.gallery.next')"
+          class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors"
+        >
+          <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Thumbnail rail, so a long gallery can be jumped through directly -->
+      <div v-if="imageCount > 1" ref="lightboxStrip" class="shrink-0 p-3 flex gap-2 overflow-x-auto justify-start [&>*]:shrink-0" @click.stop>
+        <button
+          v-for="(img, index) in galleryImages"
+          :key="index"
+          type="button"
+          :data-thumb="index"
+          @click="currentIndex = index"
+          :aria-label="`${$t('car_details.thumbnail')} ${index + 1}`"
+          class="flex-shrink-0 w-16 h-12 rounded overflow-hidden border-2 transition-all"
+          :class="currentIndex === index ? 'border-white opacity-100' : 'border-transparent opacity-50 hover:opacity-90'"
+        >
+          <img :src="img" :alt="`${$t('car_details.thumbnail')} ${index + 1}`" class="w-full h-full object-cover" loading="lazy" decoding="async">
+        </button>
+      </div>
     </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, defineAsyncComponent } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick, defineAsyncComponent } from 'vue'
 
 // Both are heavy and only rendered conditionally (chat modal on interaction,
 // feature button for owners), so load them as separate chunks instead of
@@ -777,7 +933,11 @@ const { apiFetch } = useApiFetch()
 
 // State
 const car = ref<any>(null)
-const currentImage = ref('')
+// The gallery is driven by an INDEX. It used to hold the image URL, which meant
+// there was no way to ask "which one is this?" and therefore no next/previous
+// and no counter — and a listing that repeated a photo highlighted two
+// thumbnails at once.
+const currentIndex = ref(0)
 const activeTab = ref('specs')
 const showContactForm = ref(false)
 const error = ref(false)
@@ -798,16 +958,22 @@ const auctionTimer = ref<NodeJS.Timeout | null>(null)
 const bidEligibility = ref({
   canBid: false,
   reason: '',
+  // needsVerification → no ID document yet, they must upload one.
+  // auctionAccessPending → document is in, an admin just has not looked yet.
   needsVerification: false,
+  auctionAccessPending: false,
   userBanned: false,
   message: '',
-  user: null as any
+  user: null as any,
+  // { minBid, ownHeld, availableToBid, increment } from the server, or null
+  // until /api/bids/canBid?carId=… has answered.
+  car: null as any
 })
 
 const isCheckingEligibility = ref(false)
 
-// LIGHTBOX STATE
-const lightboxImage = ref<string | null>(null)
+// FULL-SCREEN GALLERY STATE
+const lightboxOpen = ref(false)
 
 // Tabs configuration with icons
 const tabs = [
@@ -846,7 +1012,7 @@ if (fetchError.value) {
   loading.value = false
 } else {
   car.value = carData.value
-  currentImage.value = car.value?.images?.[0] || '/placeholder-car.jpg'
+  currentIndex.value = 0
   loading.value = false
   if (car.value && car.value.listingType === 'auction') {
     console.log('🔍 Auction car data:', {
@@ -871,13 +1037,105 @@ useHead({
   }) || `${car.value.make} ${car.value.model} (${car.value.year}) - Swiss Car Marketplace` : 'Car Details')
 })
 
-// LIGHTBOX FUNCTIONS
-const openLightbox = (img: string) => {
-  lightboxImage.value = img
+// ── GALLERY ─────────────────────────────────────────────────────────────────
+const galleryImages = computed<string[]>(() => {
+  const imgs = car.value?.images
+  return Array.isArray(imgs) ? imgs.filter(Boolean) : []
+})
+const imageCount = computed(() => galleryImages.value.length)
+
+const currentImage = computed(() => galleryImages.value[currentIndex.value] || '/placeholder-car.svg')
+
+// Wrap around at both ends — reaching the last photo and having the button go
+// dead is the thing that made people close the page.
+const goToImage = (index: number) => {
+  const n = imageCount.value
+  if (n === 0) return
+  currentIndex.value = ((index % n) + n) % n
+}
+const nextImage = () => goToImage(currentIndex.value + 1)
+const prevImage = () => goToImage(currentIndex.value - 1)
+
+// A stale index would render the placeholder if the listing's photos change
+// (e.g. the owner edits it while the page is open).
+watch(imageCount, (n) => {
+  if (currentIndex.value >= n) currentIndex.value = 0
+})
+
+// Keep the highlighted thumbnail visible. Without this, arrowing through a
+// 13-photo listing scrolls the main image but leaves the strip where it was, so
+// the highlighted thumb sits off-screen and the strip looks frozen/broken.
+const thumbStrip = ref<HTMLElement | null>(null)
+const lightboxStrip = ref<HTMLElement | null>(null)
+
+const scrollThumbIntoView = (strip: HTMLElement | null) => {
+  if (!strip) return
+  const el = strip.querySelector<HTMLElement>(`[data-thumb="${currentIndex.value}"]`)
+  // scrollIntoView with a block option scrolls ANCESTORS too on some browsers,
+  // which would yank the whole page. Move the strip's own scrollLeft instead.
+  if (!el) return
+  const target = el.offsetLeft - (strip.clientWidth - el.clientWidth) / 2
+  strip.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
+}
+
+watch(currentIndex, () => {
+  nextTick(() => {
+    scrollThumbIntoView(thumbStrip.value)
+    if (lightboxOpen.value) scrollThumbIntoView(lightboxStrip.value)
+  })
+})
+
+// A listing can reference an image that has since been deleted from storage.
+// Without this the browser shows its own broken-image glyph inside the card.
+const PLACEHOLDER = '/placeholder-car.svg'
+const onImageError = (e: Event) => {
+  const img = e.target as HTMLImageElement
+  if (img && img.src && !img.src.endsWith(PLACEHOLDER)) img.src = PLACEHOLDER
+}
+
+const openLightbox = (index?: number) => {
+  if (!imageCount.value) return
+  if (typeof index === 'number') goToImage(index)
+  lightboxOpen.value = true
+  nextTick(() => scrollThumbIntoView(lightboxStrip.value))
 }
 const closeLightbox = () => {
-  lightboxImage.value = null
+  lightboxOpen.value = false
 }
+
+// Arrow keys and Escape. Bound only while the full-screen view is open, so they
+// never fight with the bid input or the tab navigation underneath.
+const onGalleryKeydown = (e: KeyboardEvent) => {
+  if (!lightboxOpen.value) return
+  if (e.key === 'ArrowRight') { e.preventDefault(); nextImage() }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prevImage() }
+  else if (e.key === 'Escape') { e.preventDefault(); closeLightbox() }
+}
+
+// Swipe. Most of this marketplace's traffic is on a phone, where dragging is
+// the obvious gesture and tapping a 9px arrow is not.
+const SWIPE_MIN_PX = 40
+let touchStartX = 0
+let touchStartY = 0
+
+const onTouchStart = (e: TouchEvent) => {
+  touchStartX = e.changedTouches[0].clientX
+  touchStartY = e.changedTouches[0].clientY
+}
+const onTouchEnd = (e: TouchEvent) => {
+  if (imageCount.value < 2) return
+  const dx = e.changedTouches[0].clientX - touchStartX
+  const dy = e.changedTouches[0].clientY - touchStartY
+  // Ignore a mostly-vertical drag: that is the user scrolling the page.
+  if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) < Math.abs(dy)) return
+  dx < 0 ? nextImage() : prevImage()
+}
+
+// Keep the page behind the full-screen view from scrolling under it.
+watch(lightboxOpen, (open) => {
+  if (import.meta.server) return
+  document.body.style.overflow = open ? 'hidden' : ''
+})
 
 // Function to reveal contact information
 const revealContactInfo = async () => {
@@ -1071,15 +1329,33 @@ const isReserveMet = computed(() => {
   return car.value.currentBid >= car.value.reservePrice
 })
 
+// The server is the authority on both numbers — /api/bids/canBid?carId=…
+// returns them computed by the same code placeBid() enforces. The local
+// fallbacks below only matter before that call resolves.
+//
+// These used to be invented client-side (startingPrice + max(100, 5%)), which
+// advertised a minimum well above the server's and refused bids the server
+// would have accepted.
+const BID_INCREMENT = 50
+
 const minBidAmount = computed(() => {
-  const current = car.value?.currentBid || car.value?.startingPrice || 0
-  const increment = Math.max(100, current * 0.05)
-  return current + increment
+  const fromServer = bidEligibility.value.car?.minBid
+  if (typeof fromServer === 'number') return fromServer
+  const current = Number(car.value?.currentBid) || 0
+  const start = Number(car.value?.startingPrice) || 0
+  return current > 0 ? current + BID_INCREMENT : Math.max(start, BID_INCREMENT)
 })
 
-const bidIncrement = computed(() => {
-  const current = car.value?.currentBid || car.value?.startingPrice || 0
-  return Math.max(50, current * 0.02)
+const bidIncrement = computed(() => bidEligibility.value.car?.increment ?? BID_INCREMENT)
+
+// A bid debits the wallet immediately, so the CURRENT leading bidder's balance
+// is always below their own next legal bid. The server nets off what they
+// already hold on this car and charges only the difference; the button has to
+// use the same figure or the leading bidder can never raise their own bid.
+const availableToBid = computed(() => {
+  const fromServer = bidEligibility.value.car?.availableToBid
+  if (typeof fromServer === 'number') return fromServer
+  return bidEligibility.value.user?.funds || 0
 })
 
 // Fetch bid history
@@ -1104,9 +1380,11 @@ const checkBidEligibility = async () => {
     canBid: false,
     reason: '',
     needsVerification: false,
+    auctionAccessPending: false,
     userBanned: false,
     message: '',
-    user: null
+    user: null,
+    car: null
   }
 
   if (!auth.user.value) {
@@ -1118,25 +1396,31 @@ const checkBidEligibility = async () => {
 
   isCheckingEligibility.value = true
   try {
-    const response: any = await apiFetch('/api/bids/canBid')
+    // carId makes the response carry this auction's authoritative minimum bid
+    // and spendable amount, instead of the page guessing at both.
+    const response: any = await apiFetch(`/api/bids/canBid?carId=${car.value?.id ?? ''}`)
     
     if (response.canBid) {
       bidEligibility.value = {
         canBid: true,
         reason: 'eligible',
         needsVerification: false,
+        auctionAccessPending: false,
         userBanned: false,
         message: t('auction.can_bid_message'),
-        user: response.user
+        user: response.user,
+        car: response.car || null
       }
     } else {
       bidEligibility.value = {
         canBid: false,
         reason: response.reason,
         needsVerification: response.needsVerification || false,
+        auctionAccessPending: response.auctionAccessPending || false,
         userBanned: response.userBanned || false,
         message: response.message || t('auction.cannot_bid_message'),
-        user: response.user
+        user: response.user,
+        car: response.car || null
       }
     }
   } catch (error) {
@@ -1145,32 +1429,38 @@ const checkBidEligibility = async () => {
       canBid: false,
       reason: 'error',
       needsVerification: false,
+      auctionAccessPending: false,
       userBanned: false,
       message: t('auction.eligibility_error'),
-      user: null
+      user: null,
+      car: null
     }
   } finally {
     isCheckingEligibility.value = false
   }
 }
 
-// Request verification from admin
-const requestVerification = async () => {
-  if (!auth.user.value) return
-  
-  try {
-    const response: any = await apiFetch('/api/user/request-verification', {
-      method: 'POST'
-    })
-    
-    if (response.success) {
-      alert(t('auction.verification_request_sent'))
-      await checkBidEligibility()
-    }
-  } catch (error) {
-    alert(t('auction.verification_request_failed'))
+// The server's statusMessage is English prose meant for developers and API
+// callers. Map the machine-readable reason onto a translated string so a German
+// or Arabic visitor is not shown English at the one moment they are being told
+// they cannot do something.
+const bidGateMessage = computed(() => {
+  switch (bidEligibility.value.reason) {
+    case 'not_authenticated': return t('auction.login_to_bid')
+    case 'auction_access_required': return t('auction.auction_access_required')
+    case 'auction_access_pending': return t('auction.auction_access_pending')
+    case 'banned': return t('profile.status.banned_body')
+    case 'restricted': return t('profile.status.pending_body')
+    case 'error': return t('auction.eligibility_error')
+    // Anything the server adds later still shows its own message rather than
+    // a blank panel.
+    default: return bidEligibility.value.message || t('auction.cannot_bid_message')
   }
-}
+})
+
+// Auction access is requested from the profile page, where the ID document is
+// actually uploaded — a button here could only ever fire a request the server
+// rejects for having no document attached.
 
 // Place bid function
 const placeBid = async () => {
@@ -1189,12 +1479,11 @@ const placeBid = async () => {
   // against this car is released as part of the same operation (see
   // server/utils/bidding.ts). Comparing the whole new bid against the remaining
   // balance made it impossible for the leading bidder to ever raise.
-  const alreadyHeld = car.value?.highestBidderId === auth.user.value?.id
-    ? parseFloat(String(car.value?.currentBid ?? 0)) || 0
-    : 0
-  const availableToBid = (bidEligibility.value.user?.funds || 0) + alreadyHeld
+  // Same number the button is disabled against, and the same one the server
+  // charges against — see /api/bids/canBid.
+  const spendable = availableToBid.value
 
-  if (parseFloat(bidAmount.value) > availableToBid) {
+  if (parseFloat(bidAmount.value) > spendable) {
     bidError.value = t('auction.insufficient_funds')
     return
   }
@@ -1235,12 +1524,23 @@ const placeBid = async () => {
     bidError.value = error.data?.statusMessage || error.message || t('auction.bid_failed')
     
     if (error.status === 403) {
-      if (error.data?.message?.includes('verified')) {
-        bidEligibility.value.needsVerification = true
-        bidEligibility.value.message = error.data.message
-      } else if (error.data?.message?.includes('banned')) {
+      // requireAuctionAccess() puts a structured reason on error.data; the old
+      // substring match on a message that no longer contains the word "verified"
+      // silently stopped updating the panel.
+      const reason = error.data?.data?.reason || error.data?.reason
+      const detail = error.data?.statusMessage || error.data?.message || ''
+
+      if (reason === 'auction_access_required' || reason === 'unverified') {
+        bidEligibility.value.canBid = false
+        bidEligibility.value.needsVerification = !error.data?.data?.hasIdDocument
+        bidEligibility.value.auctionAccessPending = !!error.data?.data?.hasIdDocument
+        bidEligibility.value.message = detail
+      } else if (detail.toLowerCase().includes('suspend') || detail.toLowerCase().includes('banned')) {
+        bidEligibility.value.canBid = false
         bidEligibility.value.userBanned = true
-        bidEligibility.value.message = error.data.message
+        bidEligibility.value.message = detail
+      } else {
+        await checkBidEligibility()
       }
     } else if (error.status === 400) {
       if (error.data?.message?.includes('funds')) {
@@ -1547,6 +1847,8 @@ const callSeller = () => {
 
 // Lifecycle hooks
 onMounted(async () => {
+  window.addEventListener('keydown', onGalleryKeydown)
+
   if (car.value?.listingType === 'auction') {
     await loadBidHistory()
     startAuctionTimer()
@@ -1558,6 +1860,11 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('keydown', onGalleryKeydown)
+  // Navigating away with the full-screen gallery open would otherwise leave the
+  // whole site unscrollable.
+  document.body.style.overflow = ''
+
   if (auctionTimer.value) {
     clearInterval(auctionTimer.value)
   }
@@ -1572,9 +1879,11 @@ watch(() => auth.user.value, async (newUser) => {
       canBid: false,
       reason: 'not_authenticated',
       needsVerification: false,
+      auctionAccessPending: false,
       userBanned: false,
       message: t('auction.login_to_bid'),
-      user: null
+      user: null,
+      car: null
     }
   }
 })

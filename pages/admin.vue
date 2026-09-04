@@ -71,7 +71,7 @@
           color="green"
         />
         <StatCard 
-          title="Unverified Users" 
+          title="Awaiting auction approval" 
           :value="stats.unverifiedUsers" 
           icon="⏳"
           color="yellow"
@@ -119,7 +119,7 @@
         </div>
       </div>
       
-      <!-- Accounts waiting for ID approval -->
+      <!-- Accounts waiting for AUCTION approval. Signing up needs no approval at all. -->
       <button
         v-if="pendingUsers.length > 0"
         @click="showPendingUsers"
@@ -129,15 +129,74 @@
           <span class="text-3xl">⏳</span>
           <div class="min-w-0">
             <p class="font-bold text-amber-900">
-              {{ pendingUsers.length }} account{{ pendingUsers.length === 1 ? '' : 's' }} waiting for approval
+              {{ pendingUsers.length }} account{{ pendingUsers.length === 1 ? '' : 's' }} waiting for auction approval
             </p>
             <p class="text-sm text-amber-800">
-              These people can browse the site but cannot post, message or bid until you check their ID and press Verify.
+              These people can already browse, list cars and message sellers. Check their ID document and press
+              "Approve auctions" to let them place bids.
             </p>
           </div>
         </div>
         <span class="shrink-0 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold">Review</span>
       </button>
+
+      <!-- Activity feed. notifyAdmin() emails these events, but email needs a
+           RESEND_API_KEY that an installation may never set — without this
+           panel, "notify the admin about new signups" would silently do
+           nothing on a site with no mail transport configured. -->
+      <div v-if="notifications.length" class="mb-6 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <button
+          @click="notificationsOpen = !notificationsOpen"
+          class="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+        >
+          <span class="flex items-center gap-3 min-w-0">
+            <span class="text-2xl shrink-0">🔔</span>
+            <span class="min-w-0">
+              <span class="font-bold text-gray-900 block">Recent activity</span>
+              <span class="text-sm text-gray-500 block truncate">
+                {{ notificationsUnseen > 0
+                  ? `${notificationsUnseen} need${notificationsUnseen === 1 ? 's' : ''} your attention`
+                  : 'Nothing waiting on you' }}
+              </span>
+            </span>
+          </span>
+          <span class="flex items-center gap-2 shrink-0">
+            <span v-if="notificationsUnseen > 0" class="px-2 py-0.5 rounded-full bg-red-600 text-white text-xs font-bold">
+              {{ notificationsUnseen }}
+            </span>
+            <svg class="w-5 h-5 text-gray-400 transition-transform" :class="notificationsOpen ? 'rotate-180' : ''"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </button>
+
+        <ul v-if="notificationsOpen" class="border-t border-gray-100 divide-y divide-gray-100 max-h-96 overflow-y-auto">
+          <li v-for="n in notifications" :key="n.id" class="p-4 flex items-start gap-3">
+            <span class="text-lg shrink-0 leading-none mt-0.5">{{ notificationIcon(n.type) }}</span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-gray-900 break-words">{{ n.title }}</p>
+              <p class="text-xs text-gray-500 mt-0.5">
+                {{ formatDateTime(n.createdAt) }}
+                <template v-if="n.userEmail"> • {{ n.userEmail }}</template>
+              </p>
+            </div>
+            <span
+              v-if="!n.userExists"
+              class="shrink-0 px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs whitespace-nowrap"
+            >account gone</span>
+            <span
+              v-else-if="n.resolved"
+              class="shrink-0 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs whitespace-nowrap"
+            >done</span>
+            <button
+              v-else
+              @click="focusUser(n.userId)"
+              class="shrink-0 px-3 py-1 rounded bg-amber-600 text-white text-xs font-semibold whitespace-nowrap hover:bg-amber-700"
+            >Review</button>
+          </li>
+        </ul>
+      </div>
 
       <!-- Main Content -->
       <div class="bg-white rounded-xl shadow overflow-hidden">
@@ -180,8 +239,10 @@
                   <option value="seller">Sellers</option>
                   <option value="admin">Admins</option>
                   <option value="banned">Banned</option>
-                  <option value="unverified">Unverified Users</option>
-                  <option value="verified">Verified Users</option>
+                  <option value="auction_pending">⏳ Waiting for auction approval</option>
+                  <option value="auction_approved">🏆 Approved for auctions</option>
+                  <option value="unverified">Restricted Users</option>
+                  <option value="verified">Active Users</option>
                 </select>
               </div>
             </div>
@@ -230,13 +291,24 @@
                     </td>
                     <td class="px-3 py-3 md:px-4 md:py-4">
                       <div class="space-y-1">
-                        <span class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap" 
-                          :class="user.banned ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'">
-                          {{ user.banned ? 'Banned' : 'Active' }}
-                        </span>
+                        <!-- ONE pill with explicit precedence. Two pills both
+                             reading "Active" made Restrict and Ban impossible to
+                             tell apart at a glance. -->
                         <span class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap"
-                          :class="user.verified ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'">
-                          {{ user.verified ? 'Verified' : 'Unverified' }}
+                          :class="user.banned
+                            ? 'bg-red-100 text-red-800'
+                            : (user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800')">
+                          {{ user.banned ? 'Banned' : (user.verified ? 'Active' : 'Restricted') }}
+                        </span>
+                        <!-- Auction clearance is the ID-backed permission. Only
+                             shown when it is relevant: an account that has never
+                             asked to bid does not need a badge saying so. -->
+                        <span v-if="user.verifiedBuyer" class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap"
+                          :class="user.verified && !user.banned ? 'bg-purple-100 text-purple-800' : 'bg-gray-200 text-gray-600'">
+                          🏆 {{ user.verified && !user.banned ? 'Auctions OK' : 'Auctions (blocked)' }}
+                        </span>
+                        <span v-else-if="user.buyerType === 'auction' && user.idDocumentUrl" class="px-2 py-0.5 text-xs rounded-full block w-fit whitespace-nowrap bg-orange-100 text-orange-800">
+                          ⏳ Auction review
                         </span>
                       </div>
                     </td>
@@ -262,19 +334,39 @@
                     </td>
                     <td class="px-3 py-3 md:px-4 md:py-4">
                       <div class="flex flex-wrap gap-1 md:gap-2">
+                        <!-- Auction clearance: the decision that actually
+                             needs a human. Requires an ID document on file. -->
+                        <button
+                          v-if="!user.verifiedBuyer"
+                          @click="approveAuction(user.id)"
+                          :disabled="!user.idDocumentUrl"
+                          :title="user.idDocumentUrl ? 'Let this account place bids' : 'No ID document on file'"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          Approve auctions
+                        </button>
+                        <button
+                          v-else
+                          @click="revokeAuction(user.id)"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 whitespace-nowrap"
+                        >
+                          Revoke auctions
+                        </button>
+                        <!-- Restrict / un-restrict. `verified` no longer gates
+                             signup, it is the lever for a problem account. -->
                         <button
                           v-if="!user.verified"
                           @click="verifyUser(user.id)"
                           class="px-2 py-1 md:px-3 md:py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 whitespace-nowrap"
                         >
-                          Verify
+                          Un-restrict
                         </button>
                         <button
                           v-if="user.verified"
                           @click="unverifyUser(user.id)"
-                          class="px-2 py-1 md:px-3 md:py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 whitespace-nowrap"
+                          class="px-2 py-1 md:px-3 md:py-1 bg-amber-600 text-white text-xs rounded hover:bg-amber-700 whitespace-nowrap"
                         >
-                          Unverify
+                          Restrict
                         </button>
                         <button
                           v-if="!user.banned && user.id !== adminData?.id"
@@ -600,20 +692,23 @@
                   User Settings
                 </h3>
                 <div class="space-y-4">
-                  <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <!-- This was a toggle bound to `requireIdVerification`. The
+                       setting is stored but NO enforcement path has ever read
+                       it, so switching it off changed nothing while implying an
+                       admin could waive the ID check. The rule is not
+                       configurable — requireAuctionAccess() in
+                       server/utils/auth.ts always applies it — so state it
+                       instead of offering a switch that does nothing. -->
+                  <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                    <span class="text-lg leading-none mt-0.5">🔒</span>
                     <div>
-                      <p class="font-medium text-gray-900">Require Verification</p>
-                      <p class="text-sm text-gray-500">Users must be verified to bid/sell</p>
+                      <p class="font-medium text-gray-900">ID check for auctions</p>
+                      <p class="text-sm text-gray-500">
+                        Always on. Bidders need an ID document you have approved; browsing,
+                        listing and messaging never require one. Approve accounts from the
+                        Users tab.
+                      </p>
                     </div>
-                    <button
-                      @click="toggleSetting('requireIdVerification')"
-                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                      :class="settings.requireIdVerification ? 'bg-green-600' : 'bg-gray-300'"
-                    >
-                      <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                        :class="settings.requireIdVerification ? 'translate-x-6' : 'translate-x-1'"
-                      />
-                    </button>
                   </div>
                   
                   <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -750,7 +845,7 @@
             />
           </div>
           
-          <div class="flex justify-end space-x-3">
+          <div class="flex justify-end gap-3">
             <button
               @click="closeEditFundsModal"
               class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -1077,7 +1172,7 @@
             </p>
           </div>
           
-          <div class="flex justify-end space-x-3 pt-4">
+          <div class="flex justify-end gap-3 pt-4">
             <button
               @click="closeTransactionDetailsModal"
               class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -1313,11 +1408,57 @@ const tabs = [
   { id: 'settings', label: 'Settings' }
 ]
 
-const pendingUsers = computed(() => users.value.filter((u: any) => !u.verified && !u.banned))
+// ── Admin activity feed ─────────────────────────────────────────────────────
+// Backs the "Recent activity" panel. This is the delivery path that always
+// works: emailing these events needs RESEND_API_KEY, which may never be set.
+const notifications = ref<any[]>([])
+const notificationsUnseen = ref(0)
+// Collapsed by default so it never pushes the real work below the fold, but
+// opened automatically when something is actually waiting.
+const notificationsOpen = ref(false)
+
+const notificationIcon = (type: string) => {
+  switch (type) {
+    case 'user_registered': return '👤'
+    case 'auction_access_requested': return '🏆'
+    case 'id_document_uploaded': return '🪪'
+    default: return '🔔'
+  }
+}
+
+const loadNotifications = async () => {
+  try {
+    const data: any = await adminFetch('/api/admin/notifications')
+    notifications.value = data?.notifications || []
+    notificationsUnseen.value = data?.unseenCount || 0
+    if (notificationsUnseen.value > 0) notificationsOpen.value = true
+  } catch (e) {
+    console.warn('Notifications not loaded:', e)
+    notifications.value = []
+    notificationsUnseen.value = 0
+  }
+}
+
+// Jump straight from a notification to the account it is about, instead of
+// making the admin scan the table for a name they just read.
+const focusUser = (userId: number) => {
+  const u = users.value.find((x: any) => x.id === userId)
+  activeTab.value = 'users'
+  userFilter.value = 'all'
+  userSearch.value = u?.email || u?.name || ''
+  if (import.meta.client) window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// The work queue. Signing up no longer needs approval, so "pending" now means
+// exactly one thing: an account that uploaded an ID to bid and is waiting for a
+// human to look at it.
+const pendingUsers = computed(() => users.value.filter(
+  (u: any) => !u.verifiedBuyer && !u.banned && u.buyerType === 'auction' && u.idDocumentUrl
+))
 
 const showPendingUsers = () => {
   activeTab.value = 'users'
-  userFilter.value = 'unverified'
+  userFilter.value = 'auction_pending'
   userSearch.value = ''
 }
 
@@ -1346,6 +1487,10 @@ const filteredUsers = computed(() => {
     filtered = filtered.filter(user => !user.verified)
   } else if (userFilter.value === 'verified') {
     filtered = filtered.filter(user => user.verified)
+  } else if (userFilter.value === 'auction_pending') {
+    filtered = filtered.filter(user => !user.verifiedBuyer && !user.banned && user.buyerType === 'auction' && user.idDocumentUrl)
+  } else if (userFilter.value === 'auction_approved') {
+    filtered = filtered.filter(user => user.verifiedBuyer)
   }
   
   return filtered
@@ -1724,6 +1869,9 @@ const loadAdminData = async () => {
       users.value = []
     }
 
+    // Activity feed. After users, so focusUser() can resolve a name.
+    await loadNotifications()
+
     // Listings
     try {
       const listingsData: any = await adminFetch('/api/admin/listings')
@@ -1770,6 +1918,16 @@ const refreshData = async () => {
   await loadAdminData()
 }
 
+// The dashboard tiles are server-counted, so any action that changes a user's
+// state leaves them stale until a manual reload — the "awaiting auction
+// approval" tile and the banner right below it would disagree.
+const refreshStats = async () => {
+  try {
+    const data: any = await adminFetch('/api/admin/stats')
+    if (data?.success) stats.value = { ...stats.value, ...data.stats }
+  } catch { /* the banner is computed client-side and stays correct */ }
+}
+
 const roleClasses = (role: string) => {
   switch (role) {
     case 'admin': return 'bg-purple-100 text-purple-800'
@@ -1780,31 +1938,72 @@ const roleClasses = (role: string) => {
 }
 
 const verifyUser = async (userId: number) => {
-  if (!confirm('Verify this user?')) return
+  if (!confirm('Lift the restriction on this account?')) return
   try {
     const data: any = await adminFetch(`/api/admin/users/${userId}/verify`, { method: 'POST' })
     if (data?.success) {
       const i = users.value.findIndex(u => u.id === userId)
       if (i !== -1) users.value[i].verified = true
-      alert('✅ User verified successfully!')
+      await refreshStats()
+      alert('✅ Restriction lifted.')
     } else { alert('❌ Failed to verify user') }
   } catch (e) { console.error(e); alert('❌ Failed to verify user') }
 }
 
 const unverifyUser = async (userId: number) => {
-  if (!confirm('Unverify this user?')) return
+  if (!confirm('Restrict this account? It will be able to browse but not post, message or bid.')) return
   try {
     const data: any = await adminFetch(`/api/admin/users/${userId}/unverify`, { method: 'POST' })
     if (data?.success) {
       const i = users.value.findIndex(u => u.id === userId)
       if (i !== -1) users.value[i].verified = false
-      alert('✅ User unverified successfully!')
+      await refreshStats()
+      alert('✅ Account restricted.')
     } else { alert('❌ Failed to unverify user') }
   } catch (e) { console.error(e); alert('❌ Failed to unverify user') }
 }
 
+const approveAuction = async (userId: number) => {
+  if (!confirm('Approve this account for auctions? Check their ID document first — this lets them place real bids.')) return
+  try {
+    const data: any = await adminFetch(`/api/admin/users/${userId}/verify-auction`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) {
+        users.value[i].verifiedBuyer = true
+        users.value[i].buyerType = 'auction'
+      }
+      await loadNotifications()
+      await refreshStats()
+      alert('🏆 Auction access approved — this account can now bid.')
+    } else { alert('❌ ' + (data?.error || 'Failed to approve auction access')) }
+  } catch (e: any) {
+    console.error(e)
+    alert('❌ ' + (e?.data?.statusMessage || 'Failed to approve auction access'))
+  }
+}
+
+const revokeAuction = async (userId: number) => {
+  if (!confirm('Revoke auction access? The account keeps working normally, it just cannot bid.')) return
+  try {
+    const data: any = await adminFetch(`/api/admin/users/${userId}/unverify-auction`, { method: 'POST' })
+    if (data?.success) {
+      const i = users.value.findIndex(u => u.id === userId)
+      if (i !== -1) {
+        users.value[i].verifiedBuyer = false
+        // Mirrors the server: the account leaves the auction queue rather than
+        // reappearing in it as a fresh-looking request.
+        users.value[i].buyerType = 'direct'
+      }
+      await loadNotifications()
+      await refreshStats()
+      alert('✅ Auction access revoked. The account can ask again from its profile.')
+    } else { alert('❌ Failed to revoke auction access') }
+  } catch (e) { console.error(e); alert('❌ Failed to revoke auction access') }
+}
+
 const banUser = async (userId: number) => {
-  if (!confirm('Are you sure you want to ban this user?')) return
+  if (!confirm('Ban this account? They will not be able to use the site at all.\n\nUse "Restrict" instead if you only want to stop them posting, messaging and bidding while they can still browse.')) return
   try {
     const data: any = await adminFetch(`/api/admin/users/${userId}/ban`, { method: 'POST' })
     if (data?.success) {

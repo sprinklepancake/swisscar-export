@@ -328,7 +328,7 @@
             <!-- Car Image -->
             <div :class="['car-image', viewMode === 'list' && 'w-1/3']">
               <img 
-                :src="car.images[0] || '/placeholder-car.jpg'" 
+                :src="car.images[0] || '/placeholder-car.svg'" 
                 :alt="`${car.make} ${car.model}`" 
                 class="w-full h-full object-cover"
                 loading="lazy"

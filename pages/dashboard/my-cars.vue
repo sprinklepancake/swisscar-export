@@ -108,7 +108,7 @@
               <div class="lg:w-1/4 mb-4 lg:mb-0 lg:mr-6">
                 <div class="relative h-48 lg:h-32 rounded-lg overflow-hidden">
                   <img 
-                    :src="car.images && car.images.length > 0 ? car.images[0] : '/placeholder-car.jpg'" 
+                    :src="car.images && car.images.length > 0 ? car.images[0] : '/placeholder-car.svg'" 
                     :alt="`${car.make} ${car.model}`"
                     class="w-full h-full object-cover"
                     loading="lazy"

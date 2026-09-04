@@ -82,7 +82,6 @@
     "login_to_bid": "Bitte melden Sie sich an, um zu bieten",
     "login_to_bid_link": "anmelden",
     "login_to_bid_message": "Sie müssen sich anmelden, um zu bieten",
-    "login_to_bid_post": "und Ihre Identität verifizieren, um zu bieten",
     "login_to_bid_pre": "Sie müssen sich",
     "login_to_place_bid": "Bitte melden Sie sich an, um ein Gebot abzugeben",
     "max_button": "Max",
@@ -91,7 +90,6 @@
     "place_bid": "Gebot abgeben",
     "placing_bid": "Gebot wird platziert...",
     "processing": "Wird verarbeitet...",
-    "request_verification": "Verifizierung anfordern",
     "reserve": "Mindestpreis",
     "reserve_met": "Erreicht",
     "reserve_not_met": "Nicht erreicht",
@@ -108,16 +106,21 @@
     "time_left": "verbleibend",
     "time_minutes": "{minutes}Min",
     "verification_request_failed": "Verifizierungsanfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
-    "verification_request_sent": "Verifizierungsanfrage gesendet! Administratoren werden Ihre Anfrage prüfen.",
-    "verification_required": "Sie müssen Ihre Identität verifizieren, um den Kauf abzuschließen.",
-    "verification_time": "Administratoren verifizieren normalerweise innerhalb von 24 Stunden",
     "watching_auction": "Sie sehen Ihre Auktion live. {count} Gebot(e) bisher.",
     "winning": "Führend",
     "your_auction_dashboard": "Ihr Auktions-Dashboard",
     "your_bid": "Ihr Gebot",
     "your_max_bid": "Ihr Maximalgebot",
     "your_wallet": "Ihr Wallet",
-    "status_heading": "Auktionsstatus"
+    "status_heading": "Auktionsstatus",
+    "auction_access_pending": "Ihre Auktionsfreigabe wird geprüft. Sobald ein Administrator Ihr Ausweisdokument freigibt, können Sie bieten.",
+    "auction_access_required": "Nur zum Bieten ist eine Ausweisprüfung nötig. Laden Sie in Ihrem Profil ein Dokument hoch, um die Auktionsfreigabe zu beantragen.",
+    "go_to_profile": "Zu meinem Profil",
+    "login_to_bid_post": "und die Auktionsfreigabe erhalten, um Gebote abzugeben",
+    "request_verification": "Auktionsfreigabe beantragen",
+    "verification_request_sent": "Anfrage gesendet! Ein Administrator prüft Ihr Ausweisdokument.",
+    "verification_required": "Zum Bieten ist eine einmalige Ausweisprüfung nötig. Alles andere auf der Website funktioniert ohne.",
+    "verification_time": "Administratoren geben in der Regel innerhalb von 24 Stunden frei"
   },
   "auth": {
     "confirm_message": "Bitte warten Sie, während wir Ihre E-Mail-Adresse verifizieren...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Ihr Passwort konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
     "new_password": "Neues Passwort",
     "set_new_password": "Neues Passwort speichern",
-    "logging_in": "Anmeldung läuft..."
+    "logging_in": "Anmeldung läuft...",
+    "registered_title": "Konto erstellt",
+    "registered_body": "Sie können sich anmelden und die Website sofort nutzen."
   },
   "body_type_label": "Karosserieform",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Schweizer Automarktplatz"
     },
-    "view_listing": "Inserat ansehen"
+    "view_listing": "Inserat ansehen",
+    "gallery": {
+      "close": "Schliessen",
+      "counter": "{current} von {total}",
+      "next": "Nächstes Foto",
+      "no_photos": "Noch keine Fotos für dieses Inserat",
+      "open_fullscreen": "Vollbild öffnen",
+      "previous": "Vorheriges Foto",
+      "view_all": "Alle {count} Fotos ansehen"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Ich akzeptiere die",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Sie sind der Käufer",
     "you_are_seller": "Sie sind der Verkäufer",
     "you_are_seller_label": "Sie sind der Verkäufer",
-    "verification_required": "Ein Administrator muss Ihr Konto noch verifizieren, bevor Sie Nachrichten senden können. Sie können diese Unterhaltung in der Zwischenzeit weiterlesen."
+    "verification_required": "Ein Administrator hat dieses Konto eingeschränkt, daher können keine Nachrichten gesendet werden. Sie können diese Unterhaltung weiterhin lesen. Bitte wenden Sie sich an den Support, wenn Sie glauben, dass dies ein Fehler ist."
   },
   "city_label": "Stadt",
   "city_placeholder": "Stadt eingeben",
@@ -846,7 +860,6 @@
     "you_have_left": "Sie haben {count} übrig",
     "your_balance": "Ihr Guthaben:"
   },
-  "feature_1_desc": "Alle Verkäufer sind verifizierte Schweizer Einwohner mit authentischen Dokumenten und vollständigen Fahrzeughistorien.",
   "feature_1_title": "Verifizierte Schweizer Verkäufer",
   "feature_2_desc": "Wir konzentrieren uns auf qualitativ hochwertige Gebrauchtwagen zu wettbewerbsfähigen Exportpreisen, die Schweizer Fahrzeuge für internationale Käufer zugänglich machen.",
   "feature_2_title": "Erschwingliche Exportpreise",
@@ -1009,12 +1022,12 @@
       "zip_code": "Postleitzahl"
     },
     "quick_actions": {
-      "get_verified": "Verifizierten Käuferstatus erhalten",
       "list_new_car": "Neues Auto listen",
-      "request_verification": "Verifizierung anfordern",
       "title": "Schnellaktionen",
       "view_dashboard": "Dashboard anzeigen",
-      "view_profile": "Zu meinem Profil"
+      "view_profile": "Zu meinem Profil",
+      "get_verified": "Laden Sie Ihren Ausweis hoch, um bei Auktionen zu bieten",
+      "request_verification": "Auktionsfreigabe beantragen"
     },
     "recent_activity": {
       "empty": "Keine letzten Aktivitäten",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Verifiziert",
     "status": {
-      "pending_title": "Verifizierung ausstehend",
-      "pending_body": "Ein Administrator prüft Ihr Ausweisdokument. In der Zwischenzeit können Sie alle Inserate ansehen. Ein Auto inserieren, Verkäufer anschreiben und bieten wird freigeschaltet, sobald Ihr Konto verifiziert ist.",
-      "verified_title": "Konto verifiziert",
       "verified_body_seller": "Sie können Inserate aufgeben, Käufer anschreiben und die ganze Website nutzen.",
-      "verified_body_buyer": "Sie können Verkäufer anschreiben und Gebote abgeben.",
       "banned_title": "Konto gesperrt",
       "banned_body": "Dieses Konto wurde gesperrt und kann keine Inserate aufgeben, keine Nachrichten schreiben und nicht bieten. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich um einen Fehler handelt.",
-      "missing_id": "Für dieses Konto liegt uns noch kein Ausweisdokument vor, deshalb kann es nicht verifiziert werden. Bitte laden Sie unten eines hoch.",
       "upload_id": "Ausweisdokument hochladen",
       "replace_id": "Ausweisdokument ersetzen",
       "id_uploaded": "Vielen Dank. Ihr Dokument wurde zur Prüfung an die Administratoren gesendet.",
-      "id_upload_failed": "Dieses Dokument konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut."
+      "id_upload_failed": "Dieses Dokument konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
+      "missing_id": "Bitte kontaktieren Sie den Support, damit ein Administrator Ihr Konto prüfen kann.",
+      "pending_body": "Ein Administrator hat dieses Konto eingeschränkt. Sie können die Website weiterhin durchsuchen. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich um einen Fehler handelt.",
+      "pending_title": "Konto eingeschränkt",
+      "verified_body_buyer": "Sie können Verkäufer anschreiben und direkt kaufen. Für Gebote bei Auktionen ist eine einmalige Ausweisprüfung nötig.",
+      "verified_title": "Konto aktiv"
     },
     "password": {
       "title": "Passwort ändern",
       "current": "Aktuelles Passwort",
       "submit": "Passwort ändern",
       "hint": "Ihr neues Passwort muss mindestens 8 Zeichen lang sein. Falls Sie Ihr aktuelles vergessen haben, nutzen Sie stattdessen den Link zum Zurücksetzen."
+    },
+    "auction": {
+      "approved_body": "Sie können auf jede laufende Auktion bieten.",
+      "approved_title": "Für Auktionen freigegeben",
+      "none_body": "Alles andere auf der Website funktioniert bereits. Nur zum Bieten ist eine Ausweisprüfung nötig, denn ein gewonnenes Gebot ist eine Kaufverpflichtung. Laden Sie Reisepass, Identitätskarte oder Führerschein hoch, und ein Administrator gibt Sie frei.",
+      "none_title": "Nicht für Auktionen freigeschaltet",
+      "pending_body": "Ein Administrator prüft Ihr Ausweisdokument. Sobald es freigegeben ist, können Sie bieten, in der Regel innerhalb von 24 Stunden.",
+      "pending_title": "Warten auf Freigabe",
+      "replace_label": "Ausweisdokument ersetzen",
+      "request_button": "Auktionsfreigabe beantragen",
+      "request_failed": "Ihre Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "request_sent": "Anfrage gesendet. Ein Administrator prüft Ihr Ausweisdokument, in der Regel innerhalb von 24 Stunden.",
+      "requesting": "Wird gesendet ...",
+      "title": "Auktionsfreigabe",
+      "upload_first": "Bitte laden Sie zuerst Ihr Ausweisdokument hoch.",
+      "upload_label": "Ausweisdokument hochladen"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Erforderlich für die Auktionsteilnahme. Zulässige Formate: JPG, PNG, PDF (max. 5 MB).",
     "id_upload_label": "Laden Sie Ihren Ausweis hoch (Reisepass, Führerschein)",
     "important_notice": {
-      "message": "Durch die Registrierung als Verkäufer erklären Sie sich damit einverstanden, dass die Angabe falscher Informationen oder betrügerische Aktivitäten zur Sperrung des Kontos führen können. Eine Telefonverifizierung wird für alle Verkäufer vor der Listung von Fahrzeugen erforderlich sein.",
-      "title": "Wichtig"
+      "title": "Wichtig",
+      "message": "Mit der Registrierung als Verkäufer bestätigen Sie, dass falsche Angaben oder betrügerisches Verhalten zur Sperrung Ihres Kontos führen können. Ihre Telefonnummer wird in Ihren Inseraten angezeigt, damit Käufer Sie erreichen können."
     },
     "join_title": "Treten Sie SwissExportCar bei",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Deutschland",
         "italy": "Italien",
         "other": "Andere",
-        "switzerland": "Schweiz"
+        "switzerland": "Schweiz",
+        "CH": "Schweiz",
+        "AL": "Albanien",
+        "DZ": "Algerien",
+        "AM": "Armenien",
+        "AT": "Österreich",
+        "AZ": "Aserbaidschan",
+        "BE": "Belgien",
+        "BJ": "Benin",
+        "BA": "Bosnien und Herzegowina",
+        "BG": "Bulgarien",
+        "BF": "Burkina Faso",
+        "CM": "Kamerun",
+        "HR": "Kroatien",
+        "CZ": "Tschechien",
+        "CD": "Kongo-Kinshasa",
+        "DK": "Dänemark",
+        "EG": "Ägypten",
+        "EE": "Estland",
+        "FI": "Finnland",
+        "FR": "Frankreich",
+        "GM": "Gambia",
+        "GE": "Georgien",
+        "DE": "Deutschland",
+        "GH": "Ghana",
+        "GR": "Griechenland",
+        "GN": "Guinea",
+        "HU": "Ungarn",
+        "IQ": "Irak",
+        "IE": "Irland",
+        "IT": "Italien",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordanien",
+        "KZ": "Kasachstan",
+        "KE": "Kenia",
+        "XK": "Kosovo",
+        "LV": "Lettland",
+        "LB": "Libanon",
+        "LR": "Liberia",
+        "LY": "Libyen",
+        "LT": "Litauen",
+        "LU": "Luxemburg",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Republik Moldau",
+        "ME": "Montenegro",
+        "MA": "Marokko",
+        "NL": "Niederlande",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "Nordmazedonien",
+        "NO": "Norwegen",
+        "PL": "Polen",
+        "PT": "Portugal",
+        "RO": "Rumänien",
+        "SN": "Senegal",
+        "RS": "Serbien",
+        "SK": "Slowakei",
+        "SI": "Slowenien",
+        "ES": "Spanien",
+        "SE": "Schweden",
+        "TZ": "Tansania",
+        "TG": "Togo",
+        "TN": "Tunesien",
+        "TR": "Türkei",
+        "UG": "Uganda",
+        "UA": "Ukraine",
+        "GB": "Vereinigtes Königreich",
+        "ZM": "Sambia",
+        "ZW": "Simbabwe"
       },
       "country": "Land",
       "select_canton": "Kanton auswählen",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Telefonnummer",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Jedes Land möglich. Bitte mit Ländervorwahl angeben, eine Schweizer Nummer ist nicht erforderlich.",
+      "optional": "optional",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Gewerbe",
@@ -1187,18 +1287,21 @@
       "password_length": "Passwort muss mindestens 8 Zeichen lang sein",
       "passwords_not_match": "Passwörter stimmen nicht überein",
       "phone_too_short": "Telefonnummer zu kurz",
-      "id_required": "Bitte laden Sie Ihr Ausweisdokument hoch. Ein Administrator benötigt es, um Ihr Konto zu verifizieren.",
       "id_consent_required": "Bitte bestätigen Sie, dass Sie mit der Verarbeitung Ihres Ausweisdokuments einverstanden sind.",
       "id_file_type": "Bitte laden Sie eine JPG-, PNG- oder PDF-Datei hoch.",
       "id_file_size": "Diese Datei ist zu gross. Bitte laden Sie ein Dokument mit weniger als 6 MB hoch.",
-      "phone_required": "Eine Telefonnummer ist erforderlich."
+      "id_required": "Für Auktionskonten ist ein Ausweisdokument nötig. Laden Sie eines hoch oder wählen Sie „Autos direkt kaufen“, um sich ohne Ausweis zu registrieren.",
+      "phone_invalid": "Diese Telefonnummer sieht nicht richtig aus. Bitte geben Sie die Ländervorwahl an, zum Beispiel +41 79 123 45 67 oder +40 721 234 567.",
+      "phone_required": "Für Verkäuferkonten ist eine Telefonnummer erforderlich."
     },
-    "id_upload_required_note": "Für jedes Konto ist ein Ausweisdokument nötig. Ein Administrator prüft es, bevor Sie ein Auto inserieren, jemandem schreiben oder ein Gebot abgeben können.",
     "id_consent": "Ich bin damit einverstanden, dass SwissCarExport mein Ausweisdokument ausschliesslich zur Überprüfung meiner Identität verarbeitet, wie beschrieben in der",
-    "approval_notice_title": "Ihr Konto muss zuerst verifiziert werden",
-    "approval_notice_body": "Sie können sich sofort anmelden und die ganze Website ansehen. Ein Auto inserieren, Verkäufer anschreiben und bieten bleibt gesperrt, bis ein Administrator Ihr Ausweisdokument geprüft hat.",
     "buyer_type_auction_short": "Auktionskäufer",
-    "buyer_type_direct_short": "Direktkäufer"
+    "buyer_type_direct_short": "Direktkäufer",
+    "approval_notice_body": "Ihr Konto funktioniert sofort: Sie können sich anmelden, stöbern, Verkäufer anschreiben und direkt kaufen. Nur für Gebote prüft ein Administrator zuerst Ihr Ausweisdokument, in der Regel innerhalb von 24 Stunden.",
+    "approval_notice_title": "Zum Bieten ist eine Freigabe nötig",
+    "id_upload_required_note": "Nur für Auktionen. Bei einem Gebot geht es um echtes Geld, deshalb prüft ein Administrator vorher Ihren Ausweis. Sonst wird er nirgends auf der Website benötigt.",
+    "no_id_needed_body": "Ihr Konto ist sofort nach der Erstellung nutzbar. Ein Ausweis wird nur verlangt, wenn Sie später bei Auktionen mitbieten möchten. Sie können ihn jederzeit in Ihrem Profil hinzufügen.",
+    "no_id_needed_title": "Kein Ausweisdokument nötig"
   },
   "reset_filters": "Filter zurücksetzen",
   "search_button": "Autos suchen",
@@ -1333,8 +1436,8 @@
     "banned_body": "Dieses Konto wurde gesperrt und kann keine Inserate veröffentlichen. Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich um einen Fehler handelt.",
     "buyer_title": "Dies ist ein Käuferkonto",
     "buyer_body": "Nur Verkäuferkonten können Inserate veröffentlichen. Wenn Sie ein Auto für den Export verkaufen möchten, wenden Sie sich bitte an den Support, damit Ihr Konto umgestellt werden kann.",
-    "unverified_title": "Verifizierung ausstehend",
-    "unverified_body": "Ein Administrator muss Ihr Ausweisdokument noch prüfen, bevor Sie Inserate veröffentlichen können. Sobald Ihr Konto verifiziert ist, können Sie inserieren – bis dahin würde nichts gespeichert, was Sie hier eingeben."
+    "unverified_body": "Ein Administrator hat dieses Konto eingeschränkt, daher können derzeit keine Inserate veröffentlicht werden. Bitte kontaktieren Sie den Support. Normalerweise braucht es für ein Inserat keine Freigabe.",
+    "unverified_title": "Konto eingeschränkt"
   },
   "contact_page": {
     "title": "Kontakt",
@@ -1385,5 +1488,6 @@
     "save_failed": "Ihre Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
     "load_failed": "Dieses Inserat konnte nicht geladen werden.",
     "not_yours": "Dieses Inserat gehört einem anderen Verkäufer."
-  }
+  },
+  "feature_1_desc": "Jedes Auto wird von einem Verkäufer in der Schweiz inseriert, mit vollständiger Fahrzeughistorie. Und bei Auktionen wird die Identität der Bieter geprüft, bevor sie bieten dürfen."
 }

@@ -82,7 +82,6 @@
     "login_to_bid": "Inicia sesión para realizar pujas",
     "login_to_bid_link": "inicia sesión",
     "login_to_bid_message": "Debes iniciar sesión para realizar pujas",
-    "login_to_bid_post": "y verificar tu identidad para realizar pujas",
     "login_to_bid_pre": "Debes",
     "login_to_place_bid": "Inicia sesión para realizar una puja",
     "max_button": "Máx.",
@@ -91,7 +90,6 @@
     "place_bid": "Realizar una puja",
     "placing_bid": "Realizando la puja...",
     "processing": "Procesando...",
-    "request_verification": "Solicitar verificación",
     "reserve": "Precio de reserva",
     "reserve_met": "Alcanzado",
     "reserve_not_met": "No alcanzado",
@@ -108,16 +106,21 @@
     "time_left": "restante",
     "time_minutes": "{minutes}m",
     "verification_request_failed": "No se pudo enviar la solicitud de verificación. Inténtalo de nuevo.",
-    "verification_request_sent": "¡Solicitud de verificación enviada! Los administradores revisarán tu solicitud.",
-    "verification_required": "Tendrás que verificar tu identidad para completar la compra.",
-    "verification_time": "Los administradores suelen verificar en un plazo de 24 horas",
     "watching_auction": "Estás siguiendo tu subasta en directo. {count} puja(s) hasta ahora.",
     "winning": "Ganando",
     "your_auction_dashboard": "Tu panel de subasta",
     "your_bid": "Tu puja",
     "your_max_bid": "Tu puja máxima",
     "your_wallet": "Tu monedero",
-    "status_heading": "Estado de la subasta"
+    "status_heading": "Estado de la subasta",
+    "auction_access_pending": "Estamos revisando su acceso a las subastas. Podrá pujar en cuanto un administrador apruebe su documento de identidad.",
+    "auction_access_required": "Pujar es lo único del sitio que requiere verificación de identidad. Suba un documento en su perfil para solicitar el acceso a las subastas.",
+    "go_to_profile": "Ir a mi perfil",
+    "login_to_bid_post": "y obtener acceso a las subastas para poder pujar",
+    "request_verification": "Solicitar acceso a las subastas",
+    "verification_request_sent": "¡Solicitud enviada! Un administrador revisará su documento de identidad.",
+    "verification_required": "Para pujar hace falta una única verificación de identidad. Todo lo demás del sitio funciona sin ella.",
+    "verification_time": "Los administradores suelen aprobarlo en menos de 24 horas"
   },
   "auth": {
     "confirm_message": "Espera mientras verificamos tu dirección de correo electrónico...",
@@ -154,7 +157,9 @@
     "password_change_failed": "No hemos podido cambiar tu contraseña. Inténtalo de nuevo.",
     "new_password": "Nueva contraseña",
     "set_new_password": "Guardar la nueva contraseña",
-    "logging_in": "Iniciando sesión..."
+    "logging_in": "Iniciando sesión...",
+    "registered_title": "Cuenta creada",
+    "registered_body": "Puedes iniciar sesión y empezar a usar el sitio de inmediato."
   },
   "body_type_label": "Tipo de Carrocería",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Marketplace de coches suizos"
     },
-    "view_listing": "Ver anuncio"
+    "view_listing": "Ver anuncio",
+    "gallery": {
+      "close": "Cerrar",
+      "counter": "{current} de {total}",
+      "next": "Foto siguiente",
+      "no_photos": "Este anuncio aún no tiene fotos",
+      "open_fullscreen": "Ver en pantalla completa",
+      "previous": "Foto anterior",
+      "view_all": "Ver las {count} fotos"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Acepto los",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Eres el comprador",
     "you_are_seller": "Eres el vendedor",
     "you_are_seller_label": "Eres el vendedor",
-    "verification_required": "Un administrador todavía tiene que aprobar tu cuenta para que puedas enviar mensajes. Mientras tanto, puedes seguir leyendo esta conversación."
+    "verification_required": "Un administrador ha restringido esta cuenta, por lo que no puede enviar mensajes. Todavía puedes leer esta conversación. Contacta con soporte si crees que es un error."
   },
   "city_label": "Ciudad",
   "city_placeholder": "Introduce la ciudad",
@@ -846,7 +860,6 @@
     "you_have_left": "Te quedan {count}",
     "your_balance": "Tu saldo:"
   },
-  "feature_1_desc": "Todos los vendedores son residentes suizos verificados, con documentación auténtica e historial completo del vehículo.",
   "feature_1_title": "Vendedores suizos verificados",
   "feature_2_desc": "Nos centramos en coches usados de calidad a precios de exportación competitivos, haciendo que los vehículos suizos sean accesibles para compradores internacionales.",
   "feature_2_title": "Precios de exportación asequibles",
@@ -1009,12 +1022,12 @@
       "zip_code": "Código postal"
     },
     "quick_actions": {
-      "get_verified": "Obtén el estado de comprador verificado",
       "list_new_car": "Publicar coche nuevo",
-      "request_verification": "Solicitar verificación",
       "title": "Acciones rápidas",
       "view_dashboard": "Ver panel",
-      "view_profile": "Ir a mi perfil"
+      "view_profile": "Ir a mi perfil",
+      "get_verified": "Suba su documento de identidad para poder pujar en subastas",
+      "request_verification": "Solicitar acceso a las subastas"
     },
     "recent_activity": {
       "empty": "No hay actividad reciente",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Verificado",
     "status": {
-      "pending_title": "Pendiente de aprobación",
-      "pending_body": "Un administrador está revisando tu documento de identidad. Mientras tanto, puedes ver todos los anuncios. Publicar un coche, escribir a un vendedor y pujar se desbloquean en cuanto se aprueba tu cuenta.",
-      "verified_title": "Cuenta aprobada",
       "verified_body_seller": "Puedes publicar anuncios, escribir a los compradores y usar todas las funciones del sitio.",
-      "verified_body_buyer": "Puedes escribir a los vendedores y realizar pujas.",
       "banned_title": "Cuenta suspendida",
       "banned_body": "Esta cuenta ha sido suspendida y no puede publicar, escribir mensajes ni pujar. Si crees que se trata de un error, contacta con el soporte.",
-      "missing_id": "Todavía no tenemos ningún documento de identidad de esta cuenta, así que no se puede aprobar. Sube uno aquí abajo.",
       "upload_id": "Subir tu documento de identidad",
       "replace_id": "Sustituir tu documento de identidad",
       "id_uploaded": "Gracias. Hemos enviado tu documento a los administradores para que lo revisen.",
-      "id_upload_failed": "No hemos podido subir ese documento. Inténtalo de nuevo."
+      "id_upload_failed": "No hemos podido subir ese documento. Inténtalo de nuevo.",
+      "missing_id": "Contacte con el soporte para que un administrador revise su cuenta.",
+      "pending_body": "Un administrador ha restringido esta cuenta. Puede seguir navegando por el sitio. Si cree que se trata de un error, contacte con el soporte.",
+      "pending_title": "Cuenta restringida",
+      "verified_body_buyer": "Puede escribir a los vendedores y comprar directamente. Para pujar en subastas hace falta una única verificación de identidad.",
+      "verified_title": "Cuenta activa"
     },
     "password": {
       "title": "Cambiar contraseña",
       "current": "Contraseña actual",
       "submit": "Cambiar contraseña",
       "hint": "Tu nueva contraseña debe tener al menos 8 caracteres. Si has olvidado la actual, usa el enlace para restablecerla."
+    },
+    "auction": {
+      "approved_body": "Puede realizar pujas en cualquier subasta en directo.",
+      "approved_title": "Aprobado para las subastas",
+      "none_body": "Todo lo demás del sitio ya funciona. Pujar es lo único que requiere una verificación de identidad, porque una puja ganadora es un compromiso de compra. Suba su pasaporte, documento de identidad o carné de conducir y un administrador le dará el visto bueno.",
+      "none_title": "Sin acceso a las subastas",
+      "pending_body": "Un administrador está revisando su documento de identidad. Podrá pujar en cuanto lo apruebe, normalmente en menos de 24 horas.",
+      "pending_title": "Pendiente de aprobación",
+      "replace_label": "Sustituir su documento de identidad",
+      "request_button": "Solicitar acceso a las subastas",
+      "request_failed": "No hemos podido enviar su solicitud. Inténtelo de nuevo.",
+      "request_sent": "Solicitud enviada. Un administrador revisará su documento de identidad, normalmente en menos de 24 horas.",
+      "requesting": "Enviando...",
+      "title": "Acceso a las subastas",
+      "upload_first": "Suba primero su documento de identidad.",
+      "upload_label": "Subir su documento de identidad"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Obligatorio para participar en subastas. Formatos aceptados: JPG, PNG, PDF (máx. 5 MB).",
     "id_upload_label": "Sube tu documento de identidad (pasaporte, carné de conducir)",
     "important_notice": {
-      "message": "Al registrarte como vendedor, aceptas que proporcionar información falsa o realizar actividades fraudulentas puede conllevar la suspensión de la cuenta. Se requerirá la verificación telefónica a todos los vendedores antes de publicar vehículos.",
-      "title": "Importante"
+      "title": "Importante",
+      "message": "Al registrarse como vendedor, acepta que facilitar información falsa o realizar actividades fraudulentas puede conllevar la suspensión de la cuenta. Su número de teléfono se muestra en sus anuncios para que los compradores puedan contactarle."
     },
     "join_title": "Únete a SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Alemania",
         "italy": "Italia",
         "other": "Otro",
-        "switzerland": "Suiza"
+        "switzerland": "Suiza",
+        "CH": "Suiza",
+        "AL": "Albania",
+        "DZ": "Argelia",
+        "AM": "Armenia",
+        "AT": "Austria",
+        "AZ": "Azerbaiyán",
+        "BE": "Bélgica",
+        "BJ": "Benín",
+        "BA": "Bosnia y Herzegovina",
+        "BG": "Bulgaria",
+        "BF": "Burkina Faso",
+        "CM": "Camerún",
+        "HR": "Croacia",
+        "CZ": "Chequia",
+        "CD": "República Democrática del Congo",
+        "DK": "Dinamarca",
+        "EG": "Egipto",
+        "EE": "Estonia",
+        "FI": "Finlandia",
+        "FR": "Francia",
+        "GM": "Gambia",
+        "GE": "Georgia",
+        "DE": "Alemania",
+        "GH": "Ghana",
+        "GR": "Grecia",
+        "GN": "Guinea",
+        "HU": "Hungría",
+        "IQ": "Irak",
+        "IE": "Irlanda",
+        "IT": "Italia",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordania",
+        "KZ": "Kazajistán",
+        "KE": "Kenia",
+        "XK": "Kosovo",
+        "LV": "Letonia",
+        "LB": "Líbano",
+        "LR": "Liberia",
+        "LY": "Libia",
+        "LT": "Lituania",
+        "LU": "Luxemburgo",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Moldavia",
+        "ME": "Montenegro",
+        "MA": "Marruecos",
+        "NL": "Países Bajos",
+        "NE": "Níger",
+        "NG": "Nigeria",
+        "MK": "Macedonia del Norte",
+        "NO": "Noruega",
+        "PL": "Polonia",
+        "PT": "Portugal",
+        "RO": "Rumanía",
+        "SN": "Senegal",
+        "RS": "Serbia",
+        "SK": "Eslovaquia",
+        "SI": "Eslovenia",
+        "ES": "España",
+        "SE": "Suecia",
+        "TZ": "Tanzania",
+        "TG": "Togo",
+        "TN": "Túnez",
+        "TR": "Turquía",
+        "UG": "Uganda",
+        "UA": "Ucrania",
+        "GB": "Reino Unido",
+        "ZM": "Zambia",
+        "ZW": "Zimbabue"
       },
       "country": "País",
       "select_canton": "Selecciona el cantón",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Número de teléfono",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "De cualquier país. Incluya el prefijo internacional; no hace falta un número suizo.",
+      "optional": "opcional",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Empresa",
@@ -1187,18 +1287,21 @@
       "password_length": "La contraseña debe tener al menos 8 caracteres",
       "passwords_not_match": "Las contraseñas no coinciden",
       "phone_too_short": "El número de teléfono es demasiado corto",
-      "id_required": "Sube tu documento de identidad. Un administrador lo necesita para aprobar tu cuenta.",
       "id_consent_required": "Confirma que das tu consentimiento para el tratamiento de tu documento de identidad.",
       "id_file_type": "Sube un archivo JPG, PNG o PDF.",
       "id_file_size": "Ese archivo es demasiado grande. Sube un documento de menos de 6 MB.",
-      "phone_required": "El número de teléfono es obligatorio."
+      "id_required": "Las cuentas de subasta necesitan un documento de identidad. Suba uno o elija «Comprar coches directamente» para registrarse sin él.",
+      "phone_invalid": "Ese número de teléfono no parece correcto. Incluya el prefijo internacional, por ejemplo +41 79 123 45 67 o +40 721 234 567.",
+      "phone_required": "Las cuentas de vendedor necesitan un número de teléfono."
     },
-    "id_upload_required_note": "Todas las cuentas necesitan un documento de identidad. Un administrador lo revisa antes de que puedas publicar un coche, escribir a alguien o realizar una puja.",
     "id_consent": "Doy mi consentimiento para que SwissCarExport trate mi documento de identidad con el único fin de verificar mi identidad, tal como se describe en la",
-    "approval_notice_title": "Antes hay que aprobar tu cuenta",
-    "approval_notice_body": "Puedes iniciar sesión y explorar todo el sitio desde el primer momento. Publicar un coche, escribir a un vendedor y pujar seguirán bloqueados hasta que un administrador revise tu documento de identidad.",
     "buyer_type_auction_short": "Comprador de subasta",
-    "buyer_type_direct_short": "Comprador directo"
+    "buyer_type_direct_short": "Comprador directo",
+    "approval_notice_body": "Su cuenta funciona de inmediato: puede iniciar sesión, explorar los anuncios, escribir a los vendedores y comprar directamente. Solo las pujas tienen que esperar a que un administrador revise su documento de identidad, normalmente en menos de 24 horas.",
+    "approval_notice_title": "Pujar requiere aprobación previa",
+    "id_upload_required_note": "Solo para las subastas. Pujar compromete dinero real, por eso un administrador comprueba su documento de identidad antes de que pueda pujar. Nada más del sitio lo necesita.",
+    "no_id_needed_body": "Su cuenta está lista para usar en cuanto la crea. Solo le pediremos un documento de identidad si más adelante quiere pujar en subastas; puede añadirlo desde su perfil cuando quiera.",
+    "no_id_needed_title": "No hace falta documento de identidad"
   },
   "reset_filters": "Restablecer filtros",
   "search_button": "Buscar Coches",
@@ -1333,8 +1436,8 @@
     "banned_body": "Esta cuenta ha sido suspendida y no puede publicar anuncios. Si crees que se trata de un error, contacta con el soporte.",
     "buyer_title": "Esta es una cuenta de comprador",
     "buyer_body": "Solo las cuentas de vendedor pueden publicar anuncios. Si quieres vender un coche para exportación, contacta con el soporte para que cambien tu cuenta.",
-    "unverified_title": "Pendiente de aprobación",
-    "unverified_body": "Un administrador todavía tiene que revisar tu documento de identidad antes de que puedas publicar anuncios. Podrás publicar en cuanto se apruebe tu cuenta; hasta entonces no se guardaría nada de lo que escribas aquí."
+    "unverified_body": "Un administrador ha restringido esta cuenta, por lo que ahora mismo no puede publicar anuncios. Contacte con el soporte: publicar un coche no suele requerir ninguna aprobación.",
+    "unverified_title": "Cuenta restringida"
   },
   "contact_page": {
     "title": "Contacto",
@@ -1385,5 +1488,6 @@
     "save_failed": "No hemos podido guardar los cambios. Inténtalo de nuevo.",
     "load_failed": "No hemos podido cargar este anuncio.",
     "not_yours": "Este anuncio pertenece a otro vendedor."
-  }
+  },
+  "feature_1_desc": "Cada coche lo publica un vendedor con sede en Suiza, con el historial completo del vehículo, y verificamos la identidad de los pujadores antes de permitirles pujar en las subastas."
 }

@@ -82,7 +82,6 @@
     "login_to_bid": "Veuillez vous connecter pour placer des offres",
     "login_to_bid_link": "vous connecter",
     "login_to_bid_message": "Vous devez vous connecter pour placer des offres",
-    "login_to_bid_post": "et vérifier votre identité pour placer des offres",
     "login_to_bid_pre": "Vous devez",
     "login_to_place_bid": "Veuillez vous connecter pour placer une offre",
     "max_button": "Max",
@@ -91,7 +90,6 @@
     "place_bid": "Placer une Offre",
     "placing_bid": "Placement de l'offre...",
     "processing": "Traitement en cours...",
-    "request_verification": "Demander une Vérification",
     "reserve": "Prix de Réserve",
     "reserve_met": "Atteint",
     "reserve_not_met": "Non Atteint",
@@ -108,16 +106,21 @@
     "time_left": "restant",
     "time_minutes": "{minutes}min",
     "verification_request_failed": "Échec de l'envoi de la demande de vérification. Veuillez réessayer.",
-    "verification_request_sent": "Demande de vérification envoyée ! Les administrateurs examineront votre demande.",
-    "verification_required": "Vous devrez vérifier votre identité pour finaliser l'achat.",
-    "verification_time": "Les administrateurs vérifient généralement sous 24 heures",
     "watching_auction": "Vous regardez vos enchères en direct. {count} offre(s) jusqu'à présent.",
     "winning": "Gagnant",
     "your_auction_dashboard": "Votre Tableau de Bord d'Enchères",
     "your_bid": "Votre offre",
     "your_max_bid": "Votre offre maximale",
     "your_wallet": "Votre Portefeuille",
-    "status_heading": "Statut de l’enchère"
+    "status_heading": "Statut de l’enchère",
+    "auction_access_pending": "Votre accès aux enchères est en cours d'examen. Vous pourrez placer des offres dès qu'un administrateur aura validé votre pièce d'identité.",
+    "auction_access_required": "Les enchères sont la seule partie du site qui demande une vérification d'identité. Téléchargez un document depuis votre profil pour demander l'accès aux enchères.",
+    "go_to_profile": "Accéder à mon profil",
+    "login_to_bid_post": "et obtenir l'accès aux enchères pour placer des offres",
+    "request_verification": "Demander l'accès aux enchères",
+    "verification_request_sent": "Demande envoyée ! Un administrateur examinera votre pièce d'identité.",
+    "verification_required": "Pour enchérir, une vérification d'identité unique est nécessaire. Tout le reste du site fonctionne sans.",
+    "verification_time": "Les administrateurs valident généralement sous 24 heures"
   },
   "auth": {
     "confirm_message": "Veuillez patienter pendant que nous vérifions votre adresse email...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Nous n'avons pas pu modifier votre mot de passe. Veuillez réessayer.",
     "new_password": "Nouveau mot de passe",
     "set_new_password": "Enregistrer le nouveau mot de passe",
-    "logging_in": "Connexion en cours..."
+    "logging_in": "Connexion en cours...",
+    "registered_title": "Compte créé",
+    "registered_body": "Vous pouvez vous connecter et commencer à utiliser le site immédiatement."
   },
   "body_type_label": "Type de Carrosserie",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Marketplace automobile suisse"
     },
-    "view_listing": "Voir l'annonce"
+    "view_listing": "Voir l'annonce",
+    "gallery": {
+      "close": "Fermer",
+      "counter": "{current} sur {total}",
+      "next": "Photo suivante",
+      "no_photos": "Pas encore de photo pour cette annonce",
+      "open_fullscreen": "Ouvrir en plein écran",
+      "previous": "Photo précédente",
+      "view_all": "Voir les {count} photos"
+    }
   },
   "car_listing_form": {
     "accept_terms": "J'accepte les",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Vous êtes l'acheteur",
     "you_are_seller": "Vous êtes le vendeur",
     "you_are_seller_label": "Vous êtes le vendeur",
-    "verification_required": "Un administrateur doit encore vérifier votre compte avant que vous puissiez envoyer des messages. Vous pouvez continuer à lire cette conversation en attendant."
+    "verification_required": "Un administrateur a restreint ce compte, il ne peut donc pas envoyer de messages. Vous pouvez toujours lire cette conversation. Contactez le support si vous pensez qu'il s'agit d'une erreur."
   },
   "city_label": "Ville",
   "city_placeholder": "Entrer la ville",
@@ -846,7 +860,6 @@
     "you_have_left": "Il vous en reste {count}",
     "your_balance": "Votre Solde :"
   },
-  "feature_1_desc": "Tous les vendeurs sont des résidents suisses vérifiés avec une documentation authentique et des historiques complets de véhicules.",
   "feature_1_title": "Vendeurs Suisses Vérifiés",
   "feature_2_desc": "Nous nous concentrons sur des voitures d'occasion de qualité à des prix d'exportation compétitifs, rendant les véhicules suisses accessibles aux acheteurs internationaux.",
   "feature_2_title": "Prix d'Exportation Abordables",
@@ -1009,12 +1022,12 @@
       "zip_code": "Code Postal"
     },
     "quick_actions": {
-      "get_verified": "Obtenir le statut d'acheteur vérifié",
       "list_new_car": "Annoncer une Nouvelle Voiture",
-      "request_verification": "Demander une Vérification",
       "title": "Actions Rapides",
       "view_dashboard": "Voir le Tableau de Bord",
-      "view_profile": "Accéder à mon profil"
+      "view_profile": "Accéder à mon profil",
+      "get_verified": "Téléchargez votre pièce d'identité pour pouvoir enchérir",
+      "request_verification": "Demander l'accès aux enchères"
     },
     "recent_activity": {
       "empty": "Aucune activité récente",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Vérifié",
     "status": {
-      "pending_title": "En attente de vérification",
-      "pending_body": "Un administrateur est en train d'examiner votre pièce d'identité. Vous pouvez consulter toutes les annonces en attendant. Publier une voiture, écrire à un vendeur et enchérir seront débloqués dès que votre compte sera vérifié.",
-      "verified_title": "Compte vérifié",
       "verified_body_seller": "Vous pouvez publier des annonces, écrire aux acheteurs et utiliser toutes les fonctionnalités du site.",
-      "verified_body_buyer": "Vous pouvez écrire aux vendeurs et placer des offres.",
       "banned_title": "Compte suspendu",
       "banned_body": "Ce compte a été suspendu : il ne peut plus publier d'annonces, envoyer de messages ni placer d'offres. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
-      "missing_id": "Nous n'avons pas encore de pièce d'identité pour ce compte, il ne peut donc pas être vérifié. Veuillez en télécharger une ci-dessous.",
       "upload_id": "Télécharger votre pièce d'identité",
       "replace_id": "Remplacer votre pièce d'identité",
       "id_uploaded": "Merci. Votre document a été transmis aux administrateurs pour vérification.",
-      "id_upload_failed": "Nous n'avons pas pu télécharger ce document. Veuillez réessayer."
+      "id_upload_failed": "Nous n'avons pas pu télécharger ce document. Veuillez réessayer.",
+      "missing_id": "Veuillez contacter le support afin qu'un administrateur examine votre compte.",
+      "pending_body": "Un administrateur a restreint ce compte. Vous pouvez toujours parcourir le site. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
+      "pending_title": "Compte restreint",
+      "verified_body_buyer": "Vous pouvez écrire aux vendeurs et acheter directement. Pour enchérir, une vérification d'identité unique est nécessaire.",
+      "verified_title": "Compte actif"
     },
     "password": {
       "title": "Changer le mot de passe",
       "current": "Mot de passe actuel",
       "submit": "Changer le mot de passe",
       "hint": "Votre nouveau mot de passe doit contenir au moins 8 caractères. Si vous avez oublié l'actuel, utilisez plutôt le lien de réinitialisation."
+    },
+    "auction": {
+      "approved_body": "Vous pouvez placer des offres sur toutes les enchères en cours.",
+      "approved_title": "Approuvé pour les enchères",
+      "none_body": "Tout le reste du site fonctionne déjà. Seules les enchères demandent une vérification d'identité, car une offre gagnante vous engage à acheter. Téléchargez un passeport, une carte d'identité ou un permis de conduire et un administrateur validera votre compte.",
+      "none_title": "Enchères non activées",
+      "pending_body": "Un administrateur vérifie votre pièce d'identité. Vous pourrez placer des offres dès qu'elle sera validée, généralement sous 24 heures.",
+      "pending_title": "En attente d'approbation",
+      "replace_label": "Remplacer votre pièce d'identité",
+      "request_button": "Demander l'accès aux enchères",
+      "request_failed": "Nous n'avons pas pu envoyer votre demande. Veuillez réessayer.",
+      "request_sent": "Demande envoyée. Un administrateur examinera votre pièce d'identité, généralement sous 24 heures.",
+      "requesting": "Envoi…",
+      "title": "Accès aux enchères",
+      "upload_first": "Veuillez d'abord télécharger votre pièce d'identité.",
+      "upload_label": "Télécharger votre pièce d'identité"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Requis pour la participation aux enchères. Formats acceptés : JPG, PNG, PDF (max 5 Mo).",
     "id_upload_label": "Téléchargez votre pièce d'identité (passeport, permis de conduire)",
     "important_notice": {
-      "message": "En vous inscrivant en tant que vendeur, vous acceptez que la fourniture de fausses informations ou une activité frauduleuse puisse entraîner la suspension du compte. Une vérification téléphonique sera requise pour tous les vendeurs avant de lister des véhicules.",
-      "title": "Important"
+      "title": "Important",
+      "message": "En vous inscrivant comme vendeur, vous acceptez que toute fausse information ou activité frauduleuse puisse entraîner la suspension de votre compte. Votre numéro de téléphone apparaît sur vos annonces afin que les acheteurs puissent vous joindre."
     },
     "join_title": "Rejoignez SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Allemagne",
         "italy": "Italie",
         "other": "Autre",
-        "switzerland": "Suisse"
+        "switzerland": "Suisse",
+        "CH": "Suisse",
+        "AL": "Albanie",
+        "DZ": "Algérie",
+        "AM": "Arménie",
+        "AT": "Autriche",
+        "AZ": "Azerbaïdjan",
+        "BE": "Belgique",
+        "BJ": "Bénin",
+        "BA": "Bosnie-Herzégovine",
+        "BG": "Bulgarie",
+        "BF": "Burkina Faso",
+        "CM": "Cameroun",
+        "HR": "Croatie",
+        "CZ": "Tchéquie",
+        "CD": "Congo-Kinshasa",
+        "DK": "Danemark",
+        "EG": "Égypte",
+        "EE": "Estonie",
+        "FI": "Finlande",
+        "FR": "France",
+        "GM": "Gambie",
+        "GE": "Géorgie",
+        "DE": "Allemagne",
+        "GH": "Ghana",
+        "GR": "Grèce",
+        "GN": "Guinée",
+        "HU": "Hongrie",
+        "IQ": "Irak",
+        "IE": "Irlande",
+        "IT": "Italie",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordanie",
+        "KZ": "Kazakhstan",
+        "KE": "Kenya",
+        "XK": "Kosovo",
+        "LV": "Lettonie",
+        "LB": "Liban",
+        "LR": "Liberia",
+        "LY": "Libye",
+        "LT": "Lituanie",
+        "LU": "Luxembourg",
+        "MT": "Malte",
+        "ML": "Mali",
+        "MD": "Moldavie",
+        "ME": "Monténégro",
+        "MA": "Maroc",
+        "NL": "Pays-Bas",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "Macédoine du Nord",
+        "NO": "Norvège",
+        "PL": "Pologne",
+        "PT": "Portugal",
+        "RO": "Roumanie",
+        "SN": "Sénégal",
+        "RS": "Serbie",
+        "SK": "Slovaquie",
+        "SI": "Slovénie",
+        "ES": "Espagne",
+        "SE": "Suède",
+        "TZ": "Tanzanie",
+        "TG": "Togo",
+        "TN": "Tunisie",
+        "TR": "Turquie",
+        "UG": "Ouganda",
+        "UA": "Ukraine",
+        "GB": "Royaume-Uni",
+        "ZM": "Zambie",
+        "ZW": "Zimbabwe"
       },
       "country": "Pays",
       "select_canton": "Sélectionner le Canton",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Numéro de Téléphone",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Tous les pays acceptés. Merci d'indiquer votre indicatif : un numéro suisse n'est pas obligatoire.",
+      "optional": "facultatif",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Entreprise",
@@ -1187,18 +1287,21 @@
       "password_length": "Le mot de passe doit contenir au moins 8 caractères",
       "passwords_not_match": "Les mots de passe ne correspondent pas",
       "phone_too_short": "Numéro de téléphone trop court",
-      "id_required": "Veuillez télécharger votre pièce d'identité. Un administrateur en a besoin pour valider votre compte.",
       "id_consent_required": "Veuillez confirmer que vous acceptez le traitement de votre pièce d'identité.",
       "id_file_type": "Veuillez télécharger un fichier JPG, PNG ou PDF.",
       "id_file_size": "Ce fichier est trop volumineux. Veuillez télécharger un document de moins de 6 Mo.",
-      "phone_required": "Un numéro de téléphone est obligatoire."
+      "id_required": "Les comptes enchères nécessitent une pièce d'identité. Téléchargez-en une ou choisissez « Acheter des voitures directement » pour vous inscrire sans.",
+      "phone_invalid": "Ce numéro de téléphone semble incorrect. Merci d'indiquer votre indicatif, par exemple +41 79 123 45 67 ou +40 721 234 567.",
+      "phone_required": "Un numéro de téléphone est obligatoire pour les comptes vendeur."
     },
-    "id_upload_required_note": "Chaque compte doit fournir une pièce d'identité. Un administrateur la vérifie avant que vous puissiez publier une voiture, envoyer un message ou placer une offre.",
     "id_consent": "J'accepte que SwissCarExport traite ma pièce d'identité dans le seul but de vérifier mon identité, comme décrit dans la",
-    "approval_notice_title": "Votre compte doit d'abord être vérifié",
-    "approval_notice_body": "Vous pouvez vous connecter et parcourir tout le site immédiatement. Publier une voiture, écrire à un vendeur et enchérir restent bloqués tant qu'un administrateur n'a pas vérifié votre pièce d'identité.",
     "buyer_type_auction_short": "Achèteur aux enchères",
-    "buyer_type_direct_short": "Acheteur direct"
+    "buyer_type_direct_short": "Acheteur direct",
+    "approval_notice_body": "Votre compte est utilisable immédiatement : vous pouvez vous connecter, parcourir les annonces, écrire aux vendeurs et acheter directement. Seules les offres attendent qu'un administrateur vérifie votre pièce d'identité, généralement sous 24 heures.",
+    "approval_notice_title": "Enchérir demande une approbation",
+    "id_upload_required_note": "Uniquement pour les enchères. Une offre engage de l'argent réel : un administrateur vérifie donc votre pièce d'identité avant que vous puissiez enchérir. Rien d'autre sur le site ne le demande.",
+    "no_id_needed_body": "Votre compte est utilisable dès sa création. Une pièce d'identité n'est demandée que si vous souhaitez ensuite enchérir : vous pouvez en ajouter une depuis votre profil à tout moment.",
+    "no_id_needed_title": "Aucune pièce d'identité requise"
   },
   "reset_filters": "Réinitialiser les Filtres",
   "search_button": "Rechercher des Voitures",
@@ -1333,8 +1436,8 @@
     "banned_body": "Ce compte a été suspendu et ne peut pas publier d'annonces. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
     "buyer_title": "Ceci est un compte acheteur",
     "buyer_body": "Seuls les comptes vendeur peuvent publier des annonces. Si vous souhaitez vendre une voiture à l'exportation, contactez le support pour faire modifier votre compte.",
-    "unverified_title": "En attente de vérification",
-    "unverified_body": "Un administrateur doit encore examiner votre pièce d'identité avant que vous puissiez publier des annonces. Vous pourrez publier dès que votre compte sera vérifié — d'ici là, rien de ce que vous saisissez ici ne serait enregistré."
+    "unverified_body": "Un administrateur a restreint ce compte, il ne peut donc pas publier d'annonces pour le moment. Contactez le support : publier une voiture ne demande normalement aucune approbation.",
+    "unverified_title": "Compte restreint"
   },
   "contact_page": {
     "title": "Contact",
@@ -1385,5 +1488,6 @@
     "save_failed": "Nous n'avons pas pu enregistrer vos modifications. Veuillez réessayer.",
     "load_failed": "Nous n'avons pas pu charger cette annonce.",
     "not_yours": "Cette annonce appartient à un autre vendeur."
-  }
+  },
+  "feature_1_desc": "Chaque voiture est publiée par un vendeur basé en Suisse, avec l'historique complet du véhicule, et l'identité des enchérisseurs est vérifiée avant qu'ils puissent placer une offre."
 }

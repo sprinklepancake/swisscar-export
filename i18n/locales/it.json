@@ -82,7 +82,6 @@
     "login_to_bid": "Accedi per piazzare offerte",
     "login_to_bid_link": "accedi",
     "login_to_bid_message": "Devi accedere per piazzare offerte",
-    "login_to_bid_post": "e verificare la tua identità per piazzare offerte",
     "login_to_bid_pre": "Devi",
     "login_to_place_bid": "Accedi per piazzare un'offerta",
     "max_button": "Max",
@@ -91,7 +90,6 @@
     "place_bid": "Piazza un'offerta",
     "placing_bid": "Invio offerta in corso...",
     "processing": "Elaborazione in corso...",
-    "request_verification": "Richiedi verifica",
     "reserve": "Prezzo di riserva",
     "reserve_met": "Raggiunto",
     "reserve_not_met": "Non raggiunto",
@@ -108,16 +106,21 @@
     "time_left": "rimanenti",
     "time_minutes": "{minutes}m",
     "verification_request_failed": "Impossibile inviare la richiesta di verifica. Riprova.",
-    "verification_request_sent": "Richiesta di verifica inviata! Gli amministratori esamineranno la tua richiesta.",
-    "verification_required": "Dovrai verificare la tua identità per completare l'acquisto.",
-    "verification_time": "Gli amministratori effettuano di norma la verifica entro 24 ore",
     "watching_auction": "Stai seguendo la tua asta dal vivo. {count} offerta/e finora.",
     "winning": "In testa",
     "your_auction_dashboard": "La tua dashboard aste",
     "your_bid": "La tua offerta",
     "your_max_bid": "La tua offerta massima",
     "your_wallet": "Il tuo portafoglio",
-    "status_heading": "Stato dell’asta"
+    "status_heading": "Stato dell’asta",
+    "auction_access_pending": "Il tuo accesso alle aste è in fase di verifica. Potrai piazzare offerte non appena un amministratore avrà approvato il tuo documento d'identità.",
+    "auction_access_required": "Le offerte sono l'unica parte del sito che richiede la verifica dell'identità. Carica un documento nel tuo profilo per richiedere l'accesso alle aste.",
+    "go_to_profile": "Vai al mio profilo",
+    "login_to_bid_post": "e ottieni l'accesso alle aste per piazzare offerte",
+    "request_verification": "Richiedi accesso alle aste",
+    "verification_request_sent": "Richiesta inviata! Un amministratore esaminerà il tuo documento d'identità.",
+    "verification_required": "Per piazzare offerte serve una verifica dell'identità una tantum. Tutto il resto del sito funziona senza.",
+    "verification_time": "Di solito gli amministratori approvano entro 24 ore"
   },
   "auth": {
     "confirm_message": "Attendi mentre verifichiamo il tuo indirizzo email...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Non siamo riusciti a modificare la tua password. Riprova.",
     "new_password": "Nuova password",
     "set_new_password": "Salva la nuova password",
-    "logging_in": "Accesso in corso..."
+    "logging_in": "Accesso in corso...",
+    "registered_title": "Account creato",
+    "registered_body": "Puoi accedere e iniziare subito a usare il sito."
   },
   "body_type_label": "Tipo di Carrozzeria",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Marketplace di auto svizzero"
     },
-    "view_listing": "Visualizza annuncio"
+    "view_listing": "Visualizza annuncio",
+    "gallery": {
+      "close": "Chiudi",
+      "counter": "{current} di {total}",
+      "next": "Foto successiva",
+      "no_photos": "Ancora nessuna foto per questo annuncio",
+      "open_fullscreen": "Apri a schermo intero",
+      "previous": "Foto precedente",
+      "view_all": "Vedi tutte le {count} foto"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Accetto i",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Sei l'acquirente",
     "you_are_seller": "Sei il venditore",
     "you_are_seller_label": "Sei il venditore",
-    "verification_required": "Un amministratore deve ancora approvare il tuo account prima che tu possa inviare messaggi. Nel frattempo puoi continuare a leggere questa conversazione."
+    "verification_required": "Un amministratore ha limitato questo account, quindi non può inviare messaggi. Puoi comunque leggere questa conversazione. Contatta l'assistenza se pensi che sia un errore."
   },
   "city_label": "Città",
   "city_placeholder": "Inserisci la città",
@@ -846,7 +860,6 @@
     "you_have_left": "Te ne restano {count}",
     "your_balance": "Il tuo saldo:"
   },
-  "feature_1_desc": "Tutti i venditori sono residenti svizzeri verificati con documentazione autentica e storico completo del veicolo.",
   "feature_1_title": "Venditori svizzeri verificati",
   "feature_2_desc": "Ci concentriamo su auto usate di qualità a prezzi di esportazione competitivi, rendendo i veicoli svizzeri accessibili agli acquirenti internazionali.",
   "feature_2_title": "Prezzi di esportazione accessibili",
@@ -1009,12 +1022,12 @@
       "zip_code": "CAP"
     },
     "quick_actions": {
-      "get_verified": "Ottieni lo stato di acquirente verificato",
       "list_new_car": "Pubblica una nuova auto",
-      "request_verification": "Richiedi verifica",
       "title": "Azioni rapide",
       "view_dashboard": "Vedi dashboard",
-      "view_profile": "Vai al mio profilo"
+      "view_profile": "Vai al mio profilo",
+      "get_verified": "Carica il documento d'identità per poter piazzare offerte alle aste",
+      "request_verification": "Richiedi accesso alle aste"
     },
     "recent_activity": {
       "empty": "Nessuna attività recente",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Verificato",
     "status": {
-      "pending_title": "In attesa di approvazione",
-      "pending_body": "Un amministratore sta esaminando il tuo documento d'identità. Nel frattempo puoi sfogliare tutti gli annunci. Pubblicare un'auto, scrivere a un venditore e piazzare offerte si sbloccano non appena il tuo account viene approvato.",
-      "verified_title": "Account approvato",
       "verified_body_seller": "Puoi pubblicare annunci, scrivere agli acquirenti e usare tutte le funzioni del sito.",
-      "verified_body_buyer": "Puoi scrivere ai venditori e piazzare offerte.",
       "banned_title": "Account sospeso",
       "banned_body": "Questo account è stato sospeso e non può pubblicare annunci, inviare messaggi né piazzare offerte. Contatta l'assistenza se pensi che si tratti di un errore.",
-      "missing_id": "Non abbiamo ancora un documento d'identità per questo account, quindi non può essere approvato. Caricane uno qui sotto.",
       "upload_id": "Carica il tuo documento d'identità",
       "replace_id": "Sostituisci il tuo documento d'identità",
       "id_uploaded": "Grazie. Il tuo documento è stato inviato agli amministratori per la verifica.",
-      "id_upload_failed": "Non siamo riusciti a caricare il documento. Riprova."
+      "id_upload_failed": "Non siamo riusciti a caricare il documento. Riprova.",
+      "missing_id": "Contatta l'assistenza affinché un amministratore possa esaminare il tuo account.",
+      "pending_body": "Un amministratore ha limitato questo account. Puoi comunque sfogliare il sito. Contatta l'assistenza se pensi che si tratti di un errore.",
+      "pending_title": "Account limitato",
+      "verified_body_buyer": "Puoi scrivere ai venditori e acquistare direttamente. Per piazzare offerte alle aste serve una verifica dell'identità una tantum.",
+      "verified_title": "Account attivo"
     },
     "password": {
       "title": "Cambia password",
       "current": "Password attuale",
       "submit": "Cambia password",
       "hint": "La tua nuova password deve avere almeno 8 caratteri. Se hai dimenticato quella attuale, usa invece il link per reimpostarla."
+    },
+    "auction": {
+      "approved_body": "Puoi piazzare offerte su qualsiasi asta in corso.",
+      "approved_title": "Approvato per le aste",
+      "none_body": "Tutto il resto del sito funziona già. Le offerte sono l'unica cosa che richiede la verifica del documento d'identità, perché un'offerta vincente è un impegno ad acquistare. Carica il passaporto, la carta d'identità o la patente e un amministratore ti approverà.",
+      "none_title": "Non abilitato alle aste",
+      "pending_body": "Un amministratore sta controllando il tuo documento d'identità. Potrai piazzare offerte non appena sarà approvato, di solito entro 24 ore.",
+      "pending_title": "In attesa di approvazione",
+      "replace_label": "Sostituisci il tuo documento d'identità",
+      "request_button": "Richiedi accesso alle aste",
+      "request_failed": "Non siamo riusciti a inviare la tua richiesta. Riprova.",
+      "request_sent": "Richiesta inviata. Un amministratore esaminerà il tuo documento d'identità, di solito entro 24 ore.",
+      "requesting": "Invio in corso…",
+      "title": "Accesso alle aste",
+      "upload_first": "Carica prima il tuo documento d'identità.",
+      "upload_label": "Carica il tuo documento d'identità"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Richiesto per la partecipazione alle aste. Formati accettati: JPG, PNG, PDF (max 5MB).",
     "id_upload_label": "Carica il tuo documento d'identità (passaporto, patente)",
     "important_notice": {
-      "message": "Registrandoti come venditore, accetti che fornire informazioni false o svolgere attività fraudolente può comportare la sospensione dell'account. La verifica telefonica sarà richiesta a tutti i venditori prima di pubblicare veicoli.",
-      "title": "Importante"
+      "title": "Importante",
+      "message": "Registrandoti come venditore, accetti che fornire informazioni false o compiere attività fraudolente possa comportare la sospensione dell'account. Il tuo numero di telefono viene mostrato nei tuoi annunci, così gli acquirenti possono contattarti."
     },
     "join_title": "Unisciti a SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Germania",
         "italy": "Italia",
         "other": "Altro",
-        "switzerland": "Svizzera"
+        "switzerland": "Svizzera",
+        "CH": "Svizzera",
+        "AL": "Albania",
+        "DZ": "Algeria",
+        "AM": "Armenia",
+        "AT": "Austria",
+        "AZ": "Azerbaigian",
+        "BE": "Belgio",
+        "BJ": "Benin",
+        "BA": "Bosnia ed Erzegovina",
+        "BG": "Bulgaria",
+        "BF": "Burkina Faso",
+        "CM": "Camerun",
+        "HR": "Croazia",
+        "CZ": "Cechia",
+        "CD": "Congo - Kinshasa",
+        "DK": "Danimarca",
+        "EG": "Egitto",
+        "EE": "Estonia",
+        "FI": "Finlandia",
+        "FR": "Francia",
+        "GM": "Gambia",
+        "GE": "Georgia",
+        "DE": "Germania",
+        "GH": "Ghana",
+        "GR": "Grecia",
+        "GN": "Guinea",
+        "HU": "Ungheria",
+        "IQ": "Iraq",
+        "IE": "Irlanda",
+        "IT": "Italia",
+        "CI": "Costa d’Avorio",
+        "JO": "Giordania",
+        "KZ": "Kazakistan",
+        "KE": "Kenya",
+        "XK": "Kosovo",
+        "LV": "Lettonia",
+        "LB": "Libano",
+        "LR": "Liberia",
+        "LY": "Libia",
+        "LT": "Lituania",
+        "LU": "Lussemburgo",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Moldavia",
+        "ME": "Montenegro",
+        "MA": "Marocco",
+        "NL": "Paesi Bassi",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "Macedonia del Nord",
+        "NO": "Norvegia",
+        "PL": "Polonia",
+        "PT": "Portogallo",
+        "RO": "Romania",
+        "SN": "Senegal",
+        "RS": "Serbia",
+        "SK": "Slovacchia",
+        "SI": "Slovenia",
+        "ES": "Spagna",
+        "SE": "Svezia",
+        "TZ": "Tanzania",
+        "TG": "Togo",
+        "TN": "Tunisia",
+        "TR": "Turchia",
+        "UG": "Uganda",
+        "UA": "Ucraina",
+        "GB": "Regno Unito",
+        "ZM": "Zambia",
+        "ZW": "Zimbabwe"
       },
       "country": "Paese",
       "select_canton": "Seleziona il cantone",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Numero di telefono",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Da qualsiasi paese. Includi il prefisso internazionale: non serve un numero svizzero.",
+      "optional": "facoltativo",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Azienda",
@@ -1187,18 +1287,21 @@
       "password_length": "La password deve contenere almeno 8 caratteri",
       "passwords_not_match": "Le password non corrispondono",
       "phone_too_short": "Numero di telefono troppo corto",
-      "id_required": "Carica il tuo documento d'identità. Serve a un amministratore per approvare il tuo account.",
       "id_consent_required": "Conferma di acconsentire al trattamento del tuo documento d'identità.",
       "id_file_type": "Carica un file JPG, PNG o PDF.",
       "id_file_size": "Il file è troppo grande. Carica un documento di dimensioni inferiori a 6 MB.",
-      "phone_required": "Il numero di telefono è obbligatorio."
+      "id_required": "Gli account per le aste richiedono un documento d'identità. Caricane uno oppure scegli «Acquista auto direttamente» per registrarti senza.",
+      "phone_invalid": "Il numero di telefono non sembra corretto. Includi il prefisso internazionale, ad esempio +41 79 123 45 67 o +40 721 234 567.",
+      "phone_required": "Per gli account venditore è richiesto un numero di telefono."
     },
-    "id_upload_required_note": "Ogni account ha bisogno di un documento d'identità. Un amministratore lo controlla prima che tu possa pubblicare un'auto, scrivere a qualcuno o piazzare un'offerta.",
     "id_consent": "Acconsento al trattamento del mio documento d'identità da parte di SwissCarExport al solo scopo di verificare la mia identità, come descritto nell'",
-    "approval_notice_title": "Il tuo account deve prima essere approvato",
-    "approval_notice_body": "Puoi accedere e sfogliare subito tutto il sito. Pubblicare un'auto, scrivere a un venditore e piazzare offerte restano bloccati finché un amministratore non ha esaminato il tuo documento d'identità.",
     "buyer_type_auction_short": "Acquirente all’asta",
-    "buyer_type_direct_short": "Acquirente diretto"
+    "buyer_type_direct_short": "Acquirente diretto",
+    "approval_notice_body": "Il tuo account funziona da subito: puoi accedere, sfogliare gli annunci, scrivere ai venditori e acquistare direttamente. Solo per piazzare offerte devi attendere che un amministratore controlli il tuo documento d'identità, di solito entro 24 ore.",
+    "approval_notice_title": "Per le offerte serve prima l'approvazione",
+    "id_upload_required_note": "Solo per le aste. Un'offerta impegna denaro reale, quindi un amministratore verifica il tuo documento prima che tu possa piazzare offerte. Per il resto del sito non serve.",
+    "no_id_needed_body": "Il tuo account è pronto all'uso dal momento in cui lo crei. Un documento d'identità serve solo se in seguito vorrai piazzare offerte alle aste: puoi caricarlo dal tuo profilo in qualsiasi momento.",
+    "no_id_needed_title": "Nessun documento d'identità richiesto"
   },
   "reset_filters": "Reimposta filtri",
   "search_button": "Cerca Auto",
@@ -1333,8 +1436,8 @@
     "banned_body": "Questo account è stato sospeso e non può pubblicare annunci. Contatta l'assistenza se pensi che si tratti di un errore.",
     "buyer_title": "Questo è un account acquirente",
     "buyer_body": "Solo gli account venditore possono pubblicare annunci. Se vuoi vendere un'auto per l'esportazione, contatta l'assistenza per far modificare il tuo account.",
-    "unverified_title": "In attesa di approvazione",
-    "unverified_body": "Un amministratore deve ancora esaminare il tuo documento d'identità prima che tu possa pubblicare annunci. Potrai pubblicare non appena il tuo account sarà approvato: fino ad allora nulla di ciò che inserisci qui verrebbe salvato."
+    "unverified_body": "Un amministratore ha limitato questo account, che quindi non può pubblicare annunci al momento. Contatta l'assistenza: normalmente pubblicare un'auto non richiede alcuna approvazione.",
+    "unverified_title": "Account limitato"
   },
   "contact_page": {
     "title": "Contatto",
@@ -1385,5 +1488,6 @@
     "save_failed": "Non siamo riusciti a salvare le tue modifiche. Riprova.",
     "load_failed": "Non siamo riusciti a caricare questo annuncio.",
     "not_yours": "Questo annuncio appartiene a un altro venditore."
-  }
+  },
+  "feature_1_desc": "Ogni auto è pubblicata da un venditore con sede in Svizzera, con lo storico completo del veicolo, e l'identità degli offerenti viene verificata prima che possano piazzare offerte."
 }

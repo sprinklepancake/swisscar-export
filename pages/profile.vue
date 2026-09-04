@@ -20,7 +20,9 @@
 
     <!-- Profile content -->
     <div v-else class="space-y-8">
-      <!-- Account status: the single place that explains what this account can do -->
+      <!-- Account status. An account is usable the moment it is created, so
+           this is normally just a green tick — the amber state now means an
+           administrator has RESTRICTED the account, not that it is queued. -->
       <div
         class="rounded-xl border p-5"
         :class="profileData.user.banned
@@ -54,28 +56,78 @@
                   ? (profileData.user.role === 'seller' ? t('profile.status.verified_body_seller') : t('profile.status.verified_body_buyer'))
                   : t('profile.status.pending_body') }}
             </p>
-            <p v-if="!profileData.user.verified && !profileData.user.banned && !profileData.user.hasIdDocument"
-               class="text-sm mt-2 text-amber-900 font-medium">
-              {{ t('profile.status.missing_id') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Auction access. THE one place an ID document is still needed, and the
+           only thing on the site an administrator approves by hand. Signing up,
+           listing a car and messaging a seller all work without any of this.
+           Hidden for a RESTRICTED account (verified = false): requireVerified()
+           rejects those before auction access is ever consulted, so a green
+           "you can bid on any live auction" card directly under the red
+           "account restricted" card was simply false. The status card above
+           already explains the situation. -->
+      <div
+        v-if="!profileData.user.banned && profileData.user.verified"
+        class="rounded-xl border p-5"
+        :class="auctionState === 'approved'
+          ? 'bg-green-50 border-green-300'
+          : auctionState === 'pending'
+            ? 'bg-amber-50 border-amber-300'
+            : 'bg-white border-red-200'"
+      >
+        <div class="flex items-start gap-3">
+          <span class="text-2xl leading-none">
+            {{ auctionState === 'approved' ? '🏆' : auctionState === 'pending' ? '⏳' : '🔒' }}
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold"
+               :class="auctionState === 'approved' ? 'text-green-900' : auctionState === 'pending' ? 'text-amber-900' : 'text-red-800'">
+              {{ t('profile.auction.title') }} —
+              {{ auctionState === 'approved'
+                ? t('profile.auction.approved_title')
+                : auctionState === 'pending'
+                  ? t('profile.auction.pending_title')
+                  : t('profile.auction.none_title') }}
+            </p>
+            <p class="text-sm mt-1"
+               :class="auctionState === 'approved' ? 'text-green-700' : auctionState === 'pending' ? 'text-amber-800' : 'text-red-600'">
+              {{ auctionState === 'approved'
+                ? t('profile.auction.approved_body')
+                : auctionState === 'pending'
+                  ? t('profile.auction.pending_body')
+                  : t('profile.auction.none_body') }}
             </p>
           </div>
         </div>
 
-        <!-- Upload / replace the ID document -->
-        <div v-if="!profileData.user.verified && !profileData.user.banned" class="mt-4 pt-4 border-t border-amber-200">
-          <label class="block text-sm font-medium text-amber-900 mb-2">
-            {{ profileData.user.hasIdDocument ? t('profile.status.replace_id') : t('profile.status.upload_id') }}
+        <!-- Upload / replace the document, then ask for approval. -->
+        <div v-if="auctionState !== 'approved'" class="mt-4 pt-4 border-t"
+             :class="auctionState === 'pending' ? 'border-amber-200' : 'border-red-200'">
+          <label class="block text-sm font-medium mb-2"
+                 :class="auctionState === 'pending' ? 'text-amber-900' : 'text-red-700'">
+            {{ profileData.user.hasIdDocument ? t('profile.auction.replace_label') : t('profile.auction.upload_label') }}
           </label>
           <input
             type="file"
             accept="image/*,application/pdf,.pdf"
             :disabled="uploadingId"
             @change="onIdUpload"
-            class="block w-full text-sm text-amber-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-900 hover:file:bg-amber-200"
+            class="block w-full text-sm text-red-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-100 file:text-red-800 hover:file:bg-red-200"
           />
           <p v-if="idUploadMessage" class="text-sm mt-2" :class="idUploadError ? 'text-red-700' : 'text-green-700'">
             {{ idUploadMessage }}
           </p>
+
+          <button
+            v-if="profileData.user.hasIdDocument && auctionState !== 'pending'"
+            @click="requestAuctionAccess"
+            :disabled="requestingAuction"
+            class="mt-3 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+          >
+            {{ requestingAuction ? t('profile.auction.requesting') : t('profile.auction.request_button') }}
+          </button>
         </div>
       </div>
 
@@ -94,7 +146,7 @@
                 <!-- This used to read "Verified Seller" for every seller, including
                      ones an admin had not approved yet. -->
                 <span class="capitalize">{{ roleLabel }}</span>
-                <span v-if="profileData.user.verified" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                <span v-if="profileData.user.verifiedBuyer" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                   ✓ {{ t('profile.verified') }}
                 </span>
               </p>
@@ -275,7 +327,7 @@
                 </div>
               </div>
 
-              <div class="flex justify-end space-x-3 pt-4">
+              <div class="flex justify-end gap-3 pt-4">
                 <button 
                   type="button"
                   @click="toggleEditMode"
@@ -330,56 +382,12 @@
               </svg>
             </NuxtLink>
 
-            <!-- Verification Status Banner -->
-            <div v-if="profileData.user.role === 'buyer'" class="w-full p-4 rounded-lg border mb-2"
-              :class="profileData.user.verified
-                ? 'bg-green-50 border-green-200'
-                : 'bg-yellow-50 border-yellow-200'"
-            >
-              <div class="flex items-center gap-3">
-                <div v-if="profileData.user.verified" class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div v-else class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p class="font-semibold text-sm"
-                    :class="profileData.user.verified ? 'text-green-800' : 'text-yellow-800'">
-                    {{ profileData.user.verified ? '✅ Account Verified' : '⏳ Pending Verification' }}
-                  </p>
-                  <p class="text-xs mt-0.5"
-                    :class="profileData.user.verified ? 'text-green-600' : 'text-yellow-600'">
-                    {{ profileData.user.verified
-                      ? (profileData.user.buyerType === 'auction' ? 'You can bid on auctions and contact sellers.' : 'You can contact sellers and browse listings.')
-                      : 'An admin is reviewing your account. You will be able to contact sellers once verified.' }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              v-if="!profileData.user.verified"
-              @click="requestVerification"
-              class="w-full flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
-            >
-              <div class="flex items-center">
-                <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-                <div>
-                  <span class="text-red-800 font-medium">{{ t('profile.quick_actions.request_verification') }}</span>
-                  <p class="text-red-600 text-sm mt-1">{{ t('profile.quick_actions.get_verified') }}</p>
-                </div>
-              </div>
-              <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
+            <!-- The old "Verification Status Banner" and "Request
+                 Verification" button lived here. Both described a queue that no
+                 longer exists — an account is active from the moment it is
+                 created. The one thing that IS still reviewed, auction access,
+                 has its own card at the top of this page, so duplicating it
+                 here only made people think they were waiting for something. -->
           </div>
         </div>
       </div>
@@ -726,7 +734,7 @@ const transactions = ref<any[]>([])
 const emptyProfile = () => ({
   user: {
     id: null, name: '', email: '', role: '', joinedAt: new Date().toISOString(),
-    funds: 0, verified: false, banned: false, phone: '', companyName: '',
+    funds: 0, verified: false, verifiedBuyer: false, banned: false, phone: '', companyName: '',
     businessType: '', streetAddress: '', city: '', canton: '', zipCode: '',
     profileImage: '', freeFeatureCredits: 0, buyerType: 'direct', hasIdDocument: false,
   },
@@ -792,7 +800,46 @@ const loadTransactions = async () => {
 
 const refreshTransactions = () => loadTransactions()
 
-// ── ID document upload (so a user who is stuck unverified can fix it) ───────
+// ── Auction access ──────────────────────────────────────────────────────────
+// The only capability on the site that still needs an ID document and a human
+// approval. Registering, listing a car and messaging a seller need none of it.
+//
+//   'approved' — an admin checked the ID; the account can bid.
+//   'pending'  — a document is on file and the account has asked to join.
+//   'none'     — never asked, or no document uploaded yet.
+const auctionState = computed<'approved' | 'pending' | 'none'>(() => {
+  const u = profileData.value.user
+  if (u.verifiedBuyer) return 'approved'
+  if (u.hasIdDocument && u.buyerType === 'auction') return 'pending'
+  return 'none'
+})
+
+const requestingAuction = ref(false)
+
+const requestAuctionAccess = async () => {
+  if (!profileData.value.user.hasIdDocument) {
+    idUploadError.value = true
+    idUploadMessage.value = t('profile.auction.upload_first')
+    return
+  }
+  requestingAuction.value = true
+  idUploadError.value = false
+  idUploadMessage.value = ''
+  try {
+    const data: any = await apiFetch('/api/user/request-auction-access', { method: 'POST' })
+    idUploadMessage.value = data?.message || t('profile.auction.request_sent')
+    // Move the card into its 'pending' state without a full reload.
+    profileData.value.user.buyerType = 'auction'
+    if (data?.alreadyApproved) profileData.value.user.verifiedBuyer = true
+  } catch (err: any) {
+    idUploadError.value = true
+    idUploadMessage.value = err?.data?.statusMessage || t('profile.auction.request_failed')
+  } finally {
+    requestingAuction.value = false
+  }
+}
+
+// ── ID document upload ──────────────────────────────────────────────────────
 const uploadingId = ref(false)
 const idUploadMessage = ref('')
 const idUploadError = ref(false)
@@ -833,6 +880,15 @@ const onIdUpload = async (event: Event) => {
     await apiFetch('/api/user/upload-id', { method: 'POST', body: fd })
     idUploadMessage.value = t('profile.status.id_uploaded')
     profileData.value.user.hasIdDocument = true
+    // Uploading a document IS the request to be let into auctions — there is no
+    // other reason to send one — so queue it in the same step rather than
+    // leaving the user to find a second button.
+    try {
+      await apiFetch('/api/user/request-auction-access', { method: 'POST' })
+      profileData.value.user.buyerType = 'auction'
+    } catch {
+      // The document is stored either way; the user can retry with the button.
+    }
   } catch (err: any) {
     idUploadError.value = true
     idUploadMessage.value = err?.data?.statusMessage || t('profile.status.id_upload_failed')
@@ -902,8 +958,12 @@ const getTransactionStatusClass = (transaction: any) => {
 const roleLabel = computed(() => {
   const u = profileData.value.user
   if (u.role === 'admin') return t('profile.role.administrator')
-  if (u.role === 'seller') return u.verified ? t('profile.role.verified_seller') : t('profile.role.seller')
-  return u.verified ? t('profile.role.verified_buyer') : t('profile.role.registered_buyer')
+  // "Verified" is now about the ID check, which only auction accounts go
+  // through. Every seller is `verified` from signup, so keying the label off
+  // that flag would have relabelled all of them "Verified Seller" — the exact
+  // overclaim this label was rewritten to avoid.
+  if (u.role === 'seller') return u.verifiedBuyer ? t('profile.role.verified_seller') : t('profile.role.seller')
+  return u.verifiedBuyer ? t('profile.role.verified_buyer') : t('profile.role.registered_buyer')
 })
 
 const userInitial = computed(() => profileData.value.user.name?.charAt(0)?.toUpperCase() || '?')
@@ -979,16 +1039,6 @@ const confirmDelete = async (carId: number) => {
     profileData.value.stats.totalListings = Math.max(0, (profileData.value.stats.totalListings || 1) - 1)
   } catch (err: any) {
     alert(err?.data?.statusMessage || t('profile.messages.delete_failed'))
-  }
-}
-
-const requestVerification = async () => {
-  if (!confirm(t('profile.messages.confirm_verification'))) return
-  try {
-    const data: any = await apiFetch('/api/user/request-verification', { method: 'POST' })
-    if (data?.success) alert(data.message || t('profile.messages.verification_sent'))
-  } catch (err: any) {
-    alert(err?.data?.statusMessage || t('profile.messages.verification_failed'))
   }
 }
 

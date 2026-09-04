@@ -82,7 +82,6 @@
     "login_to_bid": "Ju lutemi identifikohuni për të vendosur oferta",
     "login_to_bid_link": "identifikohuni",
     "login_to_bid_message": "Ju duhet të identifikoheni për të vendosur oferta",
-    "login_to_bid_post": "dhe verifikoni identitetin tuaj për të vendosur oferta",
     "login_to_bid_pre": "Ju duhet të",
     "login_to_place_bid": "Ju lutemi identifikohuni për të vendosur një ofertë",
     "max_button": "Maks",
@@ -91,7 +90,6 @@
     "place_bid": "Vendosni një ofertë",
     "placing_bid": "Duke vendosur ofertën...",
     "processing": "Duke përpunuar...",
-    "request_verification": "Kërkoni verifikim",
     "reserve": "Rezervë",
     "reserve_met": "Përmbushur",
     "reserve_not_met": "Jo e përmbushur",
@@ -108,16 +106,21 @@
     "time_left": "mbetur",
     "time_minutes": "{minutes}m",
     "verification_request_failed": "Dërgimi i kërkesës për verifikim dështoi. Ju lutemi provoni përsëri.",
-    "verification_request_sent": "Kërkesa për verifikim u dërgua! Administratorët do ta shqyrtojnë kërkesën tuaj.",
-    "verification_required": "Do t'ju duhet të verifikoni identitetin tuaj për të përfunduar blerjen.",
-    "verification_time": "Administratorët zakonisht verifikojnë brenda 24 orëve",
     "watching_auction": "Ju po ndiqni ankandin tuaj drejtpërdrejt. {count} ofertë(a) deri tani.",
     "winning": "Duke fituar",
     "your_auction_dashboard": "Paneli i ankandit tuaj",
     "your_bid": "Oferta juaj",
     "your_max_bid": "Oferta juaj maksimale",
     "your_wallet": "Portofoli juaj",
-    "status_heading": "Statusi i ankandit"
+    "status_heading": "Statusi i ankandit",
+    "auction_access_pending": "Aksesi juaj në ankande është duke u shqyrtuar. Ofertimi hapet sapo një administrator të miratojë dokumentin tuaj të identitetit.",
+    "auction_access_required": "Ofertimi është pjesa e vetme e faqes që kërkon verifikim identiteti. Ngarkoni një dokument në profilin tuaj për të kërkuar akses në ankande.",
+    "go_to_profile": "Shko te profili im",
+    "login_to_bid_post": "dhe të merrni akses në ankande për të vendosur oferta",
+    "request_verification": "Kërko akses në ankande",
+    "verification_request_sent": "Kërkesa u dërgua! Një administrator do të shqyrtojë dokumentin tuaj të identitetit.",
+    "verification_required": "Ofertimi kërkon një kontroll identiteti një herë të vetme. Gjithçka tjetër në faqe funksionon pa të.",
+    "verification_time": "Administratorët zakonisht japin miratimin brenda 24 orëve"
   },
   "auth": {
     "confirm_message": "Ju lutemi prisni ndërsa verifikojmë adresën tuaj të emailit...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Nuk mundëm ta ndryshojmë fjalëkalimin tuaj. Ju lutemi provoni përsëri.",
     "new_password": "Fjalëkalimi i ri",
     "set_new_password": "Ruaj fjalëkalimin e ri",
-    "logging_in": "Duke u identifikuar..."
+    "logging_in": "Duke u identifikuar...",
+    "registered_title": "Llogaria u krijua",
+    "registered_body": "Mund të identifikoheni dhe të filloni ta përdorni faqen menjëherë."
   },
   "body_type_label": "Tipi i Karrocerisë",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Tregu zviceran i makinave"
     },
-    "view_listing": "Shiko shpalljen"
+    "view_listing": "Shiko shpalljen",
+    "gallery": {
+      "close": "Mbyll",
+      "counter": "{current} nga {total}",
+      "next": "Foto tjetër",
+      "no_photos": "Ende nuk ka foto për këtë shpallje",
+      "open_fullscreen": "Hap në ekran të plotë",
+      "previous": "Foto e mëparshme",
+      "view_all": "Shiko të gjitha {count} fotot"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Pranoj",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Ju jeni blerësi",
     "you_are_seller": "Ju jeni shitësi",
     "you_are_seller_label": "Ju jeni shitësi",
-    "verification_required": "Një administrator ende duhet ta verifikojë llogarinë tuaj përpara se të mund të dërgoni mesazhe. Ndërkohë mund të vazhdoni ta lexoni këtë bisedë."
+    "verification_required": "Një administrator e ka kufizuar këtë llogari, prandaj nuk mund të dërgojë mesazhe. Ju mund ta lexoni ende këtë bisedë. Kontaktoni mbështetjen nëse mendoni se është gabim."
   },
   "city_label": "Qyteti",
   "city_placeholder": "Shkruani qytetin",
@@ -846,7 +860,6 @@
     "you_have_left": "Ju kanë mbetur {count}",
     "your_balance": "Bilanci juaj:"
   },
-  "feature_1_desc": "Të gjithë shitësit janë banorë zviceranë të verifikuar me dokumentacion autentik dhe të dhëna të plota të historikut të automjetit.",
   "feature_1_title": "Shitës zviceranë të verifikuar",
   "feature_2_desc": "Ne fokusohemi te makinat e përdorura cilësore me çmime konkurruese eksporti, duke i bërë automjetet zvicerane të arritshme për blerësit ndërkombëtarë.",
   "feature_2_title": "Çmime të përballueshme eksporti",
@@ -1009,12 +1022,12 @@
       "zip_code": "Kodi postar"
     },
     "quick_actions": {
-      "get_verified": "Merrni statusin e blerësit të verifikuar",
       "list_new_car": "Shpallni makinë të re",
-      "request_verification": "Kërko verifikim",
       "title": "Veprime të shpejta",
       "view_dashboard": "Shiko panelin",
-      "view_profile": "Shko te profili im"
+      "view_profile": "Shko te profili im",
+      "get_verified": "Ngarkoni ID-në tuaj që të mund të ofertoni në ankande",
+      "request_verification": "Kërko akses në ankande"
     },
     "recent_activity": {
       "empty": "Nuk ka aktivitet të fundit",
@@ -1083,24 +1096,40 @@
     },
     "verified": "E verifikuar",
     "status": {
-      "pending_title": "Në pritje të verifikimit",
-      "pending_body": "Një administrator po shqyrton dokumentin tuaj të identitetit. Ndërkohë mund të shfletoni të gjitha shpalljet. Shpallja e një makine, shkrimi te një shitës dhe ofertimi hapen sapo llogaria juaj të verifikohet.",
-      "verified_title": "Llogaria e verifikuar",
       "verified_body_seller": "Mund të publikoni shpallje, t'u shkruani blerësve dhe të përdorni çdo pjesë të faqes.",
-      "verified_body_buyer": "Mund t'u shkruani shitësve dhe të vendosni oferta.",
       "banned_title": "Llogaria e pezulluar",
       "banned_body": "Kjo llogari është pezulluar dhe nuk mund të shpallë, të dërgojë mesazhe ose të ofertojë. Ju lutemi kontaktoni mbështetjen nëse mendoni se ky është një gabim.",
-      "missing_id": "Ende nuk kemi një dokument identiteti për këtë llogari, prandaj ajo nuk mund të verifikohet. Ju lutemi ngarkoni një të tillë më poshtë.",
       "upload_id": "Ngarkoni dokumentin tuaj të identitetit",
       "replace_id": "Zëvendësoni dokumentin tuaj të identitetit",
       "id_uploaded": "Faleminderit. Dokumenti juaj u dërgua te administratorët për shqyrtim.",
-      "id_upload_failed": "Nuk mundëm ta ngarkonim atë dokument. Ju lutemi provoni përsëri."
+      "id_upload_failed": "Nuk mundëm ta ngarkonim atë dokument. Ju lutemi provoni përsëri.",
+      "missing_id": "Ju lutemi kontaktoni mbështetjen që një administrator të shqyrtojë llogarinë tuaj.",
+      "pending_body": "Një administrator e ka kufizuar këtë llogari. Mund ta shfletoni faqen si më parë. Ju lutemi kontaktoni mbështetjen nëse mendoni se ky është një gabim.",
+      "pending_title": "Llogari e kufizuar",
+      "verified_body_buyer": "Mund t'u shkruani shitësve dhe të blini drejtpërdrejt. Ofertimi në ankande kërkon një kontroll identiteti një herë të vetme.",
+      "verified_title": "Llogari aktive"
     },
     "password": {
       "title": "Ndrysho fjalëkalimin",
       "current": "Fjalëkalimi aktual",
       "submit": "Ndrysho fjalëkalimin",
       "hint": "Fjalëkalimi juaj i ri duhet të jetë të paktën 8 karaktere. Nëse e keni harruar atë aktualin, përdorni lidhjen e rivendosjes."
+    },
+    "auction": {
+      "approved_body": "Mund të vendosni oferta në çdo ankand të drejtpërdrejtë.",
+      "approved_title": "I miratuar për ankande",
+      "none_body": "Gjithçka tjetër në faqe funksionon tashmë. Ofertimi është e vetmja gjë që kërkon kontroll identiteti, sepse një ofertë fituese është angazhim për të blerë. Ngarkoni një pasaportë, kartë identiteti ose patentë shoferi dhe një administrator do t'ju miratojë.",
+      "none_title": "Nuk keni akses në ankande",
+      "pending_body": "Një administrator po kontrollon dokumentin tuaj të identitetit. Ofertimi hapet sapo të miratohet, zakonisht brenda 24 orëve.",
+      "pending_title": "Në pritje të miratimit",
+      "replace_label": "Zëvendësoni dokumentin tuaj të identitetit",
+      "request_button": "Kërko akses në ankande",
+      "request_failed": "Nuk mundëm ta dërgonim kërkesën tuaj. Ju lutemi provoni përsëri.",
+      "request_sent": "Kërkesa u dërgua. Një administrator do të shqyrtojë dokumentin tuaj të identitetit, zakonisht brenda 24 orëve.",
+      "requesting": "Duke dërguar...",
+      "title": "Akses në ankande",
+      "upload_first": "Ju lutemi ngarkoni fillimisht dokumentin tuaj të identitetit.",
+      "upload_label": "Ngarkoni dokumentin tuaj të identitetit"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "E nevojshme për pjesëmarrjen në ankand. Formatet e pranuara: JPG, PNG, PDF (maks 5MB).",
     "id_upload_label": "Ngarkoni ID-në tuaj (pasaportë, patentë shoferi)",
     "important_notice": {
-      "message": "Duke u regjistruar si shitës, ju pranoni që dhënia e informacionit të rremë ose aktiviteti mashtrues mund të rezultojë në pezullimin e llogarisë. Verifikimi me telefon do të kërkohet për të gjithë shitësit përpara shpalljes së automjeteve.",
-      "title": "E rëndësishme"
+      "title": "E rëndësishme",
+      "message": "Duke u regjistruar si shitës, pranoni që dhënia e informacioneve të rreme ose aktiviteti mashtrues mund të çojë në pezullimin e llogarisë. Numri juaj i telefonit shfaqet në shpalljet tuaja, që blerësit të mund t'ju kontaktojnë."
     },
     "join_title": "Bashkohuni me SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Gjermani",
         "italy": "Itali",
         "other": "Tjetër",
-        "switzerland": "Zvicër"
+        "switzerland": "Zvicër",
+        "CH": "Zvicër",
+        "AL": "Shqipëri",
+        "DZ": "Algjeri",
+        "AM": "Armeni",
+        "AT": "Austri",
+        "AZ": "Azerbajxhan",
+        "BE": "Belgjikë",
+        "BJ": "Benin",
+        "BA": "Bosnjë-Hercegovinë",
+        "BG": "Bullgari",
+        "BF": "Burkina-Faso",
+        "CM": "Kamerun",
+        "HR": "Kroaci",
+        "CZ": "Çeki",
+        "CD": "Kongo-Kinshasa",
+        "DK": "Danimarkë",
+        "EG": "Egjipt",
+        "EE": "Estoni",
+        "FI": "Finlandë",
+        "FR": "Francë",
+        "GM": "Gambi",
+        "GE": "Gjeorgji",
+        "DE": "Gjermani",
+        "GH": "Ganë",
+        "GR": "Greqi",
+        "GN": "Guine",
+        "HU": "Hungari",
+        "IQ": "Irak",
+        "IE": "Irlandë",
+        "IT": "Itali",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordani",
+        "KZ": "Kazakistan",
+        "KE": "Kenia",
+        "XK": "Kosovë",
+        "LV": "Letoni",
+        "LB": "Liban",
+        "LR": "Liberi",
+        "LY": "Libi",
+        "LT": "Lituani",
+        "LU": "Luksemburg",
+        "MT": "Maltë",
+        "ML": "Mali",
+        "MD": "Moldavi",
+        "ME": "Mal i Zi",
+        "MA": "Marok",
+        "NL": "Holandë",
+        "NE": "Niger",
+        "NG": "Nigeri",
+        "MK": "Maqedonia e Veriut",
+        "NO": "Norvegji",
+        "PL": "Poloni",
+        "PT": "Portugali",
+        "RO": "Rumani",
+        "SN": "Senegal",
+        "RS": "Serbi",
+        "SK": "Sllovaki",
+        "SI": "Slloveni",
+        "ES": "Spanjë",
+        "SE": "Suedi",
+        "TZ": "Tanzani",
+        "TG": "Togo",
+        "TN": "Tunizi",
+        "TR": "Turqi",
+        "UG": "Ugandë",
+        "UA": "Ukrainë",
+        "GB": "Mbretëria e Bashkuar",
+        "ZM": "Zambi",
+        "ZW": "Zimbabve"
       },
       "country": "Shteti",
       "select_canton": "Zgjidhni kantonin",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Numri i telefonit",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Nga çdo shtet. Ju lutemi përfshini prefiksin e shtetit tuaj — nuk kërkohet numër zviceran.",
+      "optional": "opsional",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Biznes",
@@ -1187,18 +1287,21 @@
       "password_length": "Fjalëkalimi duhet të jetë të paktën 8 karaktere i gjatë",
       "passwords_not_match": "Fjalëkalimet nuk përputhen",
       "phone_too_short": "Numri i telefonit është shumë i shkurtër",
-      "id_required": "Ju lutemi ngarkoni dokumentin tuaj të identitetit. Një administratori i duhet për të verifikuar llogarinë tuaj.",
       "id_consent_required": "Ju lutemi konfirmoni se pajtoheni me përpunimin e dokumentit tuaj të identitetit.",
       "id_file_type": "Ju lutemi ngarkoni një skedar JPG, PNG ose PDF.",
       "id_file_size": "Ky skedar është shumë i madh. Ju lutemi ngarkoni një dokument më të vogël se 6 MB.",
-      "phone_required": "Numri i telefonit është i detyrueshëm."
+      "id_required": "Llogaritë për ankande kërkojnë një dokument identiteti. Ngarkoni një të tillë, ose zgjidhni \"Blini makina drejtpërdrejt\" për t'u regjistruar pa të.",
+      "phone_invalid": "Ky numër telefoni nuk duket i saktë. Ju lutemi përfshini prefiksin e shtetit, për shembull +41 79 123 45 67 ose +40 721 234 567.",
+      "phone_required": "Numri i telefonit është i detyrueshëm për llogaritë e shitësve."
     },
-    "id_upload_required_note": "Çdo llogari ka nevojë për një dokument identiteti. Një administrator e kontrollon atë përpara se të mund të shpallni një makinë, t'i shkruani dikujt ose të vendosni një ofertë.",
     "id_consent": "Pajtohem që SwissCarExport të përpunojë dokumentin tim të identitetit vetëm për të verifikuar identitetin tim, siç përshkruhet në",
-    "approval_notice_title": "Llogaria juaj duhet të verifikohet së pari",
-    "approval_notice_body": "Mund të identifikoheni dhe të shfletoni menjëherë të gjithë faqen e internetit. Shpallja e një makine, shkrimi te një shitës dhe ofertimi mbeten të kyçura derisa një administrator të ketë shqyrtuar dokumentin tuaj të identitetit.",
     "buyer_type_auction_short": "Blerës në ankand",
-    "buyer_type_direct_short": "Blerës i drejtpërdrejtë"
+    "buyer_type_direct_short": "Blerës i drejtpërdrejtë",
+    "approval_notice_body": "Llogaria juaj funksionon menjëherë — mund të identifikoheni, të shfletoni, t'u shkruani shitësve dhe të blini drejtpërdrejt. Vetëm vendosja e ofertave pret që një administrator të kontrollojë dokumentin tuaj të identitetit, zakonisht brenda 24 orëve.",
+    "approval_notice_title": "Ofertimi kërkon miratim paraprak",
+    "id_upload_required_note": "Vetëm për ankande. Ofertimi angazhon para reale, prandaj një administrator kontrollon ID-në tuaj para se të ofertoni. Asgjë tjetër në faqe nuk e kërkon.",
+    "no_id_needed_body": "Llogaria juaj është gati për përdorim që në momentin që e krijoni. Dokumenti i identitetit kërkohet vetëm nëse më vonë dëshironi të ofertoni në ankande — mund ta shtoni nga profili juaj në çdo moment.",
+    "no_id_needed_title": "Nuk nevojitet dokument identiteti"
   },
   "reset_filters": "Rivendos filtrat",
   "search_button": "Kërko Makina",
@@ -1333,8 +1436,8 @@
     "banned_body": "Kjo llogari është pezulluar dhe nuk mund të publikojë shpallje. Ju lutemi kontaktoni mbështetjen nëse mendoni se ky është një gabim.",
     "buyer_title": "Kjo është një llogari blerësi",
     "buyer_body": "Vetëm llogaritë e shitësve mund të publikojnë shpallje. Nëse dëshironi të shisni një makinë për eksport, ju lutemi kontaktoni mbështetjen që llogaria juaj të ndryshohet.",
-    "unverified_title": "Në pritje të verifikimit",
-    "unverified_body": "Një administrator ende duhet të shqyrtojë dokumentin tuaj të identitetit përpara se të mund të publikoni shpallje. Do të mund të shpallni sapo llogaria juaj të verifikohet — deri atëherë asgjë nga ajo që shkruani këtu nuk do të ruhet."
+    "unverified_body": "Një administrator e ka kufizuar këtë llogari, prandaj ajo nuk mund të publikojë shpallje për momentin. Ju lutemi kontaktoni mbështetjen — publikimi i një makine normalisht nuk kërkon asnjë miratim.",
+    "unverified_title": "Llogari e kufizuar"
   },
   "contact_page": {
     "title": "Kontakt",
@@ -1385,5 +1488,6 @@
     "save_failed": "Nuk mundëm t'i ruanim ndryshimet tuaja. Ju lutemi provoni përsëri.",
     "load_failed": "Nuk mundëm ta ngarkonim këtë shpallje.",
     "not_yours": "Kjo shpallje i përket një shitësi tjetër."
-  }
+  },
+  "feature_1_desc": "Çdo makinë shpallet nga një shitës me bazë në Zvicër, me historik të plotë të automjetit, dhe ofertuesit në ankande verifikohen para se të mund të ofertojnë."
 }

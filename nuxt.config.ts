@@ -126,6 +126,13 @@ export default defineNuxtConfig({
       redirectOn: 'root',
       fallbackLocale: 'en',
     },
+    // Resolved relative to `restructureDir` (defaults to <rootDir>/i18n), NOT to
+    // the project root — the same rule that makes `langDir: 'locales'` above
+    // point at i18n/locales. So this path means i18n/i18n.config.ts. When the
+    // file actually sat at the repo root, the module found nothing, generated an
+    // empty vueI18nConfigs, and silently dropped every option in it — including
+    // fallbackLocale, which is why an untranslated key rendered as the raw
+    // string "register.no_id_needed_title" instead of the English text.
     vueI18n: './i18n.config.ts',
     // Optimize i18n bundle
     bundle: {

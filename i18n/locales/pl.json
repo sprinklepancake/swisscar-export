@@ -82,7 +82,6 @@
     "login_to_bid": "Zaloguj się, aby składać oferty",
     "login_to_bid_link": "zaloguj się",
     "login_to_bid_message": "Musisz się zalogować, aby składać oferty",
-    "login_to_bid_post": "i zweryfikować swoją tożsamość, aby składać oferty",
     "login_to_bid_pre": "Musisz",
     "login_to_place_bid": "Zaloguj się, aby złożyć ofertę",
     "max_button": "Maks.",
@@ -91,7 +90,6 @@
     "place_bid": "Złóż ofertę",
     "placing_bid": "Składanie oferty...",
     "processing": "Przetwarzanie...",
-    "request_verification": "Poproś o weryfikację",
     "reserve": "Cena minimalna",
     "reserve_met": "Osiągnięta",
     "reserve_not_met": "Nieosiągnięta",
@@ -108,16 +106,21 @@
     "time_left": "pozostało",
     "time_minutes": "{minutes}min",
     "verification_request_failed": "Nie udało się wysłać prośby o weryfikację. Spróbuj ponownie.",
-    "verification_request_sent": "Prośba o weryfikację wysłana! Administratorzy rozpatrzą Twoją prośbę.",
-    "verification_required": "Aby sfinalizować zakup, musisz zweryfikować swoją tożsamość.",
-    "verification_time": "Administratorzy zwykle weryfikują w ciągu 24 godzin",
     "watching_auction": "Obserwujesz swoją aukcję na żywo. Dotychczas ofert: {count}.",
     "winning": "Wygrywasz",
     "your_auction_dashboard": "Panel Twojej aukcji",
     "your_bid": "Twoja oferta",
     "your_max_bid": "Twoja maksymalna oferta",
     "your_wallet": "Twój portfel",
-    "status_heading": "Status aukcji"
+    "status_heading": "Status aukcji",
+    "auction_access_pending": "Twoja prośba o dostęp do aukcji jest sprawdzana. Licytowanie odblokuje się, gdy administrator zatwierdzi Twój dokument tożsamości.",
+    "auction_access_required": "Weryfikacja tożsamości jest potrzebna tylko do licytowania. Prześlij dokument w swoim profilu, aby poprosić o dostęp do aukcji.",
+    "go_to_profile": "Przejdź do mojego profilu",
+    "login_to_bid_post": "i uzyskać dostęp do aukcji, aby składać oferty",
+    "request_verification": "Poproś o dostęp do aukcji",
+    "verification_request_sent": "Prośba wysłana! Administrator sprawdzi Twój dokument tożsamości.",
+    "verification_required": "Licytowanie wymaga jednorazowej weryfikacji tożsamości. Reszta serwisu działa bez niej.",
+    "verification_time": "Administratorzy zwykle zatwierdzają w ciągu 24 godzin"
   },
   "auth": {
     "confirm_message": "Poczekaj, aż zweryfikujemy Twój adres e-mail...",
@@ -154,7 +157,9 @@
     "password_change_failed": "Nie udało się zmienić hasła. Spróbuj ponownie.",
     "new_password": "Nowe hasło",
     "set_new_password": "Zapisz nowe hasło",
-    "logging_in": "Logowanie..."
+    "logging_in": "Logowanie...",
+    "registered_title": "Konto zostało utworzone",
+    "registered_body": "Możesz się zalogować i od razu zacząć korzystać z serwisu."
   },
   "body_type_label": "Typ Nadwozia",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Szwajcarski rynek samochodowy"
     },
-    "view_listing": "Zobacz ogłoszenie"
+    "view_listing": "Zobacz ogłoszenie",
+    "gallery": {
+      "close": "Zamknij",
+      "counter": "{current} z {total}",
+      "next": "Następne zdjęcie",
+      "no_photos": "To ogłoszenie nie ma jeszcze zdjęć",
+      "open_fullscreen": "Otwórz na pełnym ekranie",
+      "previous": "Poprzednie zdjęcie",
+      "view_all": "Zobacz wszystkie zdjęcia ({count})"
+    }
   },
   "car_listing_form": {
     "accept_terms": "Akceptuję",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "Jesteś kupującym",
     "you_are_seller": "Jesteś sprzedawcą",
     "you_are_seller_label": "Jesteś sprzedawcą",
-    "verification_required": "Administrator musi jeszcze zweryfikować Twoje konto, zanim zaczniesz wysyłać wiadomości. W tym czasie możesz nadal czytać tę rozmowę."
+    "verification_required": "Administrator ograniczył to konto, więc nie może wysyłać wiadomości. Nadal możesz czytać tę rozmowę. Skontaktuj się z pomocą, jeśli uważasz, że to pomyłka."
   },
   "city_label": "Miasto",
   "city_placeholder": "Wpisz miasto",
@@ -846,7 +860,6 @@
     "you_have_left": "Pozostało Ci {count}",
     "your_balance": "Twoje saldo:"
   },
-  "feature_1_desc": "Wszyscy sprzedawcy to zweryfikowani mieszkańcy Szwajcarii z autentyczną dokumentacją i pełną historią pojazdu.",
   "feature_1_title": "Zweryfikowani szwajcarscy sprzedawcy",
   "feature_2_desc": "Skupiamy się na wysokiej jakości używanych samochodach w konkurencyjnych cenach eksportowych, udostępniając szwajcarskie pojazdy międzynarodowym kupującym.",
   "feature_2_title": "Przystępne ceny eksportowe",
@@ -1009,12 +1022,12 @@
       "zip_code": "Kod pocztowy"
     },
     "quick_actions": {
-      "get_verified": "Uzyskaj status zweryfikowanego kupującego",
       "list_new_car": "Dodaj nowy samochód",
-      "request_verification": "Poproś o weryfikację",
       "title": "Szybkie działania",
       "view_dashboard": "Zobacz panel",
-      "view_profile": "Przejdź do mojego profilu"
+      "view_profile": "Przejdź do mojego profilu",
+      "get_verified": "Prześlij dokument tożsamości, aby licytować na aukcjach",
+      "request_verification": "Poproś o dostęp do aukcji"
     },
     "recent_activity": {
       "empty": "Brak ostatniej aktywności",
@@ -1083,24 +1096,40 @@
     },
     "verified": "Zweryfikowane",
     "status": {
-      "pending_title": "Oczekuje na weryfikację",
-      "pending_body": "Administrator sprawdza Twój dokument tożsamości. W tym czasie możesz przeglądać wszystkie ogłoszenia. Dodawanie samochodu, pisanie do sprzedawcy i składanie ofert odblokują się, gdy tylko Twoje konto zostanie zweryfikowane.",
-      "verified_title": "Konto zweryfikowane",
       "verified_body_seller": "Możesz dodawać ogłoszenia, pisać do kupujących i korzystać ze wszystkich funkcji serwisu.",
-      "verified_body_buyer": "Możesz pisać do sprzedawców i składać oferty.",
       "banned_title": "Konto zablokowane",
       "banned_body": "To konto zostało zablokowane i nie może dodawać ogłoszeń, wysyłać wiadomości ani składać ofert. Jeśli uważasz, że to pomyłka, skontaktuj się z pomocą techniczną.",
-      "missing_id": "Nie mamy jeszcze dokumentu tożsamości dla tego konta, więc nie możemy go zweryfikować. Prześlij dokument poniżej.",
       "upload_id": "Prześlij swój dokument tożsamości",
       "replace_id": "Zmień swój dokument tożsamości",
       "id_uploaded": "Dziękujemy. Twój dokument został wysłany administratorom do sprawdzenia.",
-      "id_upload_failed": "Nie udało się przesłać tego dokumentu. Spróbuj ponownie."
+      "id_upload_failed": "Nie udało się przesłać tego dokumentu. Spróbuj ponownie.",
+      "missing_id": "Skontaktuj się z pomocą techniczną, aby administrator sprawdził Twoje konto.",
+      "pending_body": "Administrator ograniczył to konto. Nadal możesz przeglądać serwis. Jeśli uważasz, że to pomyłka, skontaktuj się z pomocą techniczną.",
+      "pending_title": "Konto ograniczone",
+      "verified_body_buyer": "Możesz pisać do sprzedawców i kupować bezpośrednio. Licytowanie na aukcjach wymaga jednorazowej weryfikacji tożsamości.",
+      "verified_title": "Konto aktywne"
     },
     "password": {
       "title": "Zmiana hasła",
       "current": "Aktualne hasło",
       "submit": "Zmień hasło",
       "hint": "Nowe hasło musi mieć co najmniej 8 znaków. Jeśli nie pamiętasz aktualnego, skorzystaj z linku do resetu hasła."
+    },
+    "auction": {
+      "approved_body": "Możesz składać oferty na każdej aukcji na żywo.",
+      "approved_title": "Dostęp do aukcji przyznany",
+      "none_body": "Reszta serwisu już działa. Weryfikacji tożsamości wymaga tylko licytowanie, ponieważ wygrana oferta jest zobowiązaniem do zakupu. Prześlij paszport, dowód osobisty lub prawo jazdy, a administrator zatwierdzi Twoje konto.",
+      "none_title": "Brak dostępu do aukcji",
+      "pending_body": "Administrator sprawdza Twój dokument tożsamości. Licytowanie odblokuje się zaraz po zatwierdzeniu, zwykle w ciągu 24 godzin.",
+      "pending_title": "Oczekuje na zatwierdzenie",
+      "replace_label": "Zmień swój dokument tożsamości",
+      "request_button": "Poproś o dostęp do aukcji",
+      "request_failed": "Nie udało się wysłać Twojej prośby. Spróbuj ponownie.",
+      "request_sent": "Prośba wysłana. Administrator sprawdzi Twój dokument tożsamości, zwykle w ciągu 24 godzin.",
+      "requesting": "Wysyłanie...",
+      "title": "Dostęp do aukcji",
+      "upload_first": "Najpierw prześlij swój dokument tożsamości.",
+      "upload_label": "Prześlij swój dokument tożsamości"
     }
   },
   "register": {
@@ -1120,8 +1149,8 @@
     "id_upload_help": "Wymagane do udziału w aukcjach. Akceptowane formaty: JPG, PNG, PDF (maks. 5 MB).",
     "id_upload_label": "Prześlij swój dokument tożsamości (paszport, prawo jazdy)",
     "important_notice": {
-      "message": "Rejestrując się jako sprzedawca, zgadzasz się, że podanie fałszywych informacji lub działalność oszukańcza mogą skutkować zawieszeniem konta. Przed dodaniem pojazdów wszyscy sprzedawcy będą musieli przejść weryfikację telefoniczną.",
-      "title": "Ważne"
+      "title": "Ważne",
+      "message": "Rejestrując się jako sprzedawca, zgadzasz się, że podanie fałszywych informacji lub oszustwo może skutkować zawieszeniem konta. Twój numer telefonu jest widoczny w Twoich ogłoszeniach, aby kupujący mogli się z Tobą skontaktować."
     },
     "join_title": "Dołącz do SwissExportCar",
     "location": {
@@ -1134,7 +1163,76 @@
         "germany": "Niemcy",
         "italy": "Włochy",
         "other": "Inne",
-        "switzerland": "Szwajcaria"
+        "switzerland": "Szwajcaria",
+        "CH": "Szwajcaria",
+        "AL": "Albania",
+        "DZ": "Algieria",
+        "AM": "Armenia",
+        "AT": "Austria",
+        "AZ": "Azerbejdżan",
+        "BE": "Belgia",
+        "BJ": "Benin",
+        "BA": "Bośnia i Hercegowina",
+        "BG": "Bułgaria",
+        "BF": "Burkina Faso",
+        "CM": "Kamerun",
+        "HR": "Chorwacja",
+        "CZ": "Czechy",
+        "CD": "Demokratyczna Republika Konga",
+        "DK": "Dania",
+        "EG": "Egipt",
+        "EE": "Estonia",
+        "FI": "Finlandia",
+        "FR": "Francja",
+        "GM": "Gambia",
+        "GE": "Gruzja",
+        "DE": "Niemcy",
+        "GH": "Ghana",
+        "GR": "Grecja",
+        "GN": "Gwinea",
+        "HU": "Węgry",
+        "IQ": "Irak",
+        "IE": "Irlandia",
+        "IT": "Włochy",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordania",
+        "KZ": "Kazachstan",
+        "KE": "Kenia",
+        "XK": "Kosowo",
+        "LV": "Łotwa",
+        "LB": "Liban",
+        "LR": "Liberia",
+        "LY": "Libia",
+        "LT": "Litwa",
+        "LU": "Luksemburg",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Mołdawia",
+        "ME": "Czarnogóra",
+        "MA": "Maroko",
+        "NL": "Holandia",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "Macedonia Północna",
+        "NO": "Norwegia",
+        "PL": "Polska",
+        "PT": "Portugalia",
+        "RO": "Rumunia",
+        "SN": "Senegal",
+        "RS": "Serbia",
+        "SK": "Słowacja",
+        "SI": "Słowenia",
+        "ES": "Hiszpania",
+        "SE": "Szwecja",
+        "TZ": "Tanzania",
+        "TG": "Togo",
+        "TN": "Tunezja",
+        "TR": "Turcja",
+        "UG": "Uganda",
+        "UA": "Ukraina",
+        "GB": "Wielka Brytania",
+        "ZM": "Zambia",
+        "ZW": "Zimbabwe"
       },
       "country": "Kraj",
       "select_canton": "Wybierz kanton",
@@ -1158,7 +1256,9 @@
     },
     "phone": {
       "label": "Numer telefonu",
-      "placeholder": "+41 79 123 45 67"
+      "international_note": "Dowolny kraj. Podaj numer kierunkowy kraju – szwajcarski numer nie jest wymagany.",
+      "optional": "opcjonalnie",
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567"
     },
     "seller_info": {
       "business": "Firma",
@@ -1187,18 +1287,21 @@
       "password_length": "Hasło musi mieć co najmniej 8 znaków",
       "passwords_not_match": "Hasła nie są zgodne",
       "phone_too_short": "Numer telefonu jest zbyt krótki",
-      "id_required": "Prześlij swój dokument tożsamości. Administrator potrzebuje go, aby zweryfikować Twoje konto.",
       "id_consent_required": "Potwierdź zgodę na przetwarzanie Twojego dokumentu tożsamości.",
       "id_file_type": "Prześlij plik w formacie JPG, PNG lub PDF.",
       "id_file_size": "Ten plik jest za duży. Prześlij dokument mniejszy niż 6 MB.",
-      "phone_required": "Numer telefonu jest wymagany."
+      "id_required": "Konta aukcyjne wymagają dokumentu tożsamości. Prześlij go lub wybierz „Kupuj samochody bezpośrednio”, aby zarejestrować się bez niego.",
+      "phone_invalid": "Ten numer telefonu wygląda na nieprawidłowy. Podaj numer kierunkowy kraju, na przykład +41 79 123 45 67 lub +40 721 234 567.",
+      "phone_required": "Numer telefonu jest wymagany dla kont sprzedawcy."
     },
-    "id_upload_required_note": "Każde konto wymaga dokumentu tożsamości. Administrator sprawdza go, zanim będzie można dodać samochód, napisać wiadomość lub złożyć ofertę.",
     "id_consent": "Wyrażam zgodę na przetwarzanie mojego dokumentu tożsamości przez SwissCarExport wyłącznie w celu potwierdzenia mojej tożsamości, na zasadach opisanych w dokumencie",
-    "approval_notice_title": "Najpierw musimy zweryfikować Twoje konto",
-    "approval_notice_body": "Możesz od razu się zalogować i przeglądać całą stronę. Dodawanie samochodu, pisanie do sprzedawcy i składanie ofert pozostają zablokowane, dopóki administrator nie sprawdzi Twojego dokumentu tożsamości.",
     "buyer_type_auction_short": "Kupujący na aukcji",
-    "buyer_type_direct_short": "Kupujący bezpośredni"
+    "buyer_type_direct_short": "Kupujący bezpośredni",
+    "approval_notice_body": "Twoje konto działa od razu – możesz się zalogować, przeglądać ogłoszenia, pisać do sprzedawców i kupować bezpośrednio. Tylko składanie ofert czeka, aż administrator sprawdzi Twój dokument tożsamości, zwykle w ciągu 24 godzin.",
+    "approval_notice_title": "Licytowanie wymaga zatwierdzenia",
+    "id_upload_required_note": "Dotyczy tylko aukcji. Licytowanie to zobowiązanie finansowe, dlatego administrator sprawdza Twój dokument tożsamości, zanim zaczniesz składać oferty. Nic innego w serwisie tego nie wymaga.",
+    "no_id_needed_body": "Twoje konto jest gotowe do użycia od razu po utworzeniu. Dokument tożsamości jest potrzebny tylko wtedy, gdy zechcesz później licytować na aukcjach – możesz go dodać w swoim profilu w dowolnej chwili.",
+    "no_id_needed_title": "Dokument tożsamości nie jest potrzebny"
   },
   "reset_filters": "Zresetuj filtry",
   "search_button": "Szukaj Samochodów",
@@ -1333,8 +1436,8 @@
     "banned_body": "To konto zostało zablokowane i nie może publikować ogłoszeń. Jeśli uważasz, że to pomyłka, skontaktuj się z pomocą techniczną.",
     "buyer_title": "To jest konto kupującego",
     "buyer_body": "Ogłoszenia mogą publikować tylko konta sprzedawców. Jeśli chcesz sprzedać samochód na eksport, skontaktuj się z pomocą techniczną, aby zmienić typ konta.",
-    "unverified_title": "Oczekuje na weryfikację",
-    "unverified_body": "Administrator musi jeszcze sprawdzić Twój dokument tożsamości, zanim zaczniesz publikować ogłoszenia. Publikowanie odblokuje się, gdy tylko Twoje konto zostanie zweryfikowane — do tego czasu nic, co tu wpiszesz, nie zostanie zapisane."
+    "unverified_body": "Administrator ograniczył to konto, więc nie może ono teraz publikować ogłoszeń. Skontaktuj się z pomocą techniczną – wystawienie samochodu zwykle nie wymaga żadnego zatwierdzenia.",
+    "unverified_title": "Konto ograniczone"
   },
   "contact_page": {
     "title": "Kontakt",
@@ -1385,5 +1488,6 @@
     "save_failed": "Nie udało się zapisać zmian. Spróbuj ponownie.",
     "load_failed": "Nie udało się wczytać tego ogłoszenia.",
     "not_yours": "To ogłoszenie należy do innego sprzedawcy."
-  }
+  },
+  "feature_1_desc": "Każdy samochód jest wystawiany przez sprzedawcę ze Szwajcarii, z pełną historią pojazdu, a tożsamość licytujących jest sprawdzana, zanim będą mogli składać oferty."
 }

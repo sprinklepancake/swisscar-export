@@ -1,4 +1,9 @@
 <template>
+  <!-- Teleported to <body>: layouts/default.vue puts every page inside
+       `<main class="relative z-10">`, which is a stacking context sitting below
+       the `z-50` header. Inside it, even z-[9999] renders UNDER the header —
+       on a phone the chat's top bar came out beneath the hamburger. -->
+  <Teleport to="body">
   <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-start md:items-center justify-center p-2 md:p-4 z-[9999] overflow-y-auto" @click.self="closeChat">
     <div class="glass rounded-2xl max-w-4xl w-full h-[calc(100vh-1rem)] md:h-auto md:max-h-[calc(100vh-2rem)] min-h-[500px] border border-red-200 shadow-2xl flex flex-col my-auto">
       <!-- Chat Header with Car Info -->
@@ -26,7 +31,7 @@
               <div class="flex items-center">
                 <div class="w-12 h-12 flex-shrink-0 mr-3 rounded-lg overflow-hidden border border-red-200">
                   <img 
-                    :src="carInfo.images?.[0] || '/placeholder-car.jpg'" 
+                    :src="carInfo.images?.[0] || '/placeholder-car.svg'" 
                     :alt="carInfo.make + ' ' + carInfo.model"
                     class="w-full h-full object-cover"
                     loading="lazy"
@@ -183,6 +188,7 @@
       </template>
     </div>
   </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -206,8 +212,10 @@ const emit = defineEmits(['update:isOpen', 'close'])
 const auth = useAuth()
 const messagesContainer = ref<HTMLElement | null>(null)
 const messages = ref<any[]>([])
-// Only admin-approved accounts may send. Mirrors the server-side rule in
-// server/api/chat/[id]/send.post.ts so the UI and the API agree.
+// Messaging needs no ID check and no admin approval — every account can do it
+// from the moment it is created. `verified` is now only false for an account an
+// administrator has deliberately restricted. Mirrors requireVerified() in
+// server/utils/auth.ts, which server/api/chat/[id]/send.post.ts goes through.
 const canSend = computed(() => !!auth.user.value?.verified && !auth.user.value?.banned)
 
 const newMessage = ref('')

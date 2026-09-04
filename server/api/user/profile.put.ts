@@ -1,5 +1,6 @@
 // server/api/user/profile.put.ts
 import { getSupabaseAdmin } from '~/server/utils/supabase'
+import { normalisePhone, isPlausiblePhone } from '~/server/utils/phone'
 
 export default defineEventHandler(async (event) => {
   const user = event.context.user
@@ -18,6 +19,20 @@ export default defineEventHandler(async (event) => {
     if (body[field] !== undefined) updateData[field] = body[field]
     else if (body[camelField] !== undefined) updateData[field] = body[camelField]
   })
+
+  // Store international numbers as the user typed them, '+' and all. Any
+  // country's format is accepted — most of this marketplace's buyers are not
+  // Swiss and their numbers are meaningless without a country code.
+  if (updateData.phone !== undefined) {
+    const phone = normalisePhone(updateData.phone)
+    if (phone && !isPlausiblePhone(phone)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'That phone number does not look right. Please include your country code, for example +41 79 123 45 67 or +40 721 234 567.',
+      })
+    }
+    updateData.phone = phone
+  }
 
   if (Object.keys(updateData).length === 0) {
     return { success: true, message: 'No changes to save' }

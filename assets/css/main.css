@@ -381,9 +381,13 @@ header .relative > div[class*="absolute"] { z-index: 50 !important; }
   /* Balance box full width */
   .mt-4.md\:mt-0.bg-white\/50 { margin-top: 1rem !important; width: 100%; }
 
-  /* Edit form buttons: stack */
-  .flex.justify-end.space-x-3 { flex-direction: column !important; gap: 0.5rem; }
-  .flex.justify-end.space-x-3 button { width: 100%; }
+  /* Edit form buttons: stack.
+     Matches .gap-3 now, not .space-x-3: space-x-* leaves a margin-left on the
+     second child that survives the switch to a column, so the stretched button
+     rendered 12px past its container and lost its right corner to
+     `.glass { overflow-x: hidden }`. gap works in both directions. */
+  .flex.justify-end.gap-3 { flex-direction: column !important; gap: 0.5rem; }
+  .flex.justify-end.gap-3 button { width: 100%; }
 
   /* Transaction rows: wrap amount below description */
   .border.border-red-200.rounded-lg.p-4 > .flex.justify-between.items-start {

@@ -2,6 +2,7 @@
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 import { getPlatformSettings } from '~/server/utils/settings'
 import { adjustFunds, InsufficientFundsError } from '~/server/utils/wallet'
+import { requireVerified } from '~/server/utils/auth'
 
 // Columns that are NOT NULL in the DB. If any is missing the insert 500s with
 // a cryptic error, so we check them here and return a clear message instead.
@@ -9,22 +10,15 @@ const REQUIRED = ['make', 'model', 'year', 'mileage', 'fuelType', 'transmission'
 const CONDITIONS = ['excellent', 'good', 'fair', 'poor']
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user
+  // This route hand-rolled its own auth/banned/verified checks, and its
+  // verified message still told sellers to "wait for admin verification" — a
+  // queue that no longer exists. Posting a listing needs no approval at all;
+  // requireVerified() now only rejects an account an admin has deliberately
+  // restricted, and it words the error that way.
+  const user = await requireVerified(event, 'post listings')
 
-  if (!user) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized. Please log in.' })
-  }
   if (user.role !== 'seller' && user.role !== 'admin') {
     throw createError({ statusCode: 403, statusMessage: 'Only sellers can create listings.' })
-  }
-  if (user.banned) {
-    throw createError({ statusCode: 403, statusMessage: 'Your account has been banned.' })
-  }
-  if (!user.verified) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Your account must be verified before you can post listings. Please wait for admin verification.',
-    })
   }
 
   try {

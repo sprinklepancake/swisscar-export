@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, email, name, phone, role, verified, banned, funds, company_name, business_type, canton, city, zip_code, country, profile_image, created_at, updated_at, free_feature_credits, id_document_url, buyer_type')
+      .select('id, email, name, phone, role, verified, verified_buyer, banned, funds, company_name, business_type, canton, city, zip_code, country, profile_image, created_at, updated_at, free_feature_credits, id_document_url, buyer_type')
       .order('created_at', { ascending: false })
 
     if (error) throw error
@@ -40,6 +40,8 @@ export default defineEventHandler(async (event) => {
       return {
         id: u.id, email: u.email, name: u.name, phone: u.phone || '',
         role: u.role, verified: u.verified || false, banned: u.banned || false,
+        // Cleared to bid. Only auction accounts ever need this.
+        verifiedBuyer: u.verified_buyer || false,
         funds: parseFloat(u.funds || 0), companyName: u.company_name || '',
         businessType: u.business_type || '', canton: u.canton || '',
         city: u.city || '', zipCode: u.zip_code || '', country: u.country || '',

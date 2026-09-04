@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const supabase = getSupabaseAdmin()
     const { data: profile } = await supabase
       .from('users')
-      .select('id, email, name, role, funds, verified, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits, buyer_type, id_document_url')
+      .select('id, email, name, role, funds, verified, verified_buyer, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits, buyer_type, id_document_url')
       .eq('id', user.id)
       .single()
 
@@ -57,6 +57,9 @@ export default defineEventHandler(async (event) => {
         joinedAt: profile.created_at,
         funds: parseFloat(profile.funds || 0),
         verified: profile.verified || false,
+        // Auction access is separate from `verified`: an ordinary account is
+        // usable immediately, bidding is what an admin still approves by hand.
+        verifiedBuyer: profile.verified_buyer || false,
         banned: profile.banned || false,
         phone: profile.phone || '',
         companyName: profile.company_name || '',

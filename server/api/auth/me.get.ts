@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
 
     let query = supabase
       .from('users')
-      .select('id, email, name, role, funds, verified, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits')
+      .select('id, email, name, role, funds, verified, verified_buyer, buyer_type, id_document_url, banned, phone, company_name, business_type, canton, city, zip_code, country, tax_id, street_address, profile_image, created_at, free_feature_credits')
 
     if (ctxUser) {
       query = query.eq('id', ctxUser.id)
@@ -41,6 +41,10 @@ export default defineEventHandler(async (event) => {
         phone: profile.phone || '',
         funds: parseFloat(profile.funds || 0),
         verified: profile.verified || false,
+        // Auction access — the only capability that still needs an ID check.
+        verifiedBuyer: profile.verified_buyer || false,
+        buyerType: profile.buyer_type === 'auction' ? 'auction' : 'direct',
+        hasIdDocument: !!profile.id_document_url,
         banned: profile.banned || false,
         companyName: profile.company_name || '',
         businessType: profile.business_type || '',

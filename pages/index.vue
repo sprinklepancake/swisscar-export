@@ -218,7 +218,7 @@
             
             <div class="relative h-40">
               <img 
-                :src="car.images && car.images[0] ? car.images[0] : '/placeholder-car.jpg'" 
+                :src="car.images && car.images[0] ? car.images[0] : '/placeholder-car.svg'" 
                 :alt="`${car.make} ${car.model}`"
                 class="w-full h-full object-cover"
                 loading="lazy"

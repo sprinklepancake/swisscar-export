@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     // Fetch profile from users table
     const { data: profile } = await supabase
       .from('users')
-      .select('id, email, name, role, funds, verified, banned, phone, company_name, profile_image, created_at')
+      .select('id, email, name, role, funds, verified, verified_buyer, buyer_type, id_document_url, banned, phone, company_name, profile_image, created_at')
       .eq('auth_uid', authUser.id)
       .single()
 
@@ -44,6 +44,12 @@ export default defineEventHandler(async (event) => {
       role: profile.role,
       funds: parseFloat(profile.funds || 0),
       verified: profile.verified || false,
+      // Auction access is a separate, ID-backed permission. Every endpoint that
+      // touches bidding reads this rather than `verified`, so it has to be on
+      // the request context or requireAuctionAccess() would deny everyone.
+      verifiedBuyer: profile.verified_buyer || false,
+      buyerType: profile.buyer_type === 'auction' ? 'auction' : 'direct',
+      hasIdDocument: !!profile.id_document_url,
       banned: profile.banned || false,
       phone: profile.phone || '',
       companyName: profile.company_name || '',

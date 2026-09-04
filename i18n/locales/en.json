@@ -82,7 +82,7 @@
     "login_to_bid": "Please log in to place bids",
     "login_to_bid_link": "log in",
     "login_to_bid_message": "You need to login to place bids",
-    "login_to_bid_post": "and verify your ID to place bids",
+    "login_to_bid_post": "and get auction access to place bids",
     "login_to_bid_pre": "You must",
     "login_to_place_bid": "Please log in to place a bid",
     "max_button": "Max",
@@ -91,7 +91,7 @@
     "place_bid": "Place a Bid",
     "placing_bid": "Placing Bid...",
     "processing": "Processing...",
-    "request_verification": "Request Verification",
+    "request_verification": "Request auction access",
     "reserve": "Reserve",
     "reserve_met": "Met",
     "reserve_not_met": "Not Met",
@@ -108,16 +108,19 @@
     "time_left": "left",
     "time_minutes": "{minutes}m",
     "verification_request_failed": "Failed to send verification request. Please try again.",
-    "verification_request_sent": "Verification request sent! Admins will review your request.",
-    "verification_required": "You'll need to verify your identity to complete the purchase.",
-    "verification_time": "Admins typically verify within 24 hours",
+    "verification_request_sent": "Request sent! An administrator will review your ID document.",
+    "verification_required": "Bidding needs a one-off ID check. Everything else on the site works without one.",
+    "verification_time": "Administrators usually approve within 24 hours",
     "watching_auction": "You're watching your auction live. {count} bid(s) so far.",
     "winning": "Winning",
     "your_auction_dashboard": "Your Auction Dashboard",
     "your_bid": "Your bid",
     "your_max_bid": "Your max bid",
     "your_wallet": "Your Wallet",
-    "status_heading": "Auction status"
+    "status_heading": "Auction status",
+    "auction_access_pending": "Your auction access is being reviewed. Bidding unlocks as soon as an administrator approves your ID document.",
+    "auction_access_required": "Bidding is the only part of the site that needs ID verification. Upload a document on your profile to request auction access.",
+    "go_to_profile": "Go to my profile"
   },
   "auth": {
     "confirm_message": "Please wait while we verify your email address...",
@@ -154,7 +157,9 @@
     "password_change_failed": "We could not change your password. Please try again.",
     "new_password": "New password",
     "set_new_password": "Save new password",
-    "logging_in": "Logging in..."
+    "logging_in": "Logging in...",
+    "registered_title": "Account created",
+    "registered_body": "You can log in and start using the site right away."
   },
   "body_type_label": "Body Type",
   "body_types": {
@@ -374,7 +379,16 @@
     "seo": {
       "title": "{make} {model} ({year}) - Swiss Car Marketplace"
     },
-    "view_listing": "View Listing"
+    "view_listing": "View Listing",
+    "gallery": {
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "counter": "{current} of {total}",
+      "view_all": "View all {count} photos",
+      "open_fullscreen": "Open full screen",
+      "close": "Close",
+      "no_photos": "No photos for this listing yet"
+    }
   },
   "car_listing_form": {
     "accept_terms": "I accept the",
@@ -727,7 +741,7 @@
     "you_are_buyer_label": "You are the buyer",
     "you_are_seller": "You are the seller",
     "you_are_seller_label": "You are the seller",
-    "verification_required": "An administrator still has to approve your account before you can send messages. You can keep reading this conversation in the meantime."
+    "verification_required": "An administrator has restricted this account, so it cannot send messages. You can still read this conversation. Please contact support if you think this is a mistake."
   },
   "city_label": "City",
   "city_placeholder": "Enter city",
@@ -846,8 +860,8 @@
     "you_have_left": "You have {count} left",
     "your_balance": "Your Balance:"
   },
-  "feature_1_desc": "All sellers are verified Swiss residents with authentic documentation and complete vehicle history records.",
-  "feature_1_title": "Verified Swiss Sellers",
+  "feature_1_desc": "Every car is listed by a Swiss-based seller with full vehicle history, and auction bidders are identity-checked before they can bid.",
+  "feature_1_title": "Swiss Quality",
   "feature_2_desc": "We focus on quality used cars at competitive export prices, making Swiss vehicles accessible to international buyers.",
   "feature_2_title": "Affordable Export Prices",
   "feature_3_desc": "We facilitate secure shipping to Eastern Europe, North Africa, and 45+ international destinations worldwide.",
@@ -977,13 +991,10 @@
     "member_since": "Member since",
     "messages": {
       "confirm_delete": "Are you sure you want to delete this listing? This action cannot be undone.",
-      "confirm_verification": "Request verification as a buyer? This will notify the admin team.",
       "delete_failed": "Failed to delete listing: ",
       "delete_success": "Listing deleted successfully!",
       "update_failed": "Failed to update profile. Please try again.",
-      "updated_success": "Profile updated successfully!",
-      "verification_failed": "Failed to send verification request. Please try again.",
-      "verification_sent": "Verification request sent! Our team will review your request soon."
+      "updated_success": "Profile updated successfully!"
     },
     "my_listings": {
       "empty": "You haven't listed any cars yet",
@@ -993,7 +1004,6 @@
       "title": "My Listings"
     },
     "my_profile": "My Profile",
-    "pending_verification": "Pending Verification",
     "personal_info": {
       "address": "Address",
       "canton": "Canton",
@@ -1009,9 +1019,9 @@
       "zip_code": "ZIP Code"
     },
     "quick_actions": {
-      "get_verified": "Get verified buyer status",
+      "get_verified": "Upload your ID so you can bid in auctions",
       "list_new_car": "List New Car",
-      "request_verification": "Request Verification",
+      "request_verification": "Request auction access",
       "title": "Quick Actions",
       "view_dashboard": "View Dashboard",
       "view_profile": "Go to my profile"
@@ -1074,23 +1084,16 @@
       },
       "was": "Was"
     },
-    "verification_status": {
-      "pending_message": "An admin is reviewing your account. You will be able to contact sellers once verified.",
-      "pending_title": "Pending Verification",
-      "verified_auction": "You can bid on auctions and contact sellers.",
-      "verified_direct": "You can contact sellers and browse listings.",
-      "verified_title": "Account Verified"
-    },
     "verified": "Verified",
     "status": {
-      "pending_title": "Waiting for approval",
-      "pending_body": "An administrator is reviewing your ID document. You can browse every listing in the meantime. Posting a car, messaging a seller and bidding unlock as soon as your account is approved.",
-      "verified_title": "Account approved",
+      "pending_title": "Account restricted",
+      "pending_body": "An administrator has restricted this account. You can still browse the site. Please contact support if you think this is a mistake.",
+      "verified_title": "Account active",
       "verified_body_seller": "You can post listings, message buyers and use every part of the site.",
-      "verified_body_buyer": "You can message sellers and place bids.",
+      "verified_body_buyer": "You can message sellers and buy directly. Bidding in auctions needs a one-off ID check.",
       "banned_title": "Account suspended",
       "banned_body": "This account has been suspended and cannot post, message or bid. Please contact support if you believe this is a mistake.",
-      "missing_id": "We do not have an ID document for this account yet, so it cannot be approved. Please upload one below.",
+      "missing_id": "Please contact support so an administrator can look at your account.",
       "upload_id": "Upload your ID document",
       "replace_id": "Replace your ID document",
       "id_uploaded": "Thank you. Your document has been sent to the administrators for review.",
@@ -1101,6 +1104,22 @@
       "current": "Current password",
       "submit": "Change password",
       "hint": "Your new password must be at least 8 characters. If you have forgotten your current one, use the reset link instead."
+    },
+    "auction": {
+      "title": "Auction access",
+      "approved_title": "Approved for auctions",
+      "approved_body": "You can place bids on any live auction.",
+      "pending_title": "Waiting for approval",
+      "pending_body": "An administrator is checking your ID document. Bidding unlocks as soon as it is approved, usually within 24 hours.",
+      "none_title": "Not set up for auctions",
+      "none_body": "Everything else on the site already works. Bidding is the one thing that needs an ID check, because a winning bid is a commitment to buy. Upload a passport, ID card or driving licence and an administrator will approve you.",
+      "upload_label": "Upload your ID document",
+      "replace_label": "Replace your ID document",
+      "request_button": "Request auction access",
+      "requesting": "Sending…",
+      "request_sent": "Request sent. An administrator will review your ID document, usually within 24 hours.",
+      "request_failed": "We could not send your request. Please try again.",
+      "upload_first": "Please upload your ID document first."
     }
   },
   "register": {
@@ -1112,15 +1131,15 @@
       "verified_vehicles": "Verified Swiss vehicles"
     },
     "buyer_message": "Find the best Swiss cars for export at competitive prices",
-    "buyer_type_auction": "Participate in auctions (ID verification required)",
-    "buyer_type_direct": "Buy cars directly (no verification needed)",
+    "buyer_type_auction": "Take part in auctions (needs an ID check)",
+    "buyer_type_direct": "Buy cars directly — no ID, no waiting",
     "buyer_type_label": "I want to",
     "creating_account": "Creating account...",
     "id_upload_button": "Choose File",
     "id_upload_help": "Accepted formats: JPG, PNG or PDF, up to 6 MB. Your document is stored privately and is only visible to administrators.",
     "id_upload_label": "Upload your ID (passport, ID card or driver's licence)",
     "important_notice": {
-      "message": "By registering as a seller, you agree that providing false information or fraudulent activity may result in account suspension. Phone verification will be required for all sellers before listing vehicles.",
+      "message": "By registering as a seller, you agree that providing false information or fraudulent activity may result in account suspension. Your phone number is shown on your listings so buyers can reach you.",
       "title": "Important"
     },
     "join_title": "Join SwissExportCar",
@@ -1134,7 +1153,76 @@
         "germany": "Germany",
         "italy": "Italy",
         "other": "Other",
-        "switzerland": "Switzerland"
+        "switzerland": "Switzerland",
+        "CH": "Switzerland",
+        "AL": "Albania",
+        "DZ": "Algeria",
+        "AM": "Armenia",
+        "AT": "Austria",
+        "AZ": "Azerbaijan",
+        "BE": "Belgium",
+        "BJ": "Benin",
+        "BA": "Bosnia & Herzegovina",
+        "BG": "Bulgaria",
+        "BF": "Burkina Faso",
+        "CM": "Cameroon",
+        "HR": "Croatia",
+        "CZ": "Czechia",
+        "CD": "Congo - Kinshasa",
+        "DK": "Denmark",
+        "EG": "Egypt",
+        "EE": "Estonia",
+        "FI": "Finland",
+        "FR": "France",
+        "GM": "Gambia",
+        "GE": "Georgia",
+        "DE": "Germany",
+        "GH": "Ghana",
+        "GR": "Greece",
+        "GN": "Guinea",
+        "HU": "Hungary",
+        "IQ": "Iraq",
+        "IE": "Ireland",
+        "IT": "Italy",
+        "CI": "Côte d’Ivoire",
+        "JO": "Jordan",
+        "KZ": "Kazakhstan",
+        "KE": "Kenya",
+        "XK": "Kosovo",
+        "LV": "Latvia",
+        "LB": "Lebanon",
+        "LR": "Liberia",
+        "LY": "Libya",
+        "LT": "Lithuania",
+        "LU": "Luxembourg",
+        "MT": "Malta",
+        "ML": "Mali",
+        "MD": "Moldova",
+        "ME": "Montenegro",
+        "MA": "Morocco",
+        "NL": "Netherlands",
+        "NE": "Niger",
+        "NG": "Nigeria",
+        "MK": "North Macedonia",
+        "NO": "Norway",
+        "PL": "Poland",
+        "PT": "Portugal",
+        "RO": "Romania",
+        "SN": "Senegal",
+        "RS": "Serbia",
+        "SK": "Slovakia",
+        "SI": "Slovenia",
+        "ES": "Spain",
+        "SE": "Sweden",
+        "TZ": "Tanzania",
+        "TG": "Togo",
+        "TN": "Tunisia",
+        "TR": "Türkiye",
+        "UG": "Uganda",
+        "UA": "Ukraine",
+        "GB": "United Kingdom",
+        "ZM": "Zambia",
+        "ZW": "Zimbabwe"
       },
       "country": "Country",
       "select_canton": "Select Canton",
@@ -1158,7 +1246,9 @@
     },
     "phone": {
       "label": "Phone Number",
-      "placeholder": "+41 79 123 45 67"
+      "placeholder": "+41 79 123 45 67 / +40 721 234 567",
+      "optional": "optional",
+      "international_note": "Any country. Please include your country code — a Swiss number is not required."
     },
     "seller_info": {
       "business": "Business",
@@ -1187,18 +1277,21 @@
       "password_length": "Password must be at least 8 characters long",
       "passwords_not_match": "Passwords do not match",
       "phone_too_short": "Phone number too short",
-      "id_required": "Please upload your ID document. An administrator needs it to approve your account.",
+      "id_required": "Auction accounts need an ID document. Upload one, or choose \"Buy cars directly\" to sign up without it.",
       "id_consent_required": "Please confirm that you consent to your ID document being processed.",
       "id_file_type": "Please upload a JPG, PNG or PDF file.",
       "id_file_size": "That file is too large. Please upload a document smaller than 6 MB.",
-      "phone_required": "A phone number is required."
+      "phone_required": "A phone number is required for seller accounts.",
+      "phone_invalid": "That phone number does not look right. Please include your country code, for example +41 79 123 45 67 or +40 721 234 567."
     },
-    "id_upload_required_note": "Every account needs an ID document. An administrator checks it before you can post a car, message anyone or place a bid.",
+    "id_upload_required_note": "Auctions only. Bidding commits real money, so an administrator checks your ID before you can bid. Nothing else on the site needs it.",
     "id_consent": "I consent to SwissCarExport processing my identity document for the sole purpose of verifying my identity, as described in the",
-    "approval_notice_title": "Your account needs approval first",
-    "approval_notice_body": "You can log in and browse the whole site straight away. Posting a car, messaging a seller and bidding stay locked until an administrator has reviewed your ID document.",
+    "approval_notice_title": "Bidding needs approval first",
+    "approval_notice_body": "Your account works straight away — you can log in, browse, message sellers and buy directly. Only placing bids waits for an administrator to check your ID document, usually within 24 hours.",
     "buyer_type_auction_short": "Auction buyer",
-    "buyer_type_direct_short": "Direct buyer"
+    "buyer_type_direct_short": "Direct buyer",
+    "no_id_needed_title": "No ID document needed",
+    "no_id_needed_body": "Your account is ready to use the moment you create it. An ID is only ever asked for if you later want to bid in auctions — you can add one from your profile at any time."
   },
   "reset_filters": "Reset Filters",
   "search_button": "Search Cars",
@@ -1333,8 +1426,8 @@
     "banned_body": "This account has been suspended and cannot publish listings. Please contact support if you believe this is a mistake.",
     "buyer_title": "This is a buyer account",
     "buyer_body": "Only seller accounts can publish listings. If you would like to sell a car for export, please contact support so your account can be changed.",
-    "unverified_title": "Waiting for approval",
-    "unverified_body": "An administrator still has to review your ID document before you can publish listings. You will be able to post as soon as your account is approved — nothing you enter here would be saved until then."
+    "unverified_title": "Account restricted",
+    "unverified_body": "An administrator has restricted this account, so it cannot publish listings right now. Please contact support — listing a car does not normally require any approval."
   },
   "contact_page": {
     "title": "Contact",

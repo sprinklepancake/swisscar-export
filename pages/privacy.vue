@@ -64,6 +64,16 @@
             Your contact details are shared with a counterparty only as needed to complete a
             transaction. We do not sell your personal data.
           </p>
+          <p class="mt-2">
+            <strong>Administrator notifications.</strong> When you create an account, upload an
+            identity document or ask for auction access, we send our own administrators a
+            notification so they can act on it. That notification contains your name, email
+            address, and — where you gave them — your phone number, city, country and company
+            name. It never contains your identity document or your password. It is delivered
+            by our email provider (Resend) and, if the operator has configured one, an internal
+            team-chat webhook. These are processors acting on our instructions, not
+            advertisers, and the notification is not used for marketing.
+          </p>
         </section>
 
         <section>

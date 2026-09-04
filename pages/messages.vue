@@ -144,7 +144,7 @@
               <div class="flex items-center space-x-4">
                 <div class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border border-red-200">
                   <img 
-                    :src="activeChatInfo.car.images?.[0] || '/placeholder-car.jpg'" 
+                    :src="activeChatInfo.car.images?.[0] || '/placeholder-car.svg'" 
                     :alt="activeChatInfo.carInfo"
                     class="w-full h-full object-cover"
                     loading="lazy"

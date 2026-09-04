@@ -1,12 +1,19 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white p-4">
-    <div class="glass p-8 rounded-2xl w-full max-w-md">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white p-3 sm:p-4">
+    <div class="glass p-5 sm:p-8 rounded-2xl w-full max-w-md">
       <h1 class="text-3xl font-bold text-center text-red-800 mb-8">{{ t('auth.login_title') }}</h1>
 
-      <!-- Shown after a successful registration -->
+      <!-- Shown after a successful registration. This used to render
+           register.approval_notice_* for EVERYONE, so a seller who was never
+           asked for an ID was greeted with "Bidding needs approval first" and
+           reasonably concluded their account was stuck in a queue. The auction
+           note now only appears for accounts that actually asked to bid. -->
       <div v-if="justRegistered" class="mb-6 rounded-lg border border-green-300 bg-green-50 p-4">
-        <p class="text-green-800 text-sm font-semibold">{{ t('register.approval_notice_title') }}</p>
-        <p class="text-green-700 text-sm mt-1">{{ t('register.approval_notice_body') }}</p>
+        <p class="text-green-800 text-sm font-semibold">{{ t('auth.registered_title') }}</p>
+        <p class="text-green-700 text-sm mt-1">{{ t('auth.registered_body') }}</p>
+        <p v-if="awaitingAuctionApproval" class="text-green-700 text-sm mt-2 pt-2 border-t border-green-200">
+          {{ t('register.approval_notice_body') }}
+        </p>
       </div>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
@@ -75,6 +82,8 @@ const loading = ref(false)
 const auth = useAuth()
 
 const justRegistered = computed(() => route.query.registered === '1')
+// Only auction signups are waiting on anything.
+const awaitingAuctionApproval = computed(() => route.query.auction === '1')
 
 useHead({ title: t('auth.login_title') })
 

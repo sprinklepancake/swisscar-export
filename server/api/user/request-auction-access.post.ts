@@ -1,10 +1,11 @@
-// server/api/user/request-verification.post.ts
+// server/api/user/request-auction-access.post.ts
 //
-// Kept for compatibility with older clients. Since registration no longer gates
-// an account behind admin approval, "requesting verification" now means exactly
-// one thing: asking to be let into auctions. It forwards to the same logic as
-// /api/user/request-auction-access, and — unlike before — it actually tells the
-// administrators, instead of writing a log row nobody ever read.
+// A direct buyer or a seller asking to be let into auctions. Signing up needs
+// no ID at all; this is where one becomes necessary, because bidding commits
+// money and carries the no-show ban.
+//
+// The document itself is uploaded separately (/api/user/upload-id) — this route
+// only flips the account into the auction queue and pings the administrators.
 import { getSupabaseAdmin } from '~/server/utils/supabase'
 import { requireAuth } from '~/server/utils/auth'
 import { notifyAdminInBackground } from '~/server/utils/notify'
@@ -22,7 +23,7 @@ export default defineEventHandler(async (event) => {
   if (!profile) throw createError({ statusCode: 404, statusMessage: 'Profile not found' })
 
   if (profile.verified_buyer) {
-    return { success: true, alreadyVerified: true, message: 'Your account is already approved for auctions.' }
+    return { success: true, alreadyApproved: true, message: 'Your account is already approved for auctions.' }
   }
 
   if (!profile.id_document_url) {
@@ -32,8 +33,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (profile.buyer_type !== 'auction') {
-    await supabase.from('users').update({ buyer_type: 'auction' }).eq('id', user.id)
+  const alreadyQueued = profile.buyer_type === 'auction'
+
+  if (!alreadyQueued) {
+    const { error } = await supabase.from('users').update({ buyer_type: 'auction' }).eq('id', user.id)
+    if (error) {
+      throw createError({ statusCode: 500, statusMessage: 'Could not submit your request. Please try again.' })
+    }
   }
 
   const siteUrl = String(useRuntimeConfig().public.siteUrl || '').replace(/\/$/, '')
@@ -42,11 +48,15 @@ export default defineEventHandler(async (event) => {
     userId: profile.id,
     subject: `Auction access requested: ${profile.name}`,
     body: [
-      `${profile.name} (${profile.email}) has requested auction access and has an ID document on file.`,
+      `${profile.name} (${profile.email}) has asked for auction access and uploaded an ID document.`,
+      ``,
+      `Role: ${profile.role}`,
+      ``,
+      `Open the admin panel, view the ID, then press "Approve auctions" to let them bid.`,
       ``,
       `Admin panel: ${siteUrl}/en/admin`,
     ].join('\n'),
-    metadata: { email: profile.email, role: profile.role },
+    metadata: { email: profile.email, role: profile.role, resubmitted: alreadyQueued },
   })
 
   return {

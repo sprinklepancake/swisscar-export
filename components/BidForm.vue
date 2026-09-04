@@ -1,7 +1,7 @@
 <template>
   <div class="border border-slate-700 rounded-lg p-4">
     <h3 class="text-lg font-bold text-white mb-3">{{ t('auction.place_bid') }}</h3>
-    <div v-if="auth.user">
+    <div v-if="currentUser">
       <div class="flex items-center justify-between mb-3">
         <span class="text-gray-400">{{ t('auction.current_bid') }}:</span>
         <span class="font-bold text-white">{{ currentBid }} {{ t('currency.chf') }}</span>
@@ -17,7 +17,7 @@
           v-model="bidAmount" 
           type="number" 
           :min="minBid" 
-          :max="auth.user.funds"
+          :max="currentUser?.funds || 0"
           class="w-full bg-slate-700 rounded-lg px-4 py-2 text-white mb-2"
           @input="validateBid"
         >
@@ -49,7 +49,7 @@
 
       <div class="mt-4 text-sm text-gray-400">
         <p>{{ t('auction.agree_to_purchase') }}</p>
-        <p v-if="auth.user.role === 'buyer' && !auth.user.verifiedBuyer" class="text-yellow-400 mt-1">
+        <p v-if="!isAuctionApproved" class="text-yellow-400 mt-1">
           {{ t('auction.verification_required') }}
         </p>
       </div>
@@ -87,8 +87,28 @@ const props = defineProps({
 })
 
 const auth = useAuth()
+// The template links to /login through localePath(), but nothing ever defined
+// it here — with i18n strategy 'prefix' that link was a render error.
+const localePath = useLocalePath()
+// useAuth() hands back a plain object of refs, which Vue templates do NOT
+// unwrap, so every `auth.user.*` in the markup read undefined. Unwrap once here.
+const currentUser = computed(() => auth.user.value)
+// The account has been cleared to bid. useAuth() selects * from users, so this
+// arrives snake_case; accept either spelling rather than depending on which.
+const isAuctionApproved = computed(() => {
+  const u = currentUser.value
+  return !!(u && (u.verified_buyer ?? u.verifiedBuyer))
+})
+
 const bidAmount = ref(props.currentBid + props.minBid)
-const maxBid = ref(auth.value.user?.funds || 0)
+// This read `auth.value.user` — auth is not a ref, so it threw on setup and the
+// whole form failed to mount.
+const maxBid = ref(currentUser.value?.funds || 0)
+
+// Funds change when a bid is placed or a deposit is refunded.
+watch(() => currentUser.value?.funds, (funds) => {
+  maxBid.value = funds || 0
+})
 const bidError = ref('')
 const loading = ref(false)
 

@@ -18,11 +18,14 @@
 //      by an atomic claim (UPDATE … RETURNING) rather than by a separate read,
 //      or two overlapping bids both refund the same deposit.
 import { getSupabaseAdmin } from '~/server/utils/supabase'
-import { requireVerified } from '~/server/utils/auth'
+import { requireAuctionAccess } from '~/server/utils/auth'
 import { adjustFunds, InsufficientFundsError } from '~/server/utils/wallet'
 import type { H3Event } from 'h3'
 
-const MIN_INCREMENT = 50
+// Exported so /api/bids/canBid advertises exactly the minimum this file
+// enforces. They were computed independently and disagreed: the page demanded
+// startingPrice + max(100, 5%) while the server accepted startingPrice.
+export const MIN_INCREMENT = 50
 const LIVE_STATUSES = ['auction', 'active']
 
 const num = (v: any) => {
@@ -31,7 +34,10 @@ const num = (v: any) => {
 }
 
 export async function placeBid(event: H3Event, rawCarId: unknown, rawAmount: unknown) {
-  const user = await requireVerified(event, 'place bids')
+  // Bidding — and ONLY bidding — requires an admin-checked ID document. That
+  // is what makes the "bid and don't complete the purchase → ban" rule
+  // enforceable; listing a car or messaging a seller needs no such thing.
+  const user = await requireAuctionAccess(event, 'place bids')
 
   const carId = parseInt(String(rawCarId), 10)
   const bidAmount = parseFloat(String(rawAmount))
